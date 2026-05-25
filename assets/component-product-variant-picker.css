@@ -63,6 +63,13 @@ variant-selects {
   gap: 6px;
 }
 
+@media screen and (max-width: 749px) {
+  .product-form__input--pill input[type='radio'] + label {
+    aspect-ratio: unset;
+    padding: 7px 4px;
+  }
+}
+
 @media screen and (min-width: 750px) {
   .product-form__input--pill {
     grid-template-columns: repeat(8, 1fr);
