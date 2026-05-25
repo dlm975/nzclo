@@ -56,36 +56,28 @@ variant-selects {
   z-index: 1;
 }
 
-/* Custom styles for Pill display type — square grid layout */
+/* Custom styles for Pill display type */
+/* Mobile-first: flex wrap so pills hug their text */
 .product-form__input--pill {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 6px;
 }
 
-@media screen and (max-width: 749px) {
-  .product-form__input--pill {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .product-form__input--pill legend.form__label {
-    width: 100%;
-  }
-  .product-form__input--pill input[type='radio'] + label {
-    aspect-ratio: unset;
-    width: auto;
-    padding: 6px 10px;
-  }
+.product-form__input--pill legend.form__label {
+  width: 100%;
 }
 
+/* Desktop: switch to 8-column square grid */
 @media screen and (min-width: 750px) {
   .product-form__input--pill {
+    display: grid;
     grid-template-columns: repeat(8, 1fr);
   }
-}
-
-.product-form__input--pill legend.form__label {
-  grid-column: 1 / -1;
+  .product-form__input--pill legend.form__label {
+    grid-column: 1 / -1;
+    width: auto;
+  }
 }
 
 .product-form__input--pill input[type='radio'] + label {
@@ -97,9 +89,10 @@ variant-selects {
   align-items: center;
   justify-content: center;
   margin: 0;
-  padding: 0;
-  width: 100%;
-  aspect-ratio: 1;
+  /* Mobile: auto width, small padding */
+  width: auto;
+  aspect-ratio: unset;
+  padding: 6px 10px;
   font-size: 1.2rem;
   letter-spacing: 0;
   line-height: 1;
@@ -107,6 +100,15 @@ variant-selects {
   transition: border var(--duration-short) ease;
   cursor: pointer;
   position: relative;
+}
+
+/* Desktop: fill grid cell as a square */
+@media screen and (min-width: 750px) {
+  .product-form__input--pill input[type='radio'] + label {
+    width: 100%;
+    aspect-ratio: 1;
+    padding: 0;
+  }
 }
 
 .product-form__input--pill input[type='radio'] + label:before {
