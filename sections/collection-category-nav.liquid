@@ -36,11 +36,10 @@
     width: 72px;
   }
 
-  .cat-nav__img-wrap {
+  .cat-nav__icon-wrap {
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    overflow: hidden;
     border: 2px solid transparent;
     background: #efeee5;
     display: flex;
@@ -49,15 +48,14 @@
     transition: border-color 0.15s ease;
   }
 
-  .cat-nav__item:hover .cat-nav__img-wrap,
-  .cat-nav__item[aria-current="page"] .cat-nav__img-wrap {
+  .cat-nav__item:hover .cat-nav__icon-wrap,
+  .cat-nav__item[aria-current="page"] .cat-nav__icon-wrap {
     border-color: #1b1c17;
   }
 
-  .cat-nav__img-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .cat-nav__icon-wrap svg {
+    width: 30px;
+    height: 30px;
     display: block;
   }
 
@@ -80,24 +78,71 @@
         {%- if block.settings.link == request.path -%}
           {%- assign is_current = true -%}
         {%- endif -%}
+
+        {%- capture cat_icon -%}
+          {%- case block.settings.icon -%}
+
+            {%- when 'all' -%}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="8" height="8"/>
+                <rect x="13" y="3" width="8" height="8"/>
+                <rect x="3" y="13" width="8" height="8"/>
+                <rect x="13" y="13" width="8" height="8"/>
+              </svg>
+
+            {%- when 'tops' -%}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 3L2 7L5 12L8 11V22H16V11L19 12L22 7L15 3Q12 5 9 3Z"/>
+              </svg>
+
+            {%- when 'pants' -%}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 3H19V22H14L12 13L10 22H5V3Z"/>
+              </svg>
+
+            {%- when 'shorts' -%}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 3H19V14H14L12 10L10 14H5V3Z"/>
+              </svg>
+
+            {%- when 'hoodies' -%}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 3L2 7L5 12L8 11V22H16V11L19 12L22 7L15 3L12 6L9 3Z"/>
+                <rect x="9" y="16" width="6" height="5"/>
+              </svg>
+
+            {%- when 'outerwear' -%}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M8 2L2 7L5 12L8 11V22H16V11L19 12L22 7L16 2L12 6L8 2Z"/>
+                <path d="M8 2L10 8L12 6"/>
+                <path d="M16 2L14 8L12 6"/>
+              </svg>
+
+            {%- when 'accessories' -%}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3C13.1 3 14 3.9 14 5C14 5.8 13.5 6.4 12.8 6.8L21 14H3L11.2 6.8C10.5 6.4 10 5.8 10 5C10 3.9 10.9 3 12 3Z"/>
+                <line x1="3" y1="14" x2="21" y2="14"/>
+              </svg>
+
+            {%- else -%}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="8" height="8"/>
+                <rect x="13" y="3" width="8" height="8"/>
+                <rect x="3" y="13" width="8" height="8"/>
+                <rect x="13" y="13" width="8" height="8"/>
+              </svg>
+
+          {%- endcase -%}
+        {%- endcapture -%}
+
         <a
           href="{{ block.settings.link }}"
           class="cat-nav__item"
           {% if is_current %}aria-current="page"{% endif %}
           {{ block.shopify_attributes }}
         >
-          <div class="cat-nav__img-wrap">
-            {%- if block.settings.image != blank -%}
-              <img
-                src="{{ block.settings.image | image_url: width: 128 }}"
-                alt="{{ block.settings.label | escape }}"
-                width="64"
-                height="64"
-                loading="lazy"
-              >
-            {%- else -%}
-              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
-            {%- endif -%}
+          <div class="cat-nav__icon-wrap">
+            {{ cat_icon }}
           </div>
           {%- if block.settings.label != blank -%}
             <span class="cat-nav__label">{{ block.settings.label }}</span>
@@ -128,9 +173,19 @@
       "name": "Category",
       "settings": [
         {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Image"
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "default": "all",
+          "options": [
+            { "value": "all",         "label": "All (grid)" },
+            { "value": "tops",        "label": "Tops (t-shirt)" },
+            { "value": "pants",       "label": "Pants" },
+            { "value": "shorts",      "label": "Shorts" },
+            { "value": "hoodies",     "label": "Hoodies" },
+            { "value": "outerwear",   "label": "Outerwear (jacket)" },
+            { "value": "accessories", "label": "Accessories (hanger)" }
+          ]
         },
         {
           "type": "text",
@@ -150,10 +205,10 @@
     {
       "name": "Category nav",
       "blocks": [
-        { "type": "category", "settings": { "label": "All" } },
-        { "type": "category", "settings": { "label": "Tops" } },
-        { "type": "category", "settings": { "label": "Pants" } },
-        { "type": "category", "settings": { "label": "Shorts" } }
+        { "type": "category", "settings": { "icon": "all",    "label": "All" } },
+        { "type": "category", "settings": { "icon": "tops",   "label": "Tops" } },
+        { "type": "category", "settings": { "icon": "pants",  "label": "Pants" } },
+        { "type": "category", "settings": { "icon": "shorts", "label": "Shorts" } }
       ]
     }
   ]
