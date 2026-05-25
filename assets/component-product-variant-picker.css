@@ -57,26 +57,19 @@ variant-selects {
 }
 
 /* Custom styles for Pill display type */
-/* Mobile-first: flex wrap so pills hug their text */
 .product-form__input--pill {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 6px;
 }
 
 .product-form__input--pill legend.form__label {
-  width: 100%;
+  grid-column: 1 / -1;
 }
 
-/* Desktop: switch to 8-column square grid */
 @media screen and (min-width: 750px) {
   .product-form__input--pill {
-    display: grid;
     grid-template-columns: repeat(8, 1fr);
-  }
-  .product-form__input--pill legend.form__label {
-    grid-column: 1 / -1;
-    width: auto;
   }
 }
 
@@ -89,11 +82,8 @@ variant-selects {
   align-items: center;
   justify-content: center;
   margin: 0;
-  /* Mobile: uniform width — min-width sized to widest label (e.g. "4XL") */
-  width: auto;
-  min-width: 44px;
-  aspect-ratio: unset;
-  padding: 6px 4px;
+  width: 100%;
+  padding: 10px 4px;
   font-size: 1.2rem;
   letter-spacing: 0;
   line-height: 1;
@@ -103,10 +93,9 @@ variant-selects {
   position: relative;
 }
 
-/* Desktop: fill grid cell as a square */
+/* Desktop: square aspect ratio */
 @media screen and (min-width: 750px) {
   .product-form__input--pill input[type='radio'] + label {
-    width: 100%;
     aspect-ratio: 1;
     padding: 0;
   }
