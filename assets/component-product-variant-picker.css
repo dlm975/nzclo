@@ -64,9 +64,17 @@ variant-selects {
 }
 
 @media screen and (max-width: 749px) {
+  .product-form__input--pill {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .product-form__input--pill legend.form__label {
+    width: 100%;
+  }
   .product-form__input--pill input[type='radio'] + label {
     aspect-ratio: unset;
-    padding: 7px 4px;
+    width: auto;
+    padding: 6px 10px;
   }
 }
 
