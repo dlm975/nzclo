@@ -23,6 +23,7 @@
         "all": {
           "type": "category",
           "settings": {
+            "icon": "all",
             "label": "all",
             "link": "/collections/all"
           }
@@ -30,6 +31,7 @@
         "tops": {
           "type": "category",
           "settings": {
+            "icon": "tops",
             "label": "Tops",
             "link": "/collections/tops"
           }
@@ -37,6 +39,7 @@
         "pants": {
           "type": "category",
           "settings": {
+            "icon": "pants",
             "label": "Pants",
             "link": "/collections/pants"
           }
@@ -44,6 +47,7 @@
         "shorts": {
           "type": "category",
           "settings": {
+            "icon": "shorts",
             "label": "Shorts",
             "link": "/collections/shorts"
           }
