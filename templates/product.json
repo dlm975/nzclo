@@ -49,6 +49,46 @@
           "type": "description",
           "settings": {}
         },
+        "tab_details": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Details",
+            "icon": "ruler",
+            "content": "<p>Relaxed fit with a mid-rise waist. Model is 183cm and wears size M. Available in sizes XS–3XL.<\/p>"
+          }
+        },
+        "tab_materials": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Materials & Care",
+            "icon": "washing",
+            "content": "<p>100% Cotton French Terry. Machine wash cold, gentle cycle. Do not bleach. Tumble dry low. Do not iron print.<\/p>"
+          }
+        },
+        "tab_shipping": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping",
+            "icon": "truck",
+            "content": "<p>Free shipping on orders over $75. Standard delivery 3–7 business days. Express delivery 1–3 business days. All orders are tracked and insured.<\/p>"
+          }
+        },
+        "tab_returns": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Returns",
+            "icon": "return",
+            "content": "<p>Free returns within 30 days of delivery. Items must be unworn, unwashed, and in original packaging with tags attached.<\/p>"
+          }
+        },
+        "tab_faq": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "FAQs",
+            "icon": "question_mark",
+            "content": "<p><strong>Are these authentic Uniqlo products?<\/strong><\/p><p>Yes — all items are sourced directly and 100% genuine.<\/p><p><strong>How do I know my size?<\/strong><\/p><p>Uniqlo sizing runs true to standard NZ sizes. Check the size guide on each product for exact measurements.<\/p><p><strong>Do you ship outside New Zealand?<\/strong><\/p><p>Not at this stage — we ship within New Zealand only.<\/p>"
+          }
+        },
         "share": {
           "type": "share",
           "settings": {
@@ -64,6 +104,11 @@
         "quantity_selector",
         "buy_buttons",
         "description",
+        "tab_details",
+        "tab_materials",
+        "tab_shipping",
+        "tab_returns",
+        "tab_faq",
         "share"
       ],
       "settings": {
