@@ -56,21 +56,6 @@
     margin-top: 14px;
   }
 
-  .mission__link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #fbfaf0;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(251,250,240,0.3);
-    padding-bottom: 2px;
-    transition: border-color 0.15s ease;
-  }
-  .mission__link:hover { border-color: #fbfaf0; }
 
   .mission__map {
     width: 100%;
@@ -120,12 +105,6 @@
         <p>Uniqlo operates in over 25 countries across Asia, Europe, the Middle East, and North America. Recognised globally for precise construction, functional materials, and a design philosophy defined by restraint.</p>
         <p>New Zealand has never had direct access. nzclo changes that — sourcing genuine pieces and delivering them to your door. Authentic product, no compromise.</p>
       </div>
-      <a href="{{ section.settings.cta_link | default: '/collections/all' }}" class="mission__link">
-        Shop the collection
-        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </a>
     </div>
 
     <div class="mission__map">
@@ -297,14 +276,7 @@
   "name": "Mission statement",
   "tag": "section",
   "class": "section",
-  "settings": [
-    {
-      "type": "url",
-      "id": "cta_link",
-      "label": "CTA link",
-      "default": "/collections/all"
-    }
-  ],
+  "settings": [],
   "presets": [
     {
       "name": "Mission statement"
