@@ -3,10 +3,12 @@
   Accepts:
   - swatch: {Object} a swatch object
   - shape: {String} swatch shape. Accepts 'square', defaults to circle.
-  - value_name: {String} option value string used as color fallback when no swatch data exists.
 
   Usage:
-  {% render 'swatch', swatch: value.swatch, shape: 'square', value_name: value %}
+  {% render 'swatch',
+    swatch: value.swatch
+    shape: 'square'
+  %}
 {% endcomment %}
 
 {%- liquid
@@ -17,58 +19,6 @@
     assign swatch_focal_point = swatch.image.presentation.focal_point
   elsif swatch.color
     assign swatch_value = 'rgb(' | append: swatch.color.rgb | append: ')'
-  elsif value_name != blank
-    assign color_key = value_name | downcase | strip
-    case color_key
-      when 'black', 'ブラック'
-        assign swatch_value = '#000000'
-      when 'white', 'ホワイト'
-        assign swatch_value = '#FFFFFF'
-      when 'off white', 'off-white', 'オフホワイト'
-        assign swatch_value = '#F5F5F0'
-      when 'cream', 'クリーム'
-        assign swatch_value = '#F2EDE4'
-      when 'ivory', 'アイボリー'
-        assign swatch_value = '#FFFFF0'
-      when 'ecru'
-        assign swatch_value = '#C2B280'
-      when 'beige', 'ベージュ'
-        assign swatch_value = '#D4B896'
-      when 'camel', 'キャメル'
-        assign swatch_value = '#C19A6B'
-      when 'khaki', 'カーキ'
-        assign swatch_value = '#8B8058'
-      when 'light gray', 'light grey', 'ライトグレー'
-        assign swatch_value = '#D1D5DB'
-      when 'gray', 'grey', 'グレー'
-        assign swatch_value = '#9CA3AF'
-      when 'dark gray', 'dark grey', 'ダークグレー', 'charcoal', 'チャコール'
-        assign swatch_value = '#374151'
-      when 'navy', 'ネイビー'
-        assign swatch_value = '#1F2D5C'
-      when 'blue', 'ブルー'
-        assign swatch_value = '#2563EB'
-      when 'light blue', 'ライトブルー'
-        assign swatch_value = '#93C5FD'
-      when 'green', 'グリーン'
-        assign swatch_value = '#16A34A'
-      when 'olive', 'オリーブ'
-        assign swatch_value = '#65732B'
-      when 'brown', 'ブラウン'
-        assign swatch_value = '#78350F'
-      when 'red', 'レッド'
-        assign swatch_value = '#DC2626'
-      when 'pink', 'ピンク'
-        assign swatch_value = '#F472B6'
-      when 'orange', 'オレンジ'
-        assign swatch_value = '#EA580C'
-      when 'yellow', 'イエロー'
-        assign swatch_value = '#FACC15'
-      when 'purple', 'パープル'
-        assign swatch_value = '#7C3AED'
-      when 'burgundy', 'wine', 'ワイン', 'バーガンディ'
-        assign swatch_value = '#6B1F2A'
-    endcase
   endif
 -%}
 
