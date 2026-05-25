@@ -56,18 +56,37 @@ variant-selects {
   z-index: 1;
 }
 
-/* Custom styles for Pill display type */
+/* Custom styles for Pill display type — square grid layout */
+.product-form__input--pill {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+@media screen and (min-width: 750px) {
+  .product-form__input--pill {
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+.product-form__input--pill legend.form__label {
+  grid-column: 1 / -1;
+}
+
 .product-form__input--pill input[type='radio'] + label {
   border: var(--variant-pills-border-width) solid rgba(var(--color-foreground), var(--variant-pills-border-opacity));
   background-color: rgb(var(--color-background));
-  color: rgba(var(--color-foreground));
-  border-radius: var(--variant-pills-radius);
   color: rgb(var(--color-foreground));
-  display: inline-block;
-  margin: 0.7rem 0.5rem 0.2rem 0;
-  padding: 1rem 2rem;
-  font-size: 1.4rem;
-  letter-spacing: 0.1rem;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  aspect-ratio: 1;
+  font-size: 1.2rem;
+  letter-spacing: 0;
   line-height: 1;
   text-align: center;
   transition: border var(--duration-short) ease;
