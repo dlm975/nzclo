@@ -89,10 +89,11 @@ variant-selects {
   align-items: center;
   justify-content: center;
   margin: 0;
-  /* Mobile: auto width, small padding */
+  /* Mobile: uniform width — min-width sized to widest label (e.g. "4XL") */
   width: auto;
+  min-width: 44px;
   aspect-ratio: unset;
-  padding: 6px 10px;
+  padding: 6px 4px;
   font-size: 1.2rem;
   letter-spacing: 0;
   line-height: 1;
