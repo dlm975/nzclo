@@ -18,8 +18,15 @@
       {%- liquid
         assign swatch_count = option.values | map: 'swatch' | compact | size
         assign picker_type = block.settings.picker_type
+        assign option_name_lower = option.name | downcase
 
         if swatch_count > 0 and block.settings.swatch_shape != 'none'
+          if block.settings.picker_type == 'dropdown'
+            assign picker_type = 'swatch_dropdown'
+          else
+            assign picker_type = 'swatch'
+          endif
+        elsif block.settings.swatch_shape != 'none' and (option_name_lower == 'color' or option_name_lower == 'colour')
           if block.settings.picker_type == 'dropdown'
             assign picker_type = 'swatch_dropdown'
           else

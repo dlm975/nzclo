@@ -66,12 +66,20 @@
       {{ label_unavailable }}
     {%- endcapture -%}
 
+    {%- liquid
+      assign css_color_name = null
+      if swatch_value == null
+        assign css_color_name = value | downcase | replace: ' ', ''
+      endif
+    -%}
+
     {%
       render 'swatch-input',
       id: input_id,
       name: input_name,
       value: escaped_value,
       swatch: value.swatch,
+      color_name: css_color_name,
       product_form_id: product_form_id,
       checked: value.selected,
       visually_disabled: option_disabled,
