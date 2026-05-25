@@ -49,6 +49,12 @@
         "show_text_below": false
       }
     },
+    "mission": {
+      "type": "mission-statement",
+      "settings": {
+        "cta_link": "/collections/all"
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
@@ -80,6 +86,7 @@
   },
   "order": [
     "image_banner",
+    "mission",
     "featured_collection"
   ]
 }
