@@ -8,6 +8,29 @@
         "color_scheme": "scheme-1"
       }
     },
+    "category-nav": {
+      "type": "collection-category-nav",
+      "blocks": {
+        "all": {
+          "type": "category",
+          "settings": { "label": "All", "link": "/collections/all" }
+        },
+        "tops": {
+          "type": "category",
+          "settings": { "label": "Tops", "link": "/collections/tops" }
+        },
+        "pants": {
+          "type": "category",
+          "settings": { "label": "Pants", "link": "/collections/pants" }
+        },
+        "shorts": {
+          "type": "category",
+          "settings": { "label": "Shorts", "link": "/collections/shorts" }
+        }
+      },
+      "block_order": ["all", "tops", "pants", "shorts"],
+      "settings": { "color_scheme": "scheme-1" }
+    },
     "product-grid": {
       "type": "main-collection-product-grid",
       "settings": {
@@ -31,6 +54,7 @@
   },
   "order": [
     "banner",
+    "category-nav",
     "product-grid"
   ]
 }
