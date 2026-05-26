@@ -27,6 +27,57 @@
   {{ 'component-price.css' | asset_url | stylesheet_tag }}
   {{ 'quick-order-list.css' | asset_url | stylesheet_tag }}
   {{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
+  <style>
+    .card-swatches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      padding: 8px 0 2px;
+    }
+    .card-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(var(--color-foreground), 0.08);
+      outline: 2px solid transparent;
+      outline-offset: 1px;
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+      transition: outline-color 0.15s;
+      box-sizing: border-box;
+      background-clip: padding-box;
+    }
+    .card-swatch:hover { outline-color: rgba(var(--color-foreground), 0.3); }
+    .card-swatch--active { outline-color: rgba(var(--color-foreground), 0.6); }
+  </style>
+  <script>
+    if (!window.__cardSwatchInit) {
+      window.__cardSwatchInit = true;
+      document.addEventListener('click', function(e) {
+        var btn = e.target.closest('.card-swatch');
+        if (!btn) return;
+        var wrapper = btn.closest('.card-wrapper');
+        var img = wrapper.querySelector('.card__media img');
+        var src = btn.dataset.mediaSrc;
+        var srcset = btn.dataset.mediaSrcset;
+        if (img && src) { img.src = src; if (srcset) img.srcset = srcset; }
+        btn.closest('.card-swatches').querySelectorAll('.card-swatch').forEach(function(s) {
+          s.classList.toggle('card-swatch--active', s === btn);
+        });
+        var variantId = btn.dataset.variantId;
+        if (variantId) {
+          wrapper.querySelectorAll('a[href]').forEach(function(a) {
+            try {
+              var u = new URL(a.href, window.location.origin);
+              u.searchParams.set('variant', variantId);
+              a.href = u.toString();
+            } catch(err) {}
+          });
+        }
+      });
+    }
+  </script>
 {%- endunless -%}
 {%- if card_product and card_product != empty -%}
   {%- liquid
@@ -39,6 +90,16 @@
     if ratio == 0 or ratio == null
       assign ratio = 1
     endif
+    assign color_option_index = nil
+    assign color_option = nil
+    for option in card_product.options_with_values
+      assign option_name_lower = option.name | downcase
+      if option_name_lower == 'color' or option_name_lower == 'colour'
+        assign color_option_index = forloop.index0
+        assign color_option = option
+        break
+      endif
+    endfor
   -%}
   <div class="card-wrapper product-card-wrapper underline-links-hover">
     <div
@@ -143,6 +204,43 @@
           </div>
         </div>
       </div>
+      {%- if color_option != nil -%}
+        <div class="card-swatches">
+          {%- for value in color_option.values -%}
+            {%- liquid
+              assign found_variant = nil
+              for variant in card_product.variants
+                if variant.options[color_option_index] == value
+                  assign found_variant = variant
+                  break
+                endif
+              endfor
+              assign swatch_color = value.swatch.color
+              if swatch_color == blank
+                assign swatch_color = value | downcase | replace: ' ', ''
+              endif
+            -%}
+            {%- capture swatch_style -%}
+              {%- if value.swatch.image -%}
+                background-image:url('{{ value.swatch.image | image_url: width: 48 }}');background-size:cover
+              {%- else -%}
+                background-color:{{ swatch_color }}
+              {%- endif -%}
+            {%- endcapture -%}
+            <button
+              class="card-swatch{% if forloop.first %} card-swatch--active{% endif %}"
+              style="{{ swatch_style | strip }}"
+              {%- if found_variant.featured_media -%}
+                data-media-src="{{ found_variant.featured_media | image_url: width: 533 }}"
+                data-media-srcset="{%- if found_variant.featured_media.width >= 165 -%}{{ found_variant.featured_media | image_url: width: 165 }} 165w,{%- endif -%}{%- if found_variant.featured_media.width >= 533 -%}{{ found_variant.featured_media | image_url: width: 533 }} 533w,{%- endif -%}{%- if found_variant.featured_media.width >= 720 -%}{{ found_variant.featured_media | image_url: width: 720 }} 720w,{%- endif -%}{{ found_variant.featured_media | image_url }} {{ found_variant.featured_media.width }}w"
+              {%- endif -%}
+              data-variant-id="{{ found_variant.id }}"
+              aria-label="{{ value | escape }}"
+              type="button"
+            ></button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
       <div class="card__content">
         <div class="card__information">
           <h3
