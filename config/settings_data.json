@@ -10,6 +10,7 @@
 {
   "current": {
     "logo_width": 90,
+    "favicon": "shopify://shop_images/Untitled_1.png",
     "type_header_font": "inter_n6",
     "heading_scale": 100,
     "type_body_font": "inter_n4",
@@ -107,6 +108,7 @@
     "sold_out_badge_color_scheme": "scheme-3",
     "brand_headline": "",
     "brand_description": "<p></p>",
+    "brand_image": "shopify://shop_images/Untitled_1.png",
     "brand_image_width": 100,
     "social_facebook_link": "",
     "social_instagram_link": "",
