@@ -140,8 +140,18 @@
     },
     "social-proof-videos": {
       "type": "social-proof-videos",
-      "blocks": {},
-      "block_order": [],
+      "blocks": {
+        "video_6QxVjP": {
+          "type": "video",
+          "settings": {
+            "embed_code": "<blockquote class=\"tiktok-embed\" cite=\"https://www.tiktok.com/@camthrifts_/video/7388611215276166406\" data-video-id=\"7388611215276166406\" style=\"max-width: 605px;min-width: 325px;\"> <section> <a target=\"_blank\" title=\"@camthrifts_\" href=\"https://www.tiktok.com/@camthrifts_?refer=embed\">@camthrifts_</a> Best Tees For Summer <a title=\"fyp\" target=\"_blank\" href=\"https://www.tiktok.com/tag/fyp?refer=embed\">#fyp</a> <a title=\"fashion\" target=\"_blank\" href=\"https://www.tiktok.com/tag/fashion?refer=embed\">#fashion</a> <a title=\"mensfashion\" target=\"_blank\" href=\"https://www.tiktok.com/tag/mensfashion?refer=embed\">#mensfashion</a> <a title=\"uniqlo\" target=\"_blank\" href=\"https://www.tiktok.com/tag/uniqlo?refer=embed\">#uniqlo</a> <a title=\"tshirt\" target=\"_blank\" href=\"https://www.tiktok.com/tag/tshirt?refer=embed\">#tshirt</a> <a title=\"blanks\" target=\"_blank\" href=\"https://www.tiktok.com/tag/blanks?refer=embed\">#blanks</a> <a title=\"fashioninspo\" target=\"_blank\" href=\"https://www.tiktok.com/tag/fashioninspo?refer=embed\">#fashioninspo</a> <a title=\"ootd\" target=\"_blank\" href=\"https://www.tiktok.com/tag/ootd?refer=embed\">#ootd</a> <a target=\"_blank\" title=\"♬ Intergalactic Janet - Ley Soul\" href=\"https://www.tiktok.com/music/Intergalactic-Janet-7299763084615714818?refer=embed\">♬ Intergalactic Janet - Ley Soul</a> </section> </blockquote> <script async=\"\" src=\"https://www.tiktok.com/embed.js\"></script>",
+            "caption": ""
+          }
+        }
+      },
+      "block_order": [
+        "video_6QxVjP"
+      ],
       "settings": {
         "heading": "As seen on",
         "subheading": "Real people, real fits",
