@@ -48,6 +48,29 @@
     .product__info-tab-block .accordion__content {
       font-size: 0.75rem;
     }
+    .trust-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      padding: 16px 0 4px;
+      border-top: 1px solid rgba(var(--color-foreground), 0.08);
+    }
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: rgba(var(--color-foreground), 0.5);
+      white-space: nowrap;
+    }
+    .trust-badge svg {
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+    }
     @media screen and (min-width: 750px) {
       .product.grid--2-col-tablet {
         grid-template-areas:
@@ -518,6 +541,39 @@
                   section_id: section.id,
                   show_pickup_availability: true
                 -%}
+              {%- when 'trust_badges' -%}
+                <div class="trust-badges" {{ block.shopify_attributes }}>
+                  <div class="trust-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M12 2L3 7V12C3 16.5 7 20.5 12 22C17 20.5 21 16.5 21 12V7Z"/>
+                      <path d="M9 12L11 14L15 10"/>
+                    </svg>
+                    <span>100% Authentic</span>
+                  </div>
+                  <div class="trust-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="5" y="11" width="14" height="10" rx="2"/>
+                      <path d="M8 11V7C8 4.8 9.8 3 12 3C14.2 3 16 4.8 16 7V11"/>
+                    </svg>
+                    <span>Secure Checkout</span>
+                  </div>
+                  <div class="trust-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M2 4H14V15H2Z"/>
+                      <path d="M14 8H18L22 12V15H14Z"/>
+                      <circle cx="6" cy="18" r="2.5"/>
+                      <circle cx="18" cy="18" r="2.5"/>
+                    </svg>
+                    <span>Free Shipping $75+</span>
+                  </div>
+                  <div class="trust-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M3 9H16C18.8 9 21 11.2 21 14C21 16.8 18.8 19 16 19H12"/>
+                      <path d="M7 6L3 9L7 12"/>
+                    </svg>
+                    <span>7-Day Returns</span>
+                  </div>
+                </div>
               {%- when 'rating' -%}
                 {%- if product.metafields.reviews.rating.value != blank -%}
                   <div class="rating-wrapper">
@@ -966,6 +1022,12 @@
           "default": "circle"
         }
       ]
+    },
+    {
+      "type": "trust_badges",
+      "name": "Trust badges",
+      "limit": 1,
+      "settings": []
     },
     {
       "type": "buy_buttons",

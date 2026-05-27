@@ -45,6 +45,10 @@
             "show_gift_card_recipient": true
           }
         },
+        "trust_badges": {
+          "type": "trust_badges",
+          "settings": {}
+        },
         "description": {
           "type": "description",
           "disabled": true,
@@ -57,7 +61,7 @@
             "icon": "ruler",
             "content": "",
             "page": "",
-            "use_product_description": false
+            "use_product_description": true
           }
         },
         "tab_materials": {
@@ -65,7 +69,7 @@
           "settings": {
             "heading": "Materials & Care",
             "icon": "washing",
-            "content": "<p>100% Cotton French Terry. Machine wash cold, gentle cycle. Do not bleach. Tumble dry low. Do not iron print.</p>",
+            "content": "<p>100% Cotton French Terry. Machine wash cold, gentle cycle. Do not bleach. Tumble dry low. Do not iron print.<\/p>",
             "page": "",
             "use_product_description": false
           }
@@ -75,7 +79,7 @@
           "settings": {
             "heading": "Shipping",
             "icon": "truck",
-            "content": "<p>Free shipping on orders over $75. NZPost is our shipping provider of choice. Note: some items may need to be ordered in, leading to small delays in fulfillment.</p>",
+            "content": "<p>Free shipping on orders over $75. NZPost is our shipping provider of choice. Note: some items may need to be ordered in, leading to small delays in fulfillment.<\/p>",
             "page": "",
             "use_product_description": false
           }
@@ -85,7 +89,7 @@
           "settings": {
             "heading": "Returns",
             "icon": "return",
-            "content": "<p>We accept returns within 7 days of delivery. Items must be unworn, unwashed, and in original packaging with tags attached.</p>",
+            "content": "<p>We accept returns within 7 days of delivery. Items must be unworn, unwashed, and in original packaging with tags attached.<\/p>",
             "page": "",
             "use_product_description": false
           }
@@ -95,7 +99,7 @@
           "settings": {
             "heading": "FAQs",
             "icon": "question_mark",
-            "content": "<p><strong>Are these authentic Uniqlo products?</strong></p><p>Yes — all items are sourced directly and 100% genuine.</p><p><strong>How do I know my size?</strong></p><p>Uniqlo sizing runs true to standard NZ sizes. Check the size guide on each product for exact measurements.</p><p><strong>Do you ship outside New Zealand?</strong></p><p>Not at this stage — we ship within New Zealand only.</p>",
+            "content": "<p><strong>Are these authentic Uniqlo products?<\/strong><\/p><p>Yes — all items are sourced directly and 100% genuine.<\/p><p><strong>How do I know my size?<\/strong><\/p><p>Uniqlo sizing runs true to standard NZ sizes. Check the size guide on each product for exact measurements.<\/p><p><strong>Do you ship outside New Zealand?<\/strong><\/p><p>Not at this stage — we ship within New Zealand only.<\/p>",
             "page": "",
             "use_product_description": false
           }
@@ -114,6 +118,7 @@
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
+        "trust_badges",
         "description",
         "tab_details",
         "tab_materials",
