@@ -15,8 +15,8 @@
         "heading": {
           "type": "heading",
           "settings": {
-            "heading": "the world's best basic.",
-            "heading_size": "h0"
+            "heading": "the world's best basics.",
+            "heading_size": "hxxl"
           }
         },
         "button": {
