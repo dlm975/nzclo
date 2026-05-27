@@ -70,14 +70,27 @@
     overflow: hidden;
     background-color: rgba(var(--color-foreground), 0.05);
   }
-  .social-proof__video-wrap video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+  /* Reset TikTok blockquote sizing so it fills our wrapper */
+  .social-proof__video-wrap .tiktok-embed {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+  /* After embed.js fires, force the generated iframe to fill the container */
+  .social-proof__video-wrap iframe {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
   }
   .social-proof__caption {
     font-size: 11px;
@@ -106,18 +119,10 @@
 
       <div class="social-proof__track">
         {%- for block in section.blocks -%}
-          {%- if block.settings.video != blank -%}
+          {%- if block.settings.embed_code != blank -%}
             <div class="social-proof__card" {{ block.shopify_attributes }}>
               <div class="social-proof__video-wrap">
-                {{-
-                  block.settings.video
-                  | video_tag:
-                    autoplay: true,
-                    loop: true,
-                    muted: true,
-                    controls: false,
-                    playsinline: true
-                -}}
+                {{ block.settings.embed_code }}
               </div>
               {%- if block.settings.caption != blank -%}
                 <p class="social-proof__caption">{{ block.settings.caption }}</p>
@@ -128,6 +133,21 @@
       </div>
     </div>
   </div>
+
+  {{- 'https://www.tiktok.com/embed.js' | script_tag -}}
+
+  <script>
+    (function () {
+      function fitEmbeds() {
+        document.querySelectorAll('.social-proof__video-wrap iframe').forEach(function (iframe) {
+          iframe.style.cssText = 'position:absolute!important;top:0!important;left:0!important;width:100%!important;height:100%!important;border:none!important;';
+        });
+      }
+      // Run immediately in case embed.js already fired, then again after a short delay
+      fitEmbeds();
+      setTimeout(fitEmbeds, 1500);
+    })();
+  </script>
 {%- endif -%}
 
 {% schema %}
@@ -182,9 +202,10 @@
       "name": "Video",
       "settings": [
         {
-          "type": "video",
-          "id": "video",
-          "label": "Video file"
+          "type": "html",
+          "id": "embed_code",
+          "label": "Embed code",
+          "info": "Paste the TikTok embed code (share → embed on TikTok.com)"
         },
         {
           "type": "text",
