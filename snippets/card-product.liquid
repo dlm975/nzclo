@@ -232,7 +232,7 @@
               {%- endif -%}
             {%- endcapture -%}
             <button
-              class="card-swatch{% if forloop.first %} card-swatch--active{% endif %}"
+              class="card-swatch"
               style="{{ swatch_style | strip }}"
               {%- if found_variant.featured_media -%}
                 data-media-src="{{ found_variant.featured_media | image_url: width: 533 }}"
