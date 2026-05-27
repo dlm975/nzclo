@@ -44,6 +44,9 @@
     .product__media-tabs .accordion {
       width: 100%;
     }
+    .product__media-tabs .accordion__content {
+      font-size: 0.75rem;
+    }
     @media screen and (min-width: 750px) {
       .product.grid--2-col-tablet {
         grid-template-areas:
@@ -247,8 +250,12 @@
                       {{- 'icon-caret.svg' | inline_asset_content -}}
                     </summary>
                     <div class="accordion__content rte" id="ProductAccordion-{{ block.id }}-{{ section.id }}">
-                      {{ block.settings.content }}
-                      {{ block.settings.page.content }}
+                      {%- if block.settings.use_product_description -%}
+                        {{ product.description }}
+                      {%- else -%}
+                        {{ block.settings.content }}
+                        {{ block.settings.page.content }}
+                      {%- endif -%}
                     </div>
                   </details>
                 </div>
@@ -722,8 +729,12 @@
                   {{- 'icon-caret.svg' | inline_asset_content -}}
                 </summary>
                 <div class="accordion__content rte" id="ProductAccordion-{{ block.id }}-{{ section.id }}">
-                  {{ block.settings.content }}
-                  {{ block.settings.page.content }}
+                  {%- if block.settings.use_product_description -%}
+                    {{ product.description }}
+                  {%- else -%}
+                    {{ block.settings.content }}
+                    {{ block.settings.page.content }}
+                  {%- endif -%}
                 </div>
               </details>
             </div>
@@ -1209,6 +1220,12 @@
           "type": "page",
           "id": "page",
           "label": "t:sections.main-product.blocks.collapsible_tab.settings.page.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "use_product_description",
+          "label": "Use product description",
+          "default": false
         }
       ]
     },

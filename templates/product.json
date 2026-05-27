@@ -54,7 +54,7 @@
           "settings": {
             "heading": "Details",
             "icon": "ruler",
-            "content": "<p>Relaxed fit with a mid-rise waist. Model is 183cm and wears size M. Available in sizes XS–3XL.<\/p>"
+            "use_product_description": true
           }
         },
         "tab_materials": {
@@ -70,7 +70,7 @@
           "settings": {
             "heading": "Shipping",
             "icon": "truck",
-            "content": "<p>Free shipping on orders over $75. Standard delivery 3–7 business days. Express delivery 1–3 business days. All orders are tracked and insured.<\/p>"
+            "content": "<p>Free shipping on orders over $75. NZPost is our shipping provider of choice. Note: some items may need to be ordered in, leading to small delays in fulfillment.<\/p>"
           }
         },
         "tab_returns": {
@@ -78,7 +78,7 @@
           "settings": {
             "heading": "Returns",
             "icon": "return",
-            "content": "<p>Free returns within 30 days of delivery. Items must be unworn, unwashed, and in original packaging with tags attached.<\/p>"
+            "content": "<p>We accept returns within 7 days of delivery. Items must be unworn, unwashed, and in original packaging with tags attached.<\/p>"
           }
         },
         "tab_faq": {
