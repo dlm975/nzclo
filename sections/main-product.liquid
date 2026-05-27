@@ -541,8 +541,7 @@
                   section_id: section.id,
                   show_pickup_availability: true
                 -%}
-              {%- when 'trust_badges' -%}
-                <div class="trust-badges" {{ block.shopify_attributes }}>
+                <div class="trust-badges">
                   <div class="trust-badge">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                       <path d="M12 2L3 7V12C3 16.5 7 20.5 12 22C17 20.5 21 16.5 21 12V7Z"/>
@@ -1022,12 +1021,6 @@
           "default": "circle"
         }
       ]
-    },
-    {
-      "type": "trust_badges",
-      "name": "Trust badges",
-      "limit": 1,
-      "settings": []
     },
     {
       "type": "buy_buttons",

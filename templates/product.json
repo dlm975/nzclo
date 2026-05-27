@@ -45,10 +45,6 @@
             "show_gift_card_recipient": true
           }
         },
-        "trust_badges": {
-          "type": "trust_badges",
-          "settings": {}
-        },
         "description": {
           "type": "description",
           "disabled": true,
@@ -118,7 +114,6 @@
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
-        "trust_badges",
         "description",
         "tab_details",
         "tab_materials",
