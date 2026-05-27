@@ -60,16 +60,6 @@
             "use_product_description": true
           }
         },
-        "tab_materials": {
-          "type": "collapsible_tab",
-          "settings": {
-            "heading": "Materials & Care",
-            "icon": "washing",
-            "content": "<p>100% Cotton French Terry. Machine wash cold, gentle cycle. Do not bleach. Tumble dry low. Do not iron print.</p>",
-            "page": "",
-            "use_product_description": false
-          }
-        },
         "tab_shipping": {
           "type": "collapsible_tab",
           "settings": {
@@ -116,7 +106,6 @@
         "buy_buttons",
         "description",
         "tab_details",
-        "tab_materials",
         "tab_shipping",
         "tab_returns",
         "tab_faq",
