@@ -70,27 +70,14 @@
     overflow: hidden;
     background-color: rgba(var(--color-foreground), 0.05);
   }
-  /* Reset TikTok blockquote sizing so it fills our wrapper */
-  .social-proof__video-wrap .tiktok-embed {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    max-width: none !important;
-    min-width: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-  }
-  /* After embed.js fires, force the generated iframe to fill the container */
+  /* Hide everything inside the wrap until JS scales it into place */
+  .social-proof__video-wrap .tiktok-embed,
   .social-proof__video-wrap iframe {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    border: none !important;
+    visibility: hidden;
+  }
+  .social-proof__video-wrap.sp-ready .tiktok-embed,
+  .social-proof__video-wrap.sp-ready iframe {
+    visibility: visible;
   }
   .social-proof__caption {
     font-size: 11px;
@@ -134,18 +121,64 @@
     </div>
   </div>
 
-  {{- 'https://www.tiktok.com/embed.js' | script_tag -}}
+  <script async src="https://www.tiktok.com/embed.js"></script>
 
   <script>
     (function () {
-      function fitEmbeds() {
-        document.querySelectorAll('.social-proof__video-wrap iframe').forEach(function (iframe) {
-          iframe.style.cssText = 'position:absolute!important;top:0!important;left:0!important;width:100%!important;height:100%!important;border:none!important;';
-        });
+      function fitEmbed(wrap) {
+        var iframe = wrap.querySelector('iframe');
+        if (!iframe) return;
+
+        var cW = wrap.clientWidth;
+        var cH = wrap.clientHeight;
+        var iW = parseInt(iframe.getAttribute('width')) || iframe.offsetWidth || 325;
+        var iH = parseInt(iframe.getAttribute('height')) || iframe.offsetHeight || 576;
+
+        var scale = Math.max(cW / iW, cH / iH);
+        var dx = (cW - iW * scale) / 2;
+        var dy = (cH - iH * scale) / 2;
+
+        iframe.style.position = 'absolute';
+        iframe.style.top = '0';
+        iframe.style.left = '0';
+        iframe.style.width = iW + 'px';
+        iframe.style.height = iH + 'px';
+        iframe.style.border = 'none';
+        iframe.style.transformOrigin = 'top left';
+        iframe.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + scale + ')';
+
+        wrap.classList.add('sp-ready');
       }
-      // Run immediately in case embed.js already fired, then again after a short delay
-      fitEmbeds();
-      setTimeout(fitEmbeds, 1500);
+
+      function fitAll() {
+        document.querySelectorAll('.social-proof__video-wrap').forEach(fitEmbed);
+      }
+
+      // MutationObserver catches the iframe the moment embed.js injects it
+      var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (m) {
+          m.addedNodes.forEach(function (node) {
+            if (node.nodeType !== 1) return;
+            var wrap = node.closest
+              ? node.closest('.social-proof__video-wrap')
+              : null;
+            if (!wrap) wrap = node.tagName === 'IFRAME'
+              ? node.parentElement
+              : node.querySelector && node.querySelector('.social-proof__video-wrap');
+            if (wrap && wrap.classList.contains('social-proof__video-wrap')) {
+              fitEmbed(wrap);
+            }
+          });
+        });
+      });
+
+      document.querySelectorAll('.social-proof__video-wrap').forEach(function (wrap) {
+        observer.observe(wrap, { childList: true, subtree: true });
+      });
+
+      // Fallback for cases where embed.js ran before this script
+      document.addEventListener('DOMContentLoaded', fitAll);
+      setTimeout(fitAll, 2000);
     })();
   </script>
 {%- endif -%}
