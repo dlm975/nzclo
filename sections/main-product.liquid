@@ -44,7 +44,8 @@
     .product__media-tabs .accordion {
       width: 100%;
     }
-    .product__media-tabs .accordion__content {
+    .product__media-tabs .accordion__content,
+    .product__info-tab-block .accordion__content {
       font-size: 0.75rem;
     }
     @media screen and (min-width: 750px) {
@@ -250,7 +251,7 @@
                       {{- 'icon-caret.svg' | inline_asset_content -}}
                     </summary>
                     <div class="accordion__content rte" id="ProductAccordion-{{ block.id }}-{{ section.id }}">
-                      {%- if block.settings.use_product_description -%}
+                      {%- if block.settings.use_product_description or block.settings.content == blank and block.settings.page == blank -%}
                         {{ product.description }}
                       {%- else -%}
                         {{ block.settings.content }}
@@ -729,7 +730,7 @@
                   {{- 'icon-caret.svg' | inline_asset_content -}}
                 </summary>
                 <div class="accordion__content rte" id="ProductAccordion-{{ block.id }}-{{ section.id }}">
-                  {%- if block.settings.use_product_description -%}
+                  {%- if block.settings.use_product_description or block.settings.content == blank and block.settings.page == blank -%}
                     {{ product.description }}
                   {%- else -%}
                     {{ block.settings.content }}
