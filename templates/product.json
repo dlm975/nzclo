@@ -89,12 +89,6 @@
             "page": "",
             "use_product_description": false
           }
-        },
-        "share": {
-          "type": "share",
-          "settings": {
-            "share_label": "Share"
-          }
         }
       },
       "block_order": [
@@ -108,8 +102,7 @@
         "tab_details",
         "tab_shipping",
         "tab_returns",
-        "tab_faq",
-        "share"
+        "tab_faq"
       ],
       "settings": {
         "enable_sticky_info": true,
