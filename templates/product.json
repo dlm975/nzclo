@@ -140,8 +140,6 @@
     },
     "social-proof-videos": {
       "type": "social-proof-videos",
-      "blocks": {},
-      "block_order": [],
       "settings": {
         "heading": "As seen on",
         "subheading": "Real people, real fits",

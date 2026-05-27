@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "name": "t:sections.footer.name",
   "type": "footer",
@@ -8,7 +17,7 @@
         "about": {
           "type": "text",
           "settings": {
-            "heading": "NZ Clothing Online",
+            "heading": "nzclo",
             "subtext": "<p>Authentic Uniqlo products shipped within New Zealand. Every item is sourced directly and 100% genuine.</p>"
           }
         },
@@ -23,11 +32,15 @@
           "type": "text",
           "settings": {
             "heading": "Contact",
-            "subtext": "<p>Email: <a href=\"mailto:hello@nzclo.co.nz\">hello@nzclo.co.nz</a></p><p>New Zealand</p>"
+            "subtext": "<p>Email: nzuniqlo@gmail.com</p><p>New Zealand</p>"
           }
         }
       },
-      "block_order": ["about", "help", "contact"],
+      "block_order": [
+        "about",
+        "help",
+        "contact"
+      ],
       "settings": {
         "color_scheme": "scheme-1",
         "newsletter_enable": true,
@@ -44,5 +57,7 @@
       }
     }
   },
-  "order": ["footer"]
+  "order": [
+    "footer"
+  ]
 }
