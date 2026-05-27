@@ -1,6 +1,6 @@
 <style>
   .cat-nav {
-    padding: 8px 0 4px;
+    padding: 12px 0;
   }
   .cat-nav__inner {
     display: flex;
@@ -17,8 +17,7 @@
   @media screen and (min-width: 750px) {
     .cat-nav__inner {
       padding: 0 40px;
-      gap: 12px;
-      justify-content: center;
+      gap: 8px;
       flex-wrap: wrap;
       overflow-x: visible;
     }
@@ -27,46 +26,30 @@
   .cat-nav__item {
     flex: 0 0 auto;
     scroll-snap-align: start;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    text-decoration: none;
-    color: rgb(var(--color-foreground));
-    width: 72px;
-  }
-
-  .cat-nav__icon-wrap {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    background: transparent;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: border-color 0.15s ease;
-  }
-
-  .cat-nav__item:hover .cat-nav__icon-wrap,
-  .cat-nav__item[aria-current="page"] .cat-nav__icon-wrap {
-    border-color: #1b1c17;
-  }
-
-  .cat-nav__icon-wrap svg {
-    width: 30px;
-    height: 30px;
-    display: block;
-  }
-
-  .cat-nav__label {
-    font-size: 10px;
+    text-decoration: none;
+    color: rgb(var(--color-foreground));
+    font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    text-align: center;
-    line-height: 1.2;
     white-space: nowrap;
+    padding: 7px 16px;
+    border: 1.5px solid rgba(var(--color-foreground), 0.18);
+    border-radius: 2px;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .cat-nav__item:hover {
+    border-color: rgb(var(--color-foreground));
+  }
+
+  .cat-nav__item[aria-current="page"] {
+    border-color: rgb(var(--color-foreground));
+    background-color: rgb(var(--color-foreground));
+    color: rgb(var(--color-background));
   }
 </style>
 
@@ -78,88 +61,12 @@
         {%- if block.settings.link == request.path -%}
           {%- assign is_current = true -%}
         {%- endif -%}
-
-        {%- capture cat_icon -%}
-          {%- case block.settings.icon -%}
-
-            {%- when 'all' -%}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/>
-                <rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/>
-                <rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/>
-                <rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/>
-              </svg>
-
-            {%- when 'tops' -%}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M9.5 3.5 Q12 6 14.5 3.5 L19.5 6 L22 7.5 L20.5 12.5 L16 11 V21.5 H8 V11 L3.5 12.5 L2 7.5 L4.5 6 Z"/>
-              </svg>
-
-            {%- when 'pants' -%}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M6 3 H18 V13.5 Q18 22 14 22 Q12 19.5 12 17 Q12 19.5 10 22 Q6 22 6 13.5 V3 Z"/>
-                <line x1="6" y1="5.5" x2="18" y2="5.5"/>
-                <line x1="12" y1="5.5" x2="12" y2="17"/>
-              </svg>
-
-            {%- when 'shorts' -%}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M6 3 H18 V12 Q17 17 14 17 Q12 15.5 12 14 Q12 15.5 10 17 Q7 17 6 12 V3 Z"/>
-                <line x1="6" y1="5.5" x2="18" y2="5.5"/>
-                <line x1="12" y1="5.5" x2="12" y2="14"/>
-              </svg>
-
-            {%- when 'hoodies' -%}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M7.5 5.5 Q12 1.5 16.5 5.5"/>
-                <path d="M7.5 5.5 L3 7.5 L2 9 L3.5 14 L8 12.5 V22 H16 V12.5 L20.5 14 L22 9 L21 7.5 L16.5 5.5"/>
-                <path d="M7.5 5.5 Q12 9 16.5 5.5"/>
-                <rect x="9" y="16" width="6" height="4.5" rx="1"/>
-              </svg>
-
-            {%- when 'outerwear' -%}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M8 3 L3 6.5 L2 8.5 L3.5 14 L8 12.5 V22 H16 V12.5 L20.5 14 L22 8.5 L21 6.5 L16 3"/>
-                <path d="M8 3 L12 12"/>
-                <path d="M16 3 L12 12"/>
-                <line x1="12" y1="12" x2="12" y2="22"/>
-                <circle cx="12" cy="14.5" r="0.7" fill="currentColor"/>
-                <circle cx="12" cy="17.5" r="0.7" fill="currentColor"/>
-                <circle cx="12" cy="20.5" r="0.7" fill="currentColor"/>
-              </svg>
-
-            {%- when 'accessories' -%}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M12 2 Q15 2 15 4.5 Q15 6.8 12 6.8"/>
-                <path d="M12 6.8 L3 17"/>
-                <path d="M12 6.8 L21 17"/>
-                <line x1="2" y1="17" x2="22" y2="17"/>
-              </svg>
-
-            {%- else -%}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/>
-                <rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/>
-                <rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/>
-                <rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/>
-              </svg>
-
-          {%- endcase -%}
-        {%- endcapture -%}
-
         <a
           href="{{ block.settings.link }}"
           class="cat-nav__item"
           {% if is_current %}aria-current="page"{% endif %}
           {{ block.shopify_attributes }}
-        >
-          <div class="cat-nav__icon-wrap">
-            {{ cat_icon }}
-          </div>
-          {%- if block.settings.label != blank -%}
-            <span class="cat-nav__label">{{ block.settings.label }}</span>
-          {%- endif -%}
-        </a>
+        >{{ block.settings.label }}</a>
       {%- endfor -%}
     </div>
   </nav>
@@ -185,21 +92,6 @@
       "name": "Category",
       "settings": [
         {
-          "type": "select",
-          "id": "icon",
-          "label": "Icon",
-          "default": "all",
-          "options": [
-            { "value": "all",         "label": "All (grid)" },
-            { "value": "tops",        "label": "Tops (t-shirt)" },
-            { "value": "pants",       "label": "Pants" },
-            { "value": "shorts",      "label": "Shorts" },
-            { "value": "hoodies",     "label": "Hoodies" },
-            { "value": "outerwear",   "label": "Outerwear (jacket)" },
-            { "value": "accessories", "label": "Accessories (hanger)" }
-          ]
-        },
-        {
           "type": "text",
           "id": "label",
           "label": "Label",
@@ -217,10 +109,10 @@
     {
       "name": "Category nav",
       "blocks": [
-        { "type": "category", "settings": { "icon": "all",    "label": "All" } },
-        { "type": "category", "settings": { "icon": "tops",   "label": "Tops" } },
-        { "type": "category", "settings": { "icon": "pants",  "label": "Pants" } },
-        { "type": "category", "settings": { "icon": "shorts", "label": "Shorts" } }
+        { "type": "category", "settings": { "label": "All" } },
+        { "type": "category", "settings": { "label": "Tops" } },
+        { "type": "category", "settings": { "label": "Pants" } },
+        { "type": "category", "settings": { "label": "Shorts" } }
       ]
     }
   ]
