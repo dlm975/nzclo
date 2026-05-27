@@ -141,24 +141,24 @@
     "social-proof-videos": {
       "type": "social-proof-videos",
       "blocks": {
+        "video_3N6mck": {
+          "type": "video",
+          "settings": {
+            "video_url": "https://www.tiktok.com/@eliasjp__/video/7467968727892495649?is_from_webapp=1&sender_device=pc&web_id=7644380833549927953",
+            "caption": "@eliasjp__"
+          }
+        },
         "video_wR4dGb": {
           "type": "video",
           "settings": {
             "video_url": "https://www.tiktok.com/@camthrifts_/video/7388611215276166406?is_from_webapp=1&sender_device=pc&web_id=7644380833549927953",
             "caption": "@camthrifts_"
           }
-        },
-        "video_k8DtxB": {
-          "type": "video",
-          "settings": {
-            "video_url": "https://www.tiktok.com/@alicerosebuttery/video/7539967255048621334?q=airism&t=1779846174074",
-            "caption": ""
-          }
         }
       },
       "block_order": [
-        "video_wR4dGb",
-        "video_k8DtxB"
+        "video_3N6mck",
+        "video_wR4dGb"
       ],
       "settings": {
         "heading": "As seen on",
