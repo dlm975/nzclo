@@ -912,17 +912,23 @@
               <div class="size-guide-content">
                 {%- assign table_lines = block.settings.table_data | strip | split: "
 " -%}
+                {%- assign sep = "|" -%}
+                {%- for first_line in table_lines limit: 1 -%}
+                  {%- assign first_clean = first_line | strip | remove: "\r" -%}
+                  {%- if first_clean contains "	" -%}
+                    {%- assign sep = "	" -%}
+                  {%- endif -%}
+                {%- endfor -%}
                 {%- assign row_count = 0 -%}
                 <table>
                   {%- for line in table_lines -%}
                     {%- assign line_clean = line | strip | remove: "\r" -%}
                     {%- if line_clean != '' -%}
+                      {%- assign cells = line_clean | split: sep -%}
                       {%- if row_count == 0 -%}
-                        {%- assign cells = line_clean | split: "|" -%}
                         <thead><tr>{%- for cell in cells -%}<th>{{ cell | strip }}</th>{%- endfor -%}</tr></thead>
                         <tbody>
                       {%- else -%}
-                        {%- assign cells = line_clean | split: "|" -%}
                         <tr>{%- for cell in cells -%}<td>{{ cell | strip }}</td>{%- endfor -%}</tr>
                       {%- endif -%}
                       {%- assign row_count = row_count | plus: 1 -%}

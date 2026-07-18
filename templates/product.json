@@ -27,13 +27,6 @@
           "type": "price",
           "settings": {}
         },
-        "size_guide_J9HGCe": {
-          "type": "size_guide",
-          "settings": {
-            "heading": "Size Guide",
-            "table": "size\twaist\thips\tThigh width\trise\tHem width\tinseam\nXS\n62\n99\n32\n29.5\n22.5\n66\nS\n68\n105\n34\n30.5\n23.5\n68\nM\n74\n111\n36\n31\n24.5\n70\nL\n80\n117\n37.5\n32\ntwenty five\n72\nXL\n88\n124\n39.5\n33\n26\n72\nXXL\n94\n128\n41\n34\n26.5\n72\n3XL\n99\n133\n42.5\n35\n27.5\n72\n4XL\n104\n137.5\n44\n36\n28.5\n72"
-          }
-        },
         "variant_picker": {
           "type": "variant_picker",
           "settings": {
@@ -108,10 +101,9 @@
         "vendor",
         "title",
         "price",
-        "size_guide_J9HGCe",
         "variant_picker",
-        "quantity_selector",
         "size_guide",
+        "quantity_selector",
         "buy_buttons",
         "description",
         "tab_details",
