@@ -64,11 +64,38 @@
       letter-spacing: 0.02em;
     }
     .size-guide-trigger:hover { color: rgba(var(--color-foreground), 0.9); }
+    .size-guide-modal .product-popup-modal__content {
+      padding: 0;
+      width: auto;
+      max-width: min(92vw, 560px);
+      max-height: 88dvh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+    }
+    .size-guide-modal .product-popup-modal__content-info {
+      padding: 0;
+    }
+    .size-guide-modal .product-popup-modal__toggle {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 2;
+      background: rgba(var(--color-background), 0.85);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .size-guide-modal h2.h2 {
+      display: none;
+    }
     .size-guide-image {
       width: 100%;
       height: auto;
       display: block;
-      border-radius: 4px;
     }
     .trust-badges {
       display: flex;
@@ -306,7 +333,9 @@
                   </details>
                 </div>
               {%- when 'size_guide' -%}
-                {%- if block.settings.image != blank -%}
+                {%- assign sg_image = product.metafields.custom.size_guide_image.value -%}
+                {%- if sg_image == blank -%}{%- assign sg_image = block.settings.image -%}{%- endif -%}
+                {%- if sg_image != blank -%}
                   <modal-opener
                     data-modal="#SizeGuideModal-{{ block.id }}"
                     {{ block.shopify_attributes }}
@@ -867,8 +896,10 @@
 
     {%- assign size_guides = section.blocks | where: 'type', 'size_guide' -%}
     {%- for block in size_guides -%}
-      {%- if block.settings.image != blank -%}
-        <modal-dialog id="SizeGuideModal-{{ block.id }}" class="product-popup-modal" {{ block.shopify_attributes }}>
+      {%- assign sg_image = product.metafields.custom.size_guide_image.value -%}
+      {%- if sg_image == blank -%}{%- assign sg_image = block.settings.image -%}{%- endif -%}
+      {%- if sg_image != blank -%}
+        <modal-dialog id="SizeGuideModal-{{ block.id }}" class="product-popup-modal size-guide-modal" {{ block.shopify_attributes }}>
           <div
             role="dialog"
             aria-label="{{ block.settings.heading | default: 'Size Guide' }}"
@@ -886,9 +917,8 @@
               {{- 'icon-close.svg' | inline_asset_content -}}
             </button>
             <div class="product-popup-modal__content-info">
-              <h2 class="h2">{{ block.settings.heading | default: 'Size Guide' }}</h2>
               {{-
-                block.settings.image
+                sg_image
                 | image_url: width: 1000
                 | image_tag:
                   loading: 'lazy',
@@ -1110,7 +1140,8 @@
         {
           "type": "image_picker",
           "id": "image",
-          "label": "Size guide image"
+          "label": "Default size guide image",
+          "info": "Set per-product images in Shopify admin → each product → Metafields → custom.size_guide_image (overrides this default)"
         }
       ]
     },
