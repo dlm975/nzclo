@@ -45,6 +45,12 @@
           "type": "quantity_selector",
           "settings": {}
         },
+        "size_guide": {
+          "type": "size_guide",
+          "settings": {
+            "heading": "Size guide"
+          }
+        },
         "buy_buttons": {
           "type": "buy_buttons",
           "settings": {
@@ -105,6 +111,7 @@
         "size_guide_J9HGCe",
         "variant_picker",
         "quantity_selector",
+        "size_guide",
         "buy_buttons",
         "description",
         "tab_details",
