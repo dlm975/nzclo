@@ -65,16 +65,18 @@
     }
     .size-guide-trigger:hover { color: rgba(var(--color-foreground), 0.9); }
     .size-guide-modal .product-popup-modal__content {
-      padding: 0;
-      width: auto;
-      max-width: min(92vw, 560px);
+      padding: 14px;
+      width: min(90vw, 500px);
       max-height: 88dvh;
-      overflow-y: auto;
-      overflow-x: hidden;
+      aspect-ratio: var(--sg-ratio, auto);
+      overflow: hidden;
+      box-sizing: border-box;
       position: relative;
     }
     .size-guide-modal .product-popup-modal__content-info {
       padding: 0;
+      width: 100%;
+      height: 100%;
     }
     .size-guide-modal .product-popup-modal__toggle {
       position: absolute;
@@ -89,13 +91,11 @@
       align-items: center;
       justify-content: center;
     }
-    .size-guide-modal h2.h2 {
-      display: none;
-    }
     .size-guide-image {
       width: 100%;
-      height: auto;
+      height: 100%;
       display: block;
+      object-fit: contain;
     }
     .trust-badges {
       display: flex;
@@ -906,6 +906,7 @@
             aria-modal="true"
             class="product-popup-modal__content"
             tabindex="-1"
+            style="--sg-ratio: {{ sg_image.width }}/{{ sg_image.height }}"
           >
             <button
               id="ModalClose-{{ block.id }}"
