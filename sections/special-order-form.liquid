@@ -1,0 +1,320 @@
+<style>
+  .special-order {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+  .special-order__inner {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .special-order__heading {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 10px;
+    text-align: center;
+  }
+  .special-order__note {
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(var(--color-foreground), 0.65);
+    background-color: rgba(var(--color-foreground), 0.05);
+    border-left: 3px solid rgb(var(--color-foreground));
+    padding: 12px 16px;
+    margin: 0 0 24px;
+  }
+  .special-order__banner {
+    font-size: 13px;
+    padding: 12px 16px;
+    margin: 0 0 20px;
+    border: 1px solid;
+  }
+  .special-order__banner--success {
+    color: #1a7f37;
+    border-color: rgba(26, 127, 55, 0.4);
+    background-color: rgba(26, 127, 55, 0.07);
+  }
+  .special-order__banner--error {
+    color: #b42318;
+    border-color: rgba(180, 35, 24, 0.4);
+    background-color: rgba(180, 35, 24, 0.06);
+  }
+  .special-order__banner--error ul { margin: 4px 0 0; padding-left: 18px; }
+  .special-order .so-field {
+    margin-bottom: 14px;
+  }
+  .special-order .so-field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(var(--color-foreground), 0.6);
+    margin-bottom: 5px;
+  }
+  .special-order .so-field input,
+  .special-order .so-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 14px;
+    padding: 10px 12px;
+    color: rgb(var(--color-foreground));
+    background-color: rgb(var(--color-background));
+    border: 1px solid rgba(var(--color-foreground), 0.25);
+    border-radius: 3px;
+  }
+  .special-order .so-field input:focus,
+  .special-order .so-field textarea:focus {
+    outline: none;
+    border-color: rgb(var(--color-foreground));
+  }
+  .special-order__contact-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media screen and (max-width: 599px) {
+    .special-order__contact-row { grid-template-columns: 1fr; gap: 0; }
+  }
+  .special-order-item {
+    border: 1px solid rgba(var(--color-foreground), 0.15);
+    border-radius: 4px;
+    padding: 16px 16px 4px;
+    margin: 0 0 14px;
+  }
+  .special-order-item__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .special-order-item__legend {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .special-order-item__remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 11px;
+    color: rgba(var(--color-foreground), 0.5);
+    text-decoration: underline;
+    padding: 2px;
+    font-family: inherit;
+  }
+  .special-order-item__remove:hover { color: #b42318; }
+  .special-order-item__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .special-order__add {
+    display: block;
+    width: 100%;
+    background: none;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgb(var(--color-foreground));
+    border: 1.5px dashed rgba(var(--color-foreground), 0.35);
+    border-radius: 4px;
+    padding: 12px;
+    cursor: pointer;
+    margin: 0 0 22px;
+    transition: border-color 0.15s ease;
+  }
+  .special-order__add:hover { border-color: rgb(var(--color-foreground)); }
+  .special-order__submit {
+    display: block;
+    width: 100%;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgb(var(--color-background));
+    background-color: rgb(var(--color-foreground));
+    border: 1.5px solid rgb(var(--color-foreground));
+    border-radius: 3px;
+    padding: 14px;
+    cursor: pointer;
+  }
+  .special-order__submit:hover { opacity: 0.85; }
+</style>
+
+<div class="special-order color-{{ section.settings.color_scheme }}">
+  <div class="special-order__inner">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="special-order__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.note != blank -%}
+      <p class="special-order__note">{{ section.settings.note }}</p>
+    {%- endif -%}
+
+    {%- form 'contact', id: 'SpecialOrderForm' -%}
+      {%- if form.posted_successfully? -%}
+        <div class="special-order__banner special-order__banner--success" role="status">
+          {{ section.settings.success_message }}
+        </div>
+      {%- endif -%}
+      {%- if form.errors -%}
+        <div class="special-order__banner special-order__banner--error" role="alert">
+          {{ form.errors | default_errors }}
+        </div>
+      {%- endif -%}
+
+      <input type="hidden" name="contact[Request type]" value="Special Order (3+ items)">
+
+      <div class="special-order__contact-row">
+        <div class="so-field">
+          <label for="SpecialOrderName">Your name</label>
+          <input type="text" id="SpecialOrderName" name="contact[Name]" autocomplete="name" required>
+        </div>
+        <div class="so-field">
+          <label for="SpecialOrderEmail">Email</label>
+          <input type="email" id="SpecialOrderEmail" name="contact[email]" autocomplete="email" required>
+        </div>
+      </div>
+
+      <div id="SpecialOrderItems"></div>
+
+      <button type="button" class="special-order__add" id="AddSpecialOrderItem">+ Add another item</button>
+
+      <div class="so-field">
+        <label for="SpecialOrderNote">Anything else? (optional)</label>
+        <textarea id="SpecialOrderNote" name="contact[Note]" rows="3"></textarea>
+      </div>
+
+      <button type="submit" class="special-order__submit">Send special order request</button>
+    {%- endform -%}
+  </div>
+</div>
+
+<template id="SpecialOrderItemTemplate">
+  <div class="special-order-item">
+    <div class="special-order-item__head">
+      <span class="special-order-item__legend">Item</span>
+      <button type="button" class="special-order-item__remove">Remove</button>
+    </div>
+    <div class="so-field">
+      <label>Product link or image link</label>
+      <input type="url" data-field="link" placeholder="https://" required>
+    </div>
+    <div class="special-order-item__row">
+      <div class="so-field">
+        <label>Size</label>
+        <input type="text" data-field="size" placeholder="e.g. M" required>
+      </div>
+      <div class="so-field">
+        <label>Colour</label>
+        <input type="text" data-field="colour" placeholder="e.g. Navy" required>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  (function () {
+    var MIN_ITEMS = 3;
+    var container = document.getElementById('SpecialOrderItems');
+    var template = document.getElementById('SpecialOrderItemTemplate');
+    var addButton = document.getElementById('AddSpecialOrderItem');
+    if (!container || !template || !addButton) return;
+
+    function renumber() {
+      var items = container.querySelectorAll('.special-order-item');
+      items.forEach(function (item, index) {
+        var n = index + 1;
+        item.querySelector('.special-order-item__legend').textContent = 'Item ' + n;
+        item.querySelector('[data-field="link"]').name = 'contact[Item ' + n + ' - Product or image link]';
+        item.querySelector('[data-field="size"]').name = 'contact[Item ' + n + ' - Size]';
+        item.querySelector('[data-field="colour"]').name = 'contact[Item ' + n + ' - Colour]';
+        item.querySelectorAll('input').forEach(function (input) {
+          input.required = n <= MIN_ITEMS;
+        });
+        item.querySelector('.special-order-item__remove').style.display = items.length > MIN_ITEMS ? '' : 'none';
+      });
+    }
+
+    function addItem() {
+      var node = template.content.firstElementChild.cloneNode(true);
+      node.querySelector('.special-order-item__remove').addEventListener('click', function () {
+        if (container.querySelectorAll('.special-order-item').length > MIN_ITEMS) {
+          node.remove();
+          renumber();
+        }
+      });
+      container.appendChild(node);
+      renumber();
+    }
+
+    for (var i = 0; i < MIN_ITEMS; i++) addItem();
+    addButton.addEventListener('click', addItem);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Special order form",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Special Order Request"
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Note",
+      "default": "Special Orders must be 3 or more items. Paste a link to each product (or a link to an image of it), plus your size and colour, and we'll get back to you with pricing and availability."
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thanks! Your special order request has been sent — we'll be in touch shortly."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 52
+    }
+  ],
+  "presets": [
+    {
+      "name": "Special order form"
+    }
+  ]
+}
+{% endschema %}

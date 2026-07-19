@@ -34,6 +34,51 @@
       padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
+
+  .special-order-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 8px;
+    height: 100%;
+    min-height: 240px;
+    border: 1.5px dashed rgba(var(--color-foreground), 0.3);
+    border-radius: 4px;
+    padding: 24px 16px;
+    text-decoration: none;
+    color: rgb(var(--color-foreground));
+    transition: border-color 0.15s ease;
+  }
+  .special-order-card:hover {
+    border-color: rgb(var(--color-foreground));
+  }
+  .special-order-card__plus {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 1.5px solid rgba(var(--color-foreground), 0.35);
+    border-radius: 50%;
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .special-order-card__title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .special-order-card__text {
+    font-size: 11px;
+    line-height: 1.5;
+    color: rgba(var(--color-foreground), 0.55);
+    max-width: 200px;
+  }
 {%- endstyle -%}
 
 <div class="section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}">
@@ -180,6 +225,18 @@
                 </li>
                 {%- assign skip_card_product_styles = true -%}
               {%- endfor -%}
+              {%- if section.settings.show_special_order and paginate.current_page == 1 -%}
+                <li class="grid__item">
+                  <a
+                    href="{{ section.settings.special_order_link | default: '/pages/special-order' }}"
+                    class="special-order-card"
+                  >
+                    <span class="special-order-card__plus" aria-hidden="true">+</span>
+                    <span class="special-order-card__title">{{ section.settings.special_order_heading }}</span>
+                    <span class="special-order-card__text">{{ section.settings.special_order_text }}</span>
+                  </a>
+                </li>
+              {%- endif -%}
             </ul>
 
             {%- if paginate.pages > 1 -%}
@@ -343,6 +400,34 @@
           "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_3"
         }
       ]
+    },
+    {
+      "type": "header",
+      "content": "Special order card"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_special_order",
+      "default": true,
+      "label": "Show special order card in grid"
+    },
+    {
+      "type": "text",
+      "id": "special_order_heading",
+      "label": "Card heading",
+      "default": "Special Order"
+    },
+    {
+      "type": "text",
+      "id": "special_order_text",
+      "label": "Card text",
+      "default": "Can't find what you're after? Request any 3+ items and we'll source them."
+    },
+    {
+      "type": "url",
+      "id": "special_order_link",
+      "label": "Card link",
+      "info": "Defaults to /pages/special-order"
     },
     {
       "type": "header",

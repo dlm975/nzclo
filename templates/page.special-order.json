@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "special-order-form": {
+      "type": "special-order-form",
+      "settings": {
+        "heading": "Special Order Request",
+        "note": "Special Orders must be 3 or more items. Paste a link to each product (or a link to an image of it), plus your size and colour, and we'll get back to you with pricing and availability.",
+        "color_scheme": "scheme-1",
+        "padding_top": 36,
+        "padding_bottom": 52
+      }
+    }
+  },
+  "order": [
+    "special-order-form"
+  ]
+}
