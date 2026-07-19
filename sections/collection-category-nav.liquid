@@ -55,6 +55,10 @@
 
 {%- liquid
   assign active_tag_handle = ''
+  assign path_parts = request.path | split: '/'
+  if path_parts.size == 4 and path_parts[1] == 'collections'
+    assign active_tag_handle = path_parts | last | handleize
+  endif
   if collection.current_tags.size > 0
     assign active_tag_handle = collection.current_tags | first | handleize
   endif

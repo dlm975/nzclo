@@ -12,7 +12,7 @@
     text-decoration: none;
     color: rgba(var(--color-foreground), 0.5);
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     white-space: nowrap;
@@ -25,6 +25,7 @@
   }
   .gender-nav__item[aria-current="page"] {
     color: rgb(var(--color-foreground));
+    font-weight: 700;
     border-bottom-color: rgb(var(--color-foreground));
   }
 </style>
@@ -39,6 +40,13 @@
   endif
 
   assign current_gender = ''
+  assign path_parts = request.path | split: '/'
+  if path_parts.size == 4 and path_parts[1] == 'collections'
+    assign last_part = path_parts | last | handleize
+    if last_part == men_tag or last_part == women_tag
+      assign current_gender = last_part
+    endif
+  endif
   for tag in collection.current_tags
     assign tag_handle = tag | handleize
     if tag_handle == men_tag or tag_handle == women_tag
