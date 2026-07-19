@@ -17,6 +17,17 @@
         "color_scheme": "scheme-1"
       }
     },
+    "gender-nav": {
+      "type": "collection-gender-nav",
+      "settings": {
+        "all_label": "All",
+        "men_label": "Men",
+        "women_label": "Women",
+        "men_tag": "mens",
+        "women_tag": "womens",
+        "color_scheme": "scheme-1"
+      }
+    },
     "category-nav": {
       "type": "collection-category-nav",
       "blocks": {
@@ -25,7 +36,7 @@
           "settings": {
             "icon": "all",
             "label": "all",
-            "link": "shopify://collections"
+            "link": "/collections/all"
           }
         },
         "tops": {
@@ -86,6 +97,7 @@
   },
   "order": [
     "banner",
+    "gender-nav",
     "category-nav",
     "product-grid"
   ]

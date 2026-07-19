@@ -53,16 +53,27 @@
   }
 </style>
 
+{%- liquid
+  assign active_tag_handle = ''
+  if collection.current_tags.size > 0
+    assign active_tag_handle = collection.current_tags | first | handleize
+  endif
+-%}
+
 {%- if section.blocks.size > 0 -%}
   <nav class="cat-nav color-{{ section.settings.color_scheme }}">
     <div class="cat-nav__inner">
       {%- for block in section.blocks -%}
+        {%- assign final_link = block.settings.link -%}
+        {%- if active_tag_handle != '' and final_link contains '/collections/' -%}
+          {%- assign final_link = final_link | append: '/' | append: active_tag_handle -%}
+        {%- endif -%}
         {%- assign is_current = false -%}
-        {%- if block.settings.link == request.path -%}
+        {%- if final_link == request.path or block.settings.link == request.path -%}
           {%- assign is_current = true -%}
         {%- endif -%}
         <a
-          href="{{ block.settings.link }}"
+          href="{{ final_link }}"
           class="cat-nav__item"
           {% if is_current %}aria-current="page"{% endif %}
           {{ block.shopify_attributes }}
