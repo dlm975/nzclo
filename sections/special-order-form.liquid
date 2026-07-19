@@ -204,6 +204,10 @@
       <button type="button" class="special-order-item__remove">Remove</button>
     </div>
     <div class="so-field">
+      <label>Product name</label>
+      <input type="text" data-field="name" placeholder="e.g. Airism Oversized T-Shirt" required>
+    </div>
+    <div class="so-field">
       <label>Product link or image link</label>
       <input type="url" data-field="link" placeholder="https://" required>
     </div>
@@ -233,6 +237,7 @@
       items.forEach(function (item, index) {
         var n = index + 1;
         item.querySelector('.special-order-item__legend').textContent = 'Item ' + n;
+        item.querySelector('[data-field="name"]').name = 'contact[Item ' + n + ' - Product name]';
         item.querySelector('[data-field="link"]').name = 'contact[Item ' + n + ' - Product or image link]';
         item.querySelector('[data-field="size"]').name = 'contact[Item ' + n + ' - Size]';
         item.querySelector('[data-field="colour"]').name = 'contact[Item ' + n + ' - Colour]';
