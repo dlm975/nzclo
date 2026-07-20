@@ -262,6 +262,13 @@
 
     for (var i = 0; i < MIN_ITEMS; i++) addItem();
     addButton.addEventListener('click', addItem);
+
+    var params = new URLSearchParams(window.location.search);
+    var firstItem = container.querySelector('.special-order-item');
+    if (firstItem) {
+      if (params.get('product')) firstItem.querySelector('[data-field="name"]').value = params.get('product');
+      if (params.get('link')) firstItem.querySelector('[data-field="link"]').value = params.get('link');
+    }
   })();
 </script>
 

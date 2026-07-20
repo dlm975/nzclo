@@ -11,6 +11,36 @@
   {% render 'buy-buttons', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true %}
 {% endcomment %}
 <div {{ block.shopify_attributes }}>
+  <style>
+    .special-order-cta {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 4.5rem;
+      padding: 0 3rem;
+      background-color: #2563eb;
+      color: #ffffff;
+      text-decoration: none;
+      text-align: center;
+      font-size: 1.5rem;
+      letter-spacing: 0.1rem;
+      line-height: 1.2;
+      border-radius: var(--buttons-radius, 0);
+      transition: background-color 0.15s ease;
+    }
+    .special-order-cta:hover {
+      background-color: #1d4ed8;
+      color: #ffffff;
+    }
+    .product-form__buttons:has(.product-form__submit[disabled]) .special-order-cta {
+      display: flex;
+    }
+    .product-form__buttons:has(.product-form__submit[disabled]) .product-form__submit,
+    .product-form__buttons:has(.product-form__submit[disabled]) .shopify-payment-button {
+      display: none;
+    }
+  </style>
   {%- if product != blank -%}
     {%- liquid
       assign gift_card_recipient_feature_active = false
@@ -93,6 +123,12 @@
             </span>
             {%- render 'loading-spinner' -%}
           </button>
+          <a
+            href="/pages/special-order?product={{ product.title | url_encode }}&link={{ shop.url | append: product.url | url_encode }}"
+            class="special-order-cta"
+          >
+            Create an order request
+          </a>
           {%- if show_dynamic_checkout -%}
             {{ form | payment_button }}
           {%- endif -%}
