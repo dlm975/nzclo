@@ -98,3 +98,11 @@
   margin-top: 0.2rem;
   color: rgba(var(--color-foreground), 0.7);
 }
+
+.badge--preorder {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
