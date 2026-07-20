@@ -593,3 +593,11 @@
     clip-path: polygon(var(--shape--blob-5));
   }
 }
+
+.badge--preorder {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
