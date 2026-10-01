@@ -1,0 +1,33 @@
+<div class="page-width section-pad" style="padding-top: 0;">
+  <div class="mission-tile">
+    <div class="mission">
+      {%- if section.settings.eyebrow != blank -%}
+        <h2 class="mission__eyebrow">{{ section.settings.eyebrow }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <p class="mission__text">{{ section.settings.text }}</p>
+      {%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        <a class="btn" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Mission",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Heading", "default": "authentic, no compromise" },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "new zealand has never had direct access to uniqlo — until now. we source authentic product and ship it from right here in aotearoa."
+    },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "our mission" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "presets": [{ "name": "Mission" }]
+}
+{% endschema %}

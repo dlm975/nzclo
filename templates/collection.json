@@ -1,104 +1,11 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "banner": {
-      "type": "main-collection-banner",
+    "main": {
+      "type": "main-collection",
       "settings": {
-        "show_collection_description": true,
-        "show_collection_image": false,
-        "color_scheme": "scheme-1"
-      }
-    },
-    "gender-nav": {
-      "type": "collection-gender-nav",
-      "settings": {
-        "all_label": "All",
-        "men_label": "Men",
-        "women_label": "Women",
-        "men_tag": "mens",
-        "women_tag": "womens",
-        "color_scheme": "scheme-1"
-      }
-    },
-    "category-nav": {
-      "type": "collection-category-nav",
-      "blocks": {
-        "all": {
-          "type": "category",
-          "settings": {
-            "icon": "all",
-            "label": "all",
-            "link": "/collections/all"
-          }
-        },
-        "tops": {
-          "type": "category",
-          "settings": {
-            "icon": "tops",
-            "label": "Tops",
-            "link": "shopify://collections/tops"
-          }
-        },
-        "pants": {
-          "type": "category",
-          "settings": {
-            "icon": "pants",
-            "label": "Pants",
-            "link": "shopify://collections/pants"
-          }
-        },
-        "shorts": {
-          "type": "category",
-          "settings": {
-            "icon": "shorts",
-            "label": "Shorts",
-            "link": "shopify://collections/shorts"
-          }
-        }
-      },
-      "block_order": [
-        "all",
-        "tops",
-        "pants",
-        "shorts"
-      ],
-      "settings": {
-        "color_scheme": "scheme-1"
-      }
-    },
-    "product-grid": {
-      "type": "main-collection-product-grid",
-      "settings": {
-        "products_per_page": 16,
-        "columns_desktop": 4,
-        "columns_mobile": "2",
-        "color_scheme": "scheme-1",
-        "image_ratio": "adapt",
-        "image_shape": "default",
-        "show_secondary_image": false,
-        "show_vendor": false,
-        "show_rating": false,
-        "quick_add": "none",
-        "enable_filtering": true,
-        "filter_type": "horizontal",
-        "enable_sorting": true,
-        "padding_top": 36,
-        "padding_bottom": 36
+        "per_page": 24
       }
     }
   },
-  "order": [
-    "banner",
-    "gender-nav",
-    "category-nav",
-    "product-grid"
-  ]
+  "order": ["main"]
 }

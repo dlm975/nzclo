@@ -1,0 +1,60 @@
+<div class="page-width section-pad">
+  {%- if cart.item_count == 0 -%}
+    <div class="cart-empty">
+      <h1 class="h-section">{{ 'cart.general.title' | t }}</h1>
+      <p class="text-secondary">{{ 'cart.general.empty' | t }}</p>
+      <a class="btn" href="{{ routes.all_products_collection_url }}">{{ 'cart.general.continue_shopping' | t }}</a>
+    </div>
+  {%- else -%}
+    <h1 class="h-section">{{ 'cart.general.title' | t }} ({{ cart.item_count }})</h1>
+    <form action="{{ routes.cart_url }}" method="post" novalidate>
+      <div class="cart-page">
+        <div>
+          {%- for item in cart.items -%}
+            <div class="cart-line">
+              <a class="cart-line__media" href="{{ item.url }}">
+                {%- if item.image -%}
+                  <img src="{{ item.image | image_url: width: 240 }}" alt="{{ item.image.alt | escape }}" width="120" height="150" loading="lazy">
+                {%- endif -%}
+              </a>
+              <div>
+                <p class="cart-line__title"><a href="{{ item.url }}">{{ item.product.title | downcase }}</a></p>
+                {%- unless item.product.has_only_default_variant -%}
+                  <p class="cart-line__meta">{{ item.variant.title | downcase }}</p>
+                {%- endunless -%}
+                {%- if item.original_line_price != item.final_line_price -%}
+                  <p class="cart-line__meta"><s>{{ item.original_line_price | money }}</s></p>
+                {%- endif -%}
+                <div class="qty-input">
+                  <button type="button" data-qty-change="-1" aria-label="decrease quantity">&minus;</button>
+                  <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" aria-label="{{ 'products.product.quantity' | t }}" onchange="this.form.submit()">
+                  <button type="button" data-qty-change="1" aria-label="increase quantity">+</button>
+                </div>
+                <p style="margin: 10px 0 0;">
+                  <a class="link-underline text-small" href="{{ item.url_to_remove }}">{{ 'cart.general.remove' | t }}</a>
+                </p>
+              </div>
+              <div class="cart-line__price">{{ item.final_line_price | money }}</div>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <div class="cart-summary">
+          <div class="cart-summary__total">
+            <span>{{ 'cart.general.subtotal' | t }}</span>
+            <span>{{ cart.total_price | money }}</span>
+          </div>
+          <p class="text-small text-secondary" style="margin: 0 0 16px;">{{ 'cart.general.taxes_and_shipping_at_checkout' | t }}</p>
+          <button class="btn btn--solid btn--full" type="submit" name="checkout">{{ 'cart.general.checkout' | t }}</button>
+        </div>
+      </div>
+    </form>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Cart page",
+  "settings": []
+}
+{% endschema %}

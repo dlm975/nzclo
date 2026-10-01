@@ -1,0 +1,57 @@
+<div class="page-width">
+  <div class="collection-header">
+    <h1 class="h-section">{{ collection.title | downcase }}</h1>
+    {%- if collection.description != blank -%}
+      <div class="collection-header__description">{{ collection.description }}</div>
+    {%- endif -%}
+  </div>
+
+  {%- paginate collection.products by section.settings.per_page -%}
+    <div class="collection-toolbar">
+      <span class="text-secondary">{{ collection.products_count }} products</span>
+      <form method="get" action="{{ collection.url }}">
+        {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+        <label class="visually-hidden" for="SortBy">sort by</label>
+        <select class="field" id="SortBy" name="sort_by" onchange="this.form.submit()">
+          {%- for option in collection.sort_options -%}
+            <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>{{ option.name | downcase }}</option>
+          {%- endfor -%}
+        </select>
+      </form>
+    </div>
+
+    {%- if collection.products.size > 0 -%}
+      <div class="product-grid">
+        {%- for product in collection.products -%}
+          {% render 'product-card', product: product %}
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <div class="cart-empty">
+        <p class="text-secondary">no products found</p>
+        <a class="btn" href="{{ routes.all_products_collection_url }}">shop all</a>
+      </div>
+    {%- endif -%}
+
+    {% render 'pagination', paginate: paginate %}
+  {%- endpaginate -%}
+</div>
+
+<div style="height: clamp(40px, 6vw, 88px);"></div>
+
+{% schema %}
+{
+  "name": "Collection page",
+  "settings": [
+    {
+      "type": "range",
+      "id": "per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "label": "Products per page",
+      "default": 24
+    }
+  ]
+}
+{% endschema %}

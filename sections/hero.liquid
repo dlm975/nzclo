@@ -1,0 +1,75 @@
+<div class="hero{% if section.settings.height == 'short' %} hero--short{% endif %} hero--{{ section.settings.text_position }}">
+  <div class="hero__media">
+    {%- if section.settings.video != blank -%}
+      {{ section.settings.video | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true }}
+    {%- elsif section.settings.image -%}
+      <img
+        src="{{ section.settings.image | image_url: width: 2200 }}"
+        srcset="{{ section.settings.image | image_url: width: 900 }} 900w, {{ section.settings.image | image_url: width: 1500 }} 1500w, {{ section.settings.image | image_url: width: 2200 }} 2200w"
+        sizes="100vw"
+        alt="{{ section.settings.image.alt | escape }}"
+        width="2200"
+        height="{{ 2200 | divided_by: section.settings.image.aspect_ratio | round }}"
+        {% if section.index == 1 %}fetchpriority="high"{% else %}loading="lazy"{% endif %}
+      >
+    {%- endif -%}
+  </div>
+  <div class="hero__content{% if section.settings.dark_text %} hero__content--dark{% endif %}">
+    {%- if section.settings.heading != blank -%}
+      {%- if section.settings.heading_style == 'display' -%}
+        <h2 class="h-hero">{{ section.settings.heading }}</h2>
+      {%- else -%}
+        <p class="hero__tagline">{{ section.settings.heading }}</p>
+      {%- endif -%}
+    {%- endif -%}
+    {%- if section.settings.button_label != blank -%}
+      <a class="btn {% if section.settings.dark_text %}btn--outline{% else %}btn--glass{% endif %}" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}</a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "video", "id": "video", "label": "Video (overrides image)" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Everyday essentials, finally in NZ." },
+    {
+      "type": "select",
+      "id": "heading_style",
+      "label": "Heading style",
+      "options": [
+        { "value": "tagline", "label": "Small tagline" },
+        { "value": "display", "label": "Large display" }
+      ],
+      "default": "tagline"
+    },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "shop the drop" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "options": [
+        { "value": "left", "label": "Bottom left" },
+        { "value": "right", "label": "Bottom right" },
+        { "value": "center", "label": "Bottom center" }
+      ],
+      "default": "right"
+    },
+    { "type": "checkbox", "id": "dark_text", "label": "Dark text", "default": false },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Height",
+      "options": [
+        { "value": "tall", "label": "Tall" },
+        { "value": "short", "label": "Short" }
+      ],
+      "default": "tall"
+    }
+  ],
+  "presets": [{ "name": "Hero" }]
+}
+{% endschema %}

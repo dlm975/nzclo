@@ -1,165 +1,31 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "main": {
       "type": "main-product",
       "blocks": {
-        "vendor": {
-          "type": "text",
+        "details": {
+          "type": "accordion",
           "settings": {
-            "text": "",
-            "text_style": "uppercase"
+            "title": "details",
+            "content": "<p>authentic uniqlo product, sourced new. sizing follows uniqlo's standard fit.</p>"
           }
         },
-        "title": {
-          "type": "title",
-          "settings": {}
-        },
-        "price": {
-          "type": "price",
-          "settings": {}
-        },
-        "variant_picker": {
-          "type": "variant_picker",
+        "shipping": {
+          "type": "accordion",
           "settings": {
-            "picker_type": "button",
-            "swatch_shape": "circle"
-          }
-        },
-        "size_guide": {
-          "type": "size_guide",
-          "settings": {
-            "heading": "Size Guide",
-            "image": "shopify://shop_images/Screenshot_2026-07-19_at_10.36.24_AM.png"
-          }
-        },
-        "quantity_selector": {
-          "type": "quantity_selector",
-          "settings": {}
-        },
-        "buy_buttons": {
-          "type": "buy_buttons",
-          "settings": {
-            "show_dynamic_checkout": true,
-            "show_gift_card_recipient": true
-          }
-        },
-        "description": {
-          "type": "description",
-          "disabled": true,
-          "settings": {}
-        },
-        "tab_details": {
-          "type": "collapsible_tab",
-          "settings": {
-            "heading": "Details",
-            "icon": "ruler",
-            "content": "",
-            "page": "",
-            "use_product_description": true
-          }
-        },
-        "tab_shipping": {
-          "type": "collapsible_tab",
-          "settings": {
-            "heading": "Shipping",
-            "icon": "truck",
-            "content": "<p>Free shipping on orders over $75. NZPost is our shipping provider of choice. Note: some items may need to be ordered in, leading to small delays in fulfillment.</p>",
-            "page": "",
-            "use_product_description": false
-          }
-        },
-        "tab_returns": {
-          "type": "collapsible_tab",
-          "settings": {
-            "heading": "Returns",
-            "icon": "return",
-            "content": "<p>We accept returns within 7 days of delivery. Items must be unworn, unwashed, and in original packaging with tags attached.</p>",
-            "page": "",
-            "use_product_description": false
-          }
-        },
-        "tab_faq": {
-          "type": "collapsible_tab",
-          "settings": {
-            "heading": "FAQs",
-            "icon": "question_mark",
-            "content": "<p><strong>Are these authentic Uniqlo products?</strong></p><p>Yes — all items are sourced directly and 100% genuine.</p><p><strong>How do I know my size?</strong></p><p>Uniqlo sizing runs true to standard NZ sizes. Check the size guide on each product for exact measurements.</p><p><strong>Do you ship outside New Zealand?</strong></p><p>Not at this stage — we ship within New Zealand only.</p>",
-            "page": "",
-            "use_product_description": false
+            "title": "shipping + returns",
+            "content": "<p>shipped from within new zealand. easy returns within 30 days of delivery.</p>"
           }
         }
       },
-      "block_order": [
-        "vendor",
-        "title",
-        "price",
-        "variant_picker",
-        "size_guide",
-        "quantity_selector",
-        "buy_buttons",
-        "description",
-        "tab_details",
-        "tab_shipping",
-        "tab_returns",
-        "tab_faq"
-      ],
-      "settings": {
-        "enable_sticky_info": true,
-        "color_scheme": "scheme-1",
-        "media_size": "large",
-        "constrain_to_viewport": true,
-        "media_fit": "contain",
-        "gallery_layout": "stacked",
-        "mobile_thumbnails": "hide",
-        "media_position": "left",
-        "image_zoom": "lightbox",
-        "hide_variants": true,
-        "enable_video_looping": false,
-        "padding_top": 36,
-        "padding_bottom": 12
-      }
+      "block_order": ["details", "shipping"]
     },
-    "social-proof-videos": {
-      "type": "social-proof-videos",
-      "settings": {
-        "heading": "As seen on",
-        "subheading": "Real people, real fits",
-        "color_scheme": "scheme-1",
-        "padding_top": 52,
-        "padding_bottom": 52
-      }
-    },
-    "related-products": {
+    "related": {
       "type": "related-products",
       "settings": {
-        "heading": "You may also like",
-        "heading_size": "h2",
-        "products_to_show": 4,
-        "columns_desktop": 4,
-        "columns_mobile": "2",
-        "color_scheme": "scheme-1",
-        "image_ratio": "square",
-        "image_shape": "default",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "padding_top": 36,
-        "padding_bottom": 28
+        "heading": "you may also like"
       }
     }
   },
-  "order": [
-    "main",
-    "social-proof-videos",
-    "related-products"
-  ]
+  "order": ["main", "related"]
 }

@@ -1,54 +1,37 @@
 {
-  "name": "t:sections.footer.name",
+  "name": "Footer group",
   "type": "footer",
   "sections": {
     "footer": {
       "type": "footer",
       "blocks": {
-        "about": {
-          "type": "text",
-          "settings": {
-            "heading": "nzclo",
-            "subtext": "<p>Authentic Uniqlo products shipped within New Zealand. Every item is sourced directly and 100% genuine.</p>"
-          }
-        },
-        "help": {
+        "links-shop": {
           "type": "link_list",
           "settings": {
-            "heading": "Help",
-            "menu": "footer-help"
+            "heading": "shop",
+            "menu": "main-menu"
           }
         },
-        "contact": {
-          "type": "text",
+        "links-help": {
+          "type": "link_list",
           "settings": {
-            "heading": "Contact",
-            "subtext": "<p>Email: <a href=\"mailto:nzuniqlo@gmail.com\">nzuniqlo@gmail.com</a></p><p>New Zealand</p>"
+            "heading": "help",
+            "menu": "footer"
+          }
+        },
+        "newsletter": {
+          "type": "newsletter",
+          "settings": {
+            "heading": "stay in the loop"
           }
         }
       },
-      "block_order": [
-        "about",
-        "help",
-        "contact"
-      ],
+      "block_order": ["links-shop", "links-help", "newsletter"],
       "settings": {
-        "color_scheme": "scheme-1",
-        "newsletter_enable": false,
-        "newsletter_heading": "Subscribe to our emails",
-        "enable_follow_on_shop": true,
-        "show_social": true,
-        "enable_country_selector": true,
-        "enable_language_selector": true,
-        "payment_enable": true,
-        "show_policy": true,
-        "margin_top": 0,
-        "padding_top": 36,
-        "padding_bottom": 36
+        "blurb": "authentic uniqlo essentials, sourced and shipped within new zealand. no compromise.",
+        "show_wordmark": true
       }
     }
   },
-  "order": [
-    "footer"
-  ]
+  "order": ["footer"]
 }

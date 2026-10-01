@@ -1,0 +1,36 @@
+{%- if section.settings.text != blank -%}
+  <div class="marquee" style="--marquee-speed: {{ section.settings.speed }}s;" aria-hidden="true">
+    {%- for i in (1..2) -%}
+      <div class="marquee__track">
+        {%- for j in (1..6) -%}
+          <span class="marquee__item">{{ section.settings.text }}</span>
+        {%- endfor -%}
+      </div>
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Marquee",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "authentic product. no compromise. shipped from nz."
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "unit": "s",
+      "label": "Loop duration",
+      "default": 24
+    }
+  ],
+  "presets": [{ "name": "Marquee" }]
+}
+{% endschema %}

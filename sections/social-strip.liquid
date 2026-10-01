@@ -1,0 +1,65 @@
+<div class="page-width section-pad" style="padding-top: 0;">
+  <div class="section-header">
+    <h2 class="h-section" style="margin: 0;">{{ section.settings.heading }}</h2>
+    {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+      <a class="btn" href="{{ section.settings.button_link }}" target="_blank" rel="noopener">{{ section.settings.button_label }}</a>
+    {%- endif -%}
+  </div>
+  <div class="social-strip__grid">
+    {%- for block in section.blocks -%}
+      {%- if block.settings.link != blank -%}
+        <a class="social-card" href="{{ block.settings.link }}" target="_blank" rel="noopener" {{ block.shopify_attributes }}>
+      {%- else -%}
+        <div class="social-card" {{ block.shopify_attributes }}>
+      {%- endif -%}
+        {%- if block.settings.image -%}
+          <img
+            src="{{ block.settings.image | image_url: width: 600 }}"
+            srcset="{{ block.settings.image | image_url: width: 400 }} 400w, {{ block.settings.image | image_url: width: 600 }} 600w"
+            sizes="280px"
+            alt="{{ block.settings.image.alt | escape }}"
+            loading="lazy"
+            width="600"
+            height="800"
+          >
+        {%- else -%}
+          {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      {%- if block.settings.link != blank -%}</a>{%- else -%}</div>{%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Social strip",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "nzclo + you" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "find us on social" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "blocks": [
+    {
+      "type": "photo",
+      "name": "Photo",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Social strip",
+      "blocks": [
+        { "type": "photo" },
+        { "type": "photo" },
+        { "type": "photo" },
+        { "type": "photo" },
+        { "type": "photo" }
+      ]
+    }
+  ]
+}
+{% endschema %}

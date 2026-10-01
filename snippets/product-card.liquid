@@ -1,0 +1,126 @@
+{%- comment -%}
+  Renders a 9:16 product card: an undistorted 3:4 photograph at the top, extended
+  to the full card height by a blurred, scaled continuation of the same image, with
+  the product information set over that blur.
+
+  Usage: {% render 'product-card', product: product %}
+{%- endcomment -%}
+
+{%- liquid
+  assign primary = product.featured_media
+  assign secondary = null
+  if product.media.size > 1
+    assign secondary = product.media[1]
+  endif
+
+  assign color_option = null
+  for product_option in product.options_with_values
+    assign option_name = product_option.name | downcase
+    if option_name contains 'color' or option_name contains 'colour'
+      assign color_option = product_option
+      break
+    endif
+  endfor
+
+  assign swatch_limit = 4
+  assign swatch_total = color_option.values.size
+  assign swatch_overflow = swatch_total | minus: swatch_limit
+-%}
+
+<div class="product-card{% if secondary %} product-card--swap{% endif %}">
+  <a class="product-card__media" href="{{ product.url }}">
+    {%- if primary -%}
+      <span class="product-card__bleed" aria-hidden="true">
+        <img
+          class="pc-img--primary"
+          src="{{ primary | image_url: width: 400 }}"
+          alt=""
+          loading="lazy"
+          width="400"
+          height="533"
+        >
+        {%- if secondary -%}
+          <img
+            class="pc-img--secondary"
+            src="{{ secondary | image_url: width: 400 }}"
+            alt=""
+            loading="lazy"
+            width="400"
+            height="533"
+          >
+        {%- endif -%}
+      </span>
+
+      <span class="product-card__shot">
+        <img
+          class="pc-img--primary"
+          src="{{ primary | image_url: width: 700 }}"
+          srcset="{{ primary | image_url: width: 400 }} 400w, {{ primary | image_url: width: 700 }} 700w, {{ primary | image_url: width: 1000 }} 1000w"
+          sizes="(max-width: 749px) 50vw, (max-width: 1099px) 33vw, 25vw"
+          alt="{{ primary.alt | default: product.title | escape }}"
+          loading="lazy"
+          width="600"
+          height="800"
+        >
+        {%- if secondary -%}
+          <img
+            class="pc-img--secondary"
+            src="{{ secondary | image_url: width: 700 }}"
+            srcset="{{ secondary | image_url: width: 400 }} 400w, {{ secondary | image_url: width: 700 }} 700w, {{ secondary | image_url: width: 1000 }} 1000w"
+            sizes="(max-width: 749px) 50vw, (max-width: 1099px) 33vw, 25vw"
+            alt=""
+            loading="lazy"
+            width="600"
+            height="800"
+          >
+        {%- endif -%}
+      </span>
+    {%- else -%}
+      <span class="product-card__shot">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</span>
+    {%- endif -%}
+
+    <span class="product-card__scrim"></span>
+
+    {%- if product.available == false -%}
+      <span class="product-card__badge">sold out</span>
+    {%- elsif product.compare_at_price > product.price -%}
+      <span class="product-card__badge">sale</span>
+    {%- endif -%}
+
+    <span class="product-card__info">
+      {%- if product.metafields.custom.subtitle != blank -%}
+        <span class="product-card__eyebrow">{{ product.metafields.custom.subtitle }}</span>
+      {%- elsif product.type != blank -%}
+        <span class="product-card__eyebrow">{{ product.type }}</span>
+      {%- endif -%}
+
+      <h3 class="product-card__title">{{ product.title }}</h3>
+
+      <span class="product-card__row">
+        <span class="product-card__price">{% render 'price', product: product %}</span>
+
+        {%- if color_option -%}
+          <span class="product-card__swatches" aria-hidden="true">
+            {%- for value in color_option.values limit: swatch_limit -%}
+              {%- liquid
+                assign swatch_image = value.swatch.image
+                assign swatch_color = value.swatch.color
+                if swatch_color == blank
+                  assign swatch_color = value | downcase | strip | replace: ' ', ''
+                endif
+              -%}
+              <span
+                class="product-card__swatch"
+                title="{{ value | escape }}"
+                style="background-color: #cfcbc4;{% if swatch_image %} background-image: url({{ swatch_image | image_url: width: 40 }});{% else %} background-color: {{ swatch_color | escape }};{% endif %}"
+              ></span>
+            {%- endfor -%}
+            {%- if swatch_overflow > 0 -%}
+              <span class="product-card__swatch-more">+{{ swatch_overflow }}</span>
+            {%- endif -%}
+          </span>
+        {%- endif -%}
+      </span>
+    </span>
+  </a>
+</div>

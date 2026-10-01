@@ -1,0 +1,15 @@
+{%- comment -%} Usage: {% render 'icon', name: 'search' %} {%- endcomment -%}
+{%- case name -%}
+  {%- when 'search' -%}
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+  {%- when 'account' -%}
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1.5-3.5 4.2-5 7.5-5s6 1.5 7.5 5"/></svg>
+  {%- when 'bag' -%}
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l-1 13H6L5 8z"/><path d="M8.5 8V6.5a3.5 3.5 0 0 1 7 0V8"/></svg>
+  {%- when 'menu' -%}
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5h18M3 12h18M3 17.5h18"/></svg>
+  {%- when 'close' -%}
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg>
+  {%- when 'arrow' -%}
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h17m0 0-6-6m6 6-6 6"/></svg>
+{%- endcase -%}

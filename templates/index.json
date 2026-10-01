@@ -1,90 +1,58 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "image_banner": {
-      "type": "image-banner",
-      "blocks": {
-        "heading": {
-          "type": "heading",
-          "settings": {
-            "heading": "the world's best basics.",
-            "heading_size": "hxxl"
-          }
-        },
-        "button": {
-          "type": "buttons",
-          "settings": {
-            "button_label_1": "SHOP NOW",
-            "button_link_1": "shopify://collections/all",
-            "button_style_secondary_1": true,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
-          }
-        }
-      },
-      "block_order": [
-        "heading",
-        "button"
-      ],
+    "hero": {
+      "type": "hero",
       "settings": {
-        "image": "shopify://shop_images/goods_465185_sub1_3x4_ca597183-183c-4ed6-b2b8-d69169b385b6.avif",
-        "image_overlay_opacity": 40,
-        "image_height": "large",
-        "image_behavior": "none",
-        "desktop_content_position": "bottom-center",
-        "desktop_content_alignment": "center",
-        "show_text_box": false,
-        "color_scheme": "scheme-3",
-        "stack_images_on_mobile": false,
-        "mobile_content_alignment": "center",
-        "show_text_below": false
+        "heading": "Everyday essentials, finally in NZ.",
+        "heading_style": "tagline",
+        "button_label": "shop the drop",
+        "text_position": "right",
+        "height": "tall"
+      }
+    },
+    "tiles": {
+      "type": "collection-tiles",
+      "blocks": {
+        "tile-mens": { "type": "tile", "settings": { "label": "mens" } },
+        "tile-womens": { "type": "tile", "settings": { "label": "womens" } },
+        "tile-all": { "type": "tile", "settings": { "label": "shop all", "badge": "new" } }
+      },
+      "block_order": ["tile-mens", "tile-womens", "tile-all"]
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "core collection",
+        "layout": "rail",
+        "limit": 8
       }
     },
     "mission": {
-      "type": "mission-statement",
+      "type": "mission",
       "settings": {}
     },
-    "featured_collection": {
-      "type": "featured-collection",
+    "iwt": {
+      "type": "image-with-text",
       "settings": {
-        "collection": "all",
-        "products_to_show": 8,
-        "title": "Core Collection.",
-        "heading_size": "h2",
-        "description": "",
-        "show_description": false,
-        "description_style": "body",
-        "columns_desktop": 4,
-        "enable_desktop_slider": false,
-        "full_width": false,
-        "show_view_all": true,
-        "view_all_style": "solid",
-        "color_scheme": "scheme-1",
-        "image_ratio": "adapt",
-        "image_shape": "default",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "quick_add": "none",
-        "columns_mobile": "2",
-        "swipe_on_mobile": false,
-        "padding_top": 44,
-        "padding_bottom": 36
+        "heading": "made for every day",
+        "button_label": "shop the range"
       }
+    },
+    "social": {
+      "type": "social-strip",
+      "blocks": {
+        "photo-1": { "type": "photo" },
+        "photo-2": { "type": "photo" },
+        "photo-3": { "type": "photo" },
+        "photo-4": { "type": "photo" },
+        "photo-5": { "type": "photo" }
+      },
+      "block_order": ["photo-1", "photo-2", "photo-3", "photo-4", "photo-5"]
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {}
     }
   },
-  "order": [
-    "image_banner",
-    "mission",
-    "featured_collection"
-  ]
+  "order": ["hero", "tiles", "featured", "mission", "iwt", "social", "newsletter"]
 }
