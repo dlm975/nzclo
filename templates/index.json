@@ -1,58 +1,158 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
       "type": "hero",
       "settings": {
+        "image": "shopify://shop_images/goods_465185_sub1_3x4_1.avif",
         "heading": "Everyday essentials, finally in NZ.",
         "heading_style": "tagline",
         "button_label": "shop the drop",
+        "button_link": "",
         "text_position": "right",
+        "dark_text": false,
         "height": "tall"
       }
     },
     "tiles": {
       "type": "collection-tiles",
       "blocks": {
-        "tile-mens": { "type": "tile", "settings": { "label": "mens" } },
-        "tile-womens": { "type": "tile", "settings": { "label": "womens" } },
-        "tile-all": { "type": "tile", "settings": { "label": "shop all", "badge": "new" } }
+        "tile-mens": {
+          "type": "tile",
+          "settings": {
+            "collection": "",
+            "label": "mens",
+            "badge": "",
+            "light_text": false
+          }
+        },
+        "tile-womens": {
+          "type": "tile",
+          "settings": {
+            "collection": "",
+            "label": "womens",
+            "badge": "",
+            "light_text": false
+          }
+        },
+        "tile-all": {
+          "type": "tile",
+          "settings": {
+            "collection": "",
+            "label": "shop all",
+            "badge": "new",
+            "light_text": false
+          }
+        }
       },
-      "block_order": ["tile-mens", "tile-womens", "tile-all"]
+      "block_order": [
+        "tile-mens",
+        "tile-womens",
+        "tile-all"
+      ],
+      "settings": {
+        "heading": ""
+      }
     },
     "featured": {
       "type": "featured-collection",
       "settings": {
+        "collection": "",
         "eyebrow": "core collection",
+        "heading": "",
         "layout": "rail",
         "limit": 8
       }
     },
     "mission": {
       "type": "mission",
-      "settings": {}
+      "settings": {
+        "eyebrow": "authentic, no compromise",
+        "text": "new zealand has never had direct access to uniqlo — until now. we source authentic product and ship it from right here in aotearoa.",
+        "button_label": "our mission",
+        "button_link": ""
+      }
     },
     "iwt": {
       "type": "image-with-text",
       "settings": {
         "heading": "made for every day",
-        "button_label": "shop the range"
+        "text": "airism cotton, relaxed fits, and wardrobe staples that work as hard as you do — delivered to your door anywhere in aotearoa.",
+        "button_label": "shop the range",
+        "button_link": "",
+        "reverse": false
       }
     },
     "social": {
       "type": "social-strip",
       "blocks": {
-        "photo-1": { "type": "photo" },
-        "photo-2": { "type": "photo" },
-        "photo-3": { "type": "photo" },
-        "photo-4": { "type": "photo" },
-        "photo-5": { "type": "photo" }
+        "photo-1": {
+          "type": "photo",
+          "settings": {
+            "link": ""
+          }
+        },
+        "photo-2": {
+          "type": "photo",
+          "settings": {
+            "link": ""
+          }
+        },
+        "photo-3": {
+          "type": "photo",
+          "settings": {
+            "link": ""
+          }
+        },
+        "photo-4": {
+          "type": "photo",
+          "settings": {
+            "link": ""
+          }
+        },
+        "photo-5": {
+          "type": "photo",
+          "settings": {
+            "link": ""
+          }
+        }
       },
-      "block_order": ["photo-1", "photo-2", "photo-3", "photo-4", "photo-5"]
+      "block_order": [
+        "photo-1",
+        "photo-2",
+        "photo-3",
+        "photo-4",
+        "photo-5"
+      ],
+      "settings": {
+        "heading": "nzclo + you",
+        "button_label": "find us on social",
+        "button_link": ""
+      }
     },
     "newsletter": {
       "type": "newsletter",
-      "settings": {}
+      "settings": {
+        "heading": "join the list",
+        "text": "restocks, new drops, and nz-only offers. no spam."
+      }
     }
   },
-  "order": ["hero", "tiles", "featured", "mission", "iwt", "social", "newsletter"]
+  "order": [
+    "hero",
+    "tiles",
+    "featured",
+    "mission",
+    "iwt",
+    "social",
+    "newsletter"
+  ]
 }
