@@ -1,74 +1,159 @@
-<div class="page-width authenticity" style="--authenticity-logo-height: {{ section.settings.logo_height }}px;">
-  <div class="authenticity__row">
-    <span class="authenticity__badge">
-      <svg class="authenticity__seal" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M12 2.6l2.2 1.5 2.6-.4 1 2.5 2.3 1.3-.6 2.6.9 2.5-2 1.7-.5 2.6-2.6.3-1.9 1.8-2.4-1.1-2.6.4-1-2.5-2.3-1.3.6-2.6-.9-2.5 2-1.7.5-2.6 2.6-.3z"/>
-        <path d="M8.6 12.1l2.3 2.3 4.5-4.6"/>
-      </svg>
-      <span class="authenticity__text">{{ section.settings.text }}</span>
-    </span>
+{%- comment -%}
+  Each mark is independently uploadable. image_picker covers PNG/JPEG/WEBP/GIF;
+  SVG cannot be selected through image_picker, so an optional file URL is accepted
+  for that case. Any mark without an image is omitted entirely.
+{%- endcomment -%}
 
-    {%- if section.settings.uniqlo_logo or section.settings.uniqlo_label != blank or section.settings.airism_logo or section.settings.airism_label != blank -%}
-      <span class="authenticity__divider" aria-hidden="true"></span>
+{%- liquid
+  assign badge_src = ''
+  if section.settings.badge_svg_url != blank
+    assign badge_src = section.settings.badge_svg_url
+  elsif section.settings.badge_image
+    assign badge_src = section.settings.badge_image | image_url: width: 300
+  endif
 
-      <span class="authenticity__logos">
-        {%- if section.settings.uniqlo_logo -%}
-          <img
-            class="authenticity__logo"
-            src="{{ section.settings.uniqlo_logo | image_url: width: 240 }}"
-            alt="{{ section.settings.uniqlo_label | default: 'UNIQLO' | escape }}"
-            loading="lazy"
-            width="120"
-            height="{{ 120 | divided_by: section.settings.uniqlo_logo.aspect_ratio | round }}"
-          >
-        {%- elsif section.settings.uniqlo_label != blank -%}
-          <span class="authenticity__wordmark">{{ section.settings.uniqlo_label }}</span>
-        {%- endif -%}
+  assign uniqlo_src = ''
+  if section.settings.uniqlo_svg_url != blank
+    assign uniqlo_src = section.settings.uniqlo_svg_url
+  elsif section.settings.uniqlo_logo
+    assign uniqlo_src = section.settings.uniqlo_logo | image_url: width: 400
+  endif
 
-        {%- if section.settings.airism_logo -%}
-          <img
-            class="authenticity__logo"
-            src="{{ section.settings.airism_logo | image_url: width: 240 }}"
-            alt="{{ section.settings.airism_label | default: 'AIRism' | escape }}"
-            loading="lazy"
-            width="120"
-            height="{{ 120 | divided_by: section.settings.airism_logo.aspect_ratio | round }}"
-          >
-        {%- elsif section.settings.airism_label != blank -%}
-          <span class="authenticity__wordmark authenticity__wordmark--airism">{{ section.settings.airism_label }}</span>
-        {%- endif -%}
-      </span>
-    {%- endif -%}
+  assign airism_src = ''
+  if section.settings.airism_svg_url != blank
+    assign airism_src = section.settings.airism_svg_url
+  elsif section.settings.airism_logo
+    assign airism_src = section.settings.airism_logo | image_url: width: 400
+  endif
+
+  comment
+    width/height hints so nothing shifts while the marks load. Known exactly for
+    picker images; for an SVG URL the ratio is unknown, so a nominal hint is used
+    and CSS (height fixed, width auto) settles it once loaded.
+  endcomment
+  assign badge_h = section.settings.badge_height
+  if section.settings.badge_svg_url != blank
+    assign badge_w = badge_h
+  elsif section.settings.badge_image
+    assign badge_w = badge_h | times: section.settings.badge_image.aspect_ratio | round
+  endif
+
+  assign logo_h = section.settings.logo_height
+  if section.settings.uniqlo_svg_url != blank
+    assign uniqlo_w = logo_h | times: 3
+  elsif section.settings.uniqlo_logo
+    assign uniqlo_w = logo_h | times: section.settings.uniqlo_logo.aspect_ratio | round
+  endif
+  if section.settings.airism_svg_url != blank
+    assign airism_w = logo_h | times: 3
+  elsif section.settings.airism_logo
+    assign airism_w = logo_h | times: section.settings.airism_logo.aspect_ratio | round
+  endif
+
+  assign has_marks = false
+  if uniqlo_src != blank or airism_src != blank
+    assign has_marks = true
+  endif
+
+  assign has_lead = false
+  if badge_src != blank or section.settings.text != blank
+    assign has_lead = true
+  endif
+-%}
+
+{%- if has_lead or has_marks -%}
+  <div
+    class="page-width authenticity"
+    style="--authenticity-logo-height: {{ section.settings.logo_height }}px; --authenticity-badge-height: {{ section.settings.badge_height }}px;"
+  >
+    <div class="authenticity__row">
+      {%- if has_lead -%}
+        <span class="authenticity__badge">
+          {%- if badge_src != blank -%}
+            <img
+              class="authenticity__mark authenticity__mark--badge"
+              src="{{ badge_src }}"
+              alt="{{ section.settings.badge_alt | escape }}"
+              loading="lazy"
+              width="{{ badge_w | default: badge_h }}"
+              height="{{ badge_h }}"
+            >
+          {%- endif -%}
+          {%- if section.settings.text != blank -%}
+            <span class="authenticity__text">{{ section.settings.text }}</span>
+          {%- endif -%}
+        </span>
+      {%- endif -%}
+
+      {%- if has_lead and has_marks -%}
+        <span class="authenticity__divider" aria-hidden="true"></span>
+      {%- endif -%}
+
+      {%- if has_marks -%}
+        <span class="authenticity__logos">
+          {%- if uniqlo_src != blank -%}
+            <img
+              class="authenticity__mark"
+              src="{{ uniqlo_src }}"
+              alt="{{ section.settings.uniqlo_alt | escape }}"
+              loading="lazy"
+              width="{{ uniqlo_w | default: logo_h }}"
+              height="{{ logo_h }}"
+            >
+          {%- endif -%}
+          {%- if airism_src != blank -%}
+            <img
+              class="authenticity__mark"
+              src="{{ airism_src }}"
+              alt="{{ section.settings.airism_alt | escape }}"
+              loading="lazy"
+              width="{{ airism_w | default: logo_h }}"
+              height="{{ logo_h }}"
+            >
+          {%- endif -%}
+        </span>
+      {%- endif -%}
+    </div>
   </div>
-</div>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "Authenticity",
   "settings": [
-    {
-      "type": "text",
-      "id": "text",
-      "label": "Statement",
-      "default": "100% authentic product"
-    },
-    {
-      "type": "header",
-      "content": "Brand marks"
-    },
+    { "type": "text", "id": "text", "label": "Statement", "default": "100% authentic product" },
     {
       "type": "paragraph",
-      "content": "Upload the official logo files to show them exactly as supplied. Until an image is uploaded, the text below is used instead."
+      "content": "Upload each mark below. PNG, JPEG, WEBP and GIF can be selected with the image picker. For an SVG, upload it under Content > Files in the admin, copy its URL, and paste it into the SVG field. Anything left empty is hidden."
     },
+    { "type": "header", "content": "Verified badge" },
+    { "type": "image_picker", "id": "badge_image", "label": "Badge image" },
+    { "type": "text", "id": "badge_svg_url", "label": "Badge SVG URL (optional, overrides image)" },
+    { "type": "text", "id": "badge_alt", "label": "Badge alt text", "default": "Verified authentic" },
+    {
+      "type": "range",
+      "id": "badge_height",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Badge height",
+      "default": 18
+    },
+    { "type": "header", "content": "UNIQLO" },
     { "type": "image_picker", "id": "uniqlo_logo", "label": "UNIQLO logo" },
-    { "type": "text", "id": "uniqlo_label", "label": "UNIQLO fallback text", "default": "UNIQLO" },
+    { "type": "text", "id": "uniqlo_svg_url", "label": "UNIQLO SVG URL (optional, overrides image)" },
+    { "type": "text", "id": "uniqlo_alt", "label": "UNIQLO alt text", "default": "UNIQLO" },
+    { "type": "header", "content": "AIRism" },
     { "type": "image_picker", "id": "airism_logo", "label": "AIRism logo" },
-    { "type": "text", "id": "airism_label", "label": "AIRism fallback text", "default": "AIRism" },
+    { "type": "text", "id": "airism_svg_url", "label": "AIRism SVG URL (optional, overrides image)" },
+    { "type": "text", "id": "airism_alt", "label": "AIRism alt text", "default": "AIRism" },
+    { "type": "header", "content": "Sizing" },
     {
       "type": "range",
       "id": "logo_height",
       "min": 12,
-      "max": 32,
+      "max": 40,
       "step": 2,
       "unit": "px",
       "label": "Logo height",

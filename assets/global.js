@@ -39,6 +39,31 @@
     }
   });
 
+  /* ---------- floating header over the hero ---------- */
+
+  var overlayHeader = qs('.site-header--overlay');
+  if (overlayHeader) {
+    var heroEl = qs('.hero');
+    var setSolid = function (solid) {
+      overlayHeader.classList.toggle('site-header--solid', solid);
+    };
+
+    if (heroEl && 'IntersectionObserver' in window) {
+      var headerH = overlayHeader.offsetHeight || 64;
+      new IntersectionObserver(function (entries) {
+        setSolid(!entries[0].isIntersecting);
+      }, { rootMargin: '-' + headerH + 'px 0px 0px 0px', threshold: 0 }).observe(heroEl);
+    } else {
+      var onScroll = function () {
+        var h = overlayHeader.offsetHeight || 64;
+        var limit = heroEl ? heroEl.offsetHeight - h : h;
+        setSolid(window.pageYOffset > limit);
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
+  }
+
   /* ---------- search bar toggle ---------- */
 
   document.addEventListener('click', function (e) {

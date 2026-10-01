@@ -25,7 +25,25 @@
 
   assign swatch_limit = 4
   assign swatch_total = color_option.values.size
-  assign swatch_overflow = swatch_total | minus: swatch_limit
+
+  comment
+    Build the set of colour values that still have an in-stock variant, so the
+    swatches can lead with what is actually buyable. Live inventory only.
+  endcomment
+  assign color_position = color_option.position
+  assign available_values = '||'
+  for variant in product.variants
+    if variant.available
+      if color_position == 1
+        assign variant_value = variant.option1
+      elsif color_position == 2
+        assign variant_value = variant.option2
+      else
+        assign variant_value = variant.option3
+      endif
+      assign available_values = available_values | append: variant_value | append: '||'
+    endif
+  endfor
 -%}
 
 <div class="product-card{% if secondary %} product-card--swap{% endif %}"{% if block_attributes %} {{ block_attributes }}{% endif %}>
@@ -102,20 +120,27 @@
 
         {%- if color_option -%}
           <span class="product-card__swatches" aria-hidden="true">
-            {%- for value in color_option.values limit: swatch_limit -%}
-              {%- liquid
-                assign swatch_image = value.swatch.image
-                assign swatch_color = value.swatch.color
-                if swatch_color == blank
-                  assign swatch_color = value | downcase | strip | replace: ' ', ''
-                endif
-              -%}
-              <span
-                class="product-card__swatch"
-                title="{{ value | escape }}"
-                style="background-color: #cfcbc4;{% if swatch_image %} background-image: url({{ swatch_image | image_url: width: 40 }});{% else %} background-color: {{ swatch_color | escape }};{% endif %}"
-              ></span>
+            {%- assign swatch_shown = 0 -%}
+
+            {%- for value in color_option.values -%}
+              {%- assign needle = '||' | append: value | append: '||' -%}
+              {%- if available_values contains needle and swatch_shown < swatch_limit -%}
+                {% render 'product-swatch', value: value, is_available: true %}
+                {%- assign swatch_shown = swatch_shown | plus: 1 -%}
+              {%- endif -%}
             {%- endfor -%}
+
+            {%- for value in color_option.values -%}
+              {%- assign needle = '||' | append: value | append: '||' -%}
+              {%- unless available_values contains needle -%}
+                {%- if swatch_shown < swatch_limit -%}
+                  {% render 'product-swatch', value: value, is_available: false %}
+                  {%- assign swatch_shown = swatch_shown | plus: 1 -%}
+                {%- endif -%}
+              {%- endunless -%}
+            {%- endfor -%}
+
+            {%- assign swatch_overflow = swatch_total | minus: swatch_shown -%}
             {%- if swatch_overflow > 0 -%}
               <span class="product-card__swatch-more">+{{ swatch_overflow }}</span>
             {%- endif -%}

@@ -6,27 +6,20 @@
 -%}
 
 {% style %}
+  /* sticky in both modes, so switching never reflows the page */
+  #shopify-section-{{ section.id }} {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
   {% if overlay %}
+    /* cancel the header's own height so the hero sits beneath it, as before */
     #shopify-section-{{ section.id }} {
-      position: absolute;
-      left: 0;
-      right: 0;
-      z-index: 40;
-    }
-  {% else %}
-    #shopify-section-{{ section.id }} {
-      position: sticky;
-      top: 0;
-      z-index: 40;
+      margin-bottom: calc(-1 * var(--header-height));
     }
   {% endif %}
 {% endstyle %}
-
-{% if overlay %}
-  <style>
-    body { position: relative; }
-  </style>
-{% endif %}
 
 <header class="site-header{% if overlay %} site-header--overlay{% endif %}">
   <div class="page-width site-header__inner">

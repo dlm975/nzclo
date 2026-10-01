@@ -1,0 +1,25 @@
+{%- comment -%}
+  Renders a single colour swatch.
+  @param value - the product option value
+  @param is_available - whether any variant in this colour is currently in stock
+
+  Usage: {% render 'product-swatch', value: value, is_available: true %}
+{%- endcomment -%}
+{%- liquid
+  assign swatch_image = value.swatch.image
+  assign swatch_color = value.swatch.color
+  if swatch_color == blank
+    assign swatch_color = value | downcase | strip | replace: ' ', ''
+  endif
+
+  assign swatch_title = value
+  unless is_available
+    assign swatch_title = value | append: ' — sold out'
+  endunless
+-%}
+<span
+  class="product-card__swatch"
+  title="{{ swatch_title | escape }}"
+  data-available="{% if is_available %}true{% else %}false{% endif %}"
+  style="background-color: #cfcbc4;{% if swatch_image %} background-image: url({{ swatch_image | image_url: width: 40 }});{% else %} background-color: {{ swatch_color | escape }};{% endif %}"
+></span>

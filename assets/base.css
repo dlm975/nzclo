@@ -226,6 +226,24 @@ select.field {
 .site-header--overlay .site-header__icon { color: #fff; }
 .site-header--overlay .cart-count-bubble { background: #fff; color: #1a1a1a; }
 
+/* once scrolled off the hero the floating header needs its own ground */
+.site-header--overlay {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+.site-header--solid {
+  background: rgba(255, 255, 255, 0.86);
+  -webkit-backdrop-filter: saturate(1.5) blur(14px);
+  backdrop-filter: saturate(1.5) blur(14px);
+  border-bottom: 1px solid rgba(var(--color-text), 0.08);
+  color: rgb(var(--color-text));
+}
+.site-header--solid a,
+.site-header--solid .site-header__icon { color: rgb(var(--color-text)); }
+.site-header--solid .cart-count-bubble {
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
+}
+
 .site-header__logo {
   justify-self: center;
   font-size: 26px;
@@ -407,17 +425,6 @@ select.field {
   align-items: center;
   gap: 8px;
 }
-.authenticity__seal {
-  width: 17px;
-  height: 17px;
-  flex: none;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  color: rgb(var(--color-text));
-}
 .authenticity__text {
   font-size: 11px;
   letter-spacing: 0.1em;
@@ -435,22 +442,21 @@ select.field {
   align-items: center;
   gap: clamp(14px, 2vw, 26px);
 }
-.authenticity__logo {
+
+/* uploaded marks: never distorted, and capped so large files cannot break the row */
+.authenticity__mark {
   height: var(--authenticity-logo-height, 20px);
   width: auto;
-  max-width: 130px;
+  max-width: clamp(90px, 14vw, 160px);
+  max-height: 44px;
   object-fit: contain;
   opacity: 0.9;
 }
-.authenticity__wordmark {
-  font-size: clamp(13px, 1.4vw, 16px);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: rgb(var(--color-text));
-  white-space: nowrap;
+.authenticity__mark--badge {
+  height: var(--authenticity-badge-height, 18px);
+  max-width: clamp(60px, 9vw, 110px);
+  opacity: 1;
 }
-.authenticity__wordmark--airism { text-transform: none; letter-spacing: 0.01em; }
 
 @media (max-width: 599px) {
   .authenticity__divider { display: none; }
