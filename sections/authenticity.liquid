@@ -1,0 +1,80 @@
+<div class="page-width authenticity" style="--authenticity-logo-height: {{ section.settings.logo_height }}px;">
+  <div class="authenticity__row">
+    <span class="authenticity__badge">
+      <svg class="authenticity__seal" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 2.6l2.2 1.5 2.6-.4 1 2.5 2.3 1.3-.6 2.6.9 2.5-2 1.7-.5 2.6-2.6.3-1.9 1.8-2.4-1.1-2.6.4-1-2.5-2.3-1.3.6-2.6-.9-2.5 2-1.7.5-2.6 2.6-.3z"/>
+        <path d="M8.6 12.1l2.3 2.3 4.5-4.6"/>
+      </svg>
+      <span class="authenticity__text">{{ section.settings.text }}</span>
+    </span>
+
+    {%- if section.settings.uniqlo_logo or section.settings.uniqlo_label != blank or section.settings.airism_logo or section.settings.airism_label != blank -%}
+      <span class="authenticity__divider" aria-hidden="true"></span>
+
+      <span class="authenticity__logos">
+        {%- if section.settings.uniqlo_logo -%}
+          <img
+            class="authenticity__logo"
+            src="{{ section.settings.uniqlo_logo | image_url: width: 240 }}"
+            alt="{{ section.settings.uniqlo_label | default: 'UNIQLO' | escape }}"
+            loading="lazy"
+            width="120"
+            height="{{ 120 | divided_by: section.settings.uniqlo_logo.aspect_ratio | round }}"
+          >
+        {%- elsif section.settings.uniqlo_label != blank -%}
+          <span class="authenticity__wordmark">{{ section.settings.uniqlo_label }}</span>
+        {%- endif -%}
+
+        {%- if section.settings.airism_logo -%}
+          <img
+            class="authenticity__logo"
+            src="{{ section.settings.airism_logo | image_url: width: 240 }}"
+            alt="{{ section.settings.airism_label | default: 'AIRism' | escape }}"
+            loading="lazy"
+            width="120"
+            height="{{ 120 | divided_by: section.settings.airism_logo.aspect_ratio | round }}"
+          >
+        {%- elsif section.settings.airism_label != blank -%}
+          <span class="authenticity__wordmark authenticity__wordmark--airism">{{ section.settings.airism_label }}</span>
+        {%- endif -%}
+      </span>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Authenticity",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Statement",
+      "default": "100% authentic product"
+    },
+    {
+      "type": "header",
+      "content": "Brand marks"
+    },
+    {
+      "type": "paragraph",
+      "content": "Upload the official logo files to show them exactly as supplied. Until an image is uploaded, the text below is used instead."
+    },
+    { "type": "image_picker", "id": "uniqlo_logo", "label": "UNIQLO logo" },
+    { "type": "text", "id": "uniqlo_label", "label": "UNIQLO fallback text", "default": "UNIQLO" },
+    { "type": "image_picker", "id": "airism_logo", "label": "AIRism logo" },
+    { "type": "text", "id": "airism_label", "label": "AIRism fallback text", "default": "AIRism" },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo height",
+      "default": 20
+    }
+  ],
+  "presets": [{ "name": "Authenticity" }]
+}
+{% endschema %}
