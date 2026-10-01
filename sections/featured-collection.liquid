@@ -1,18 +1,49 @@
+{%- liquid
+  assign has_picked_products = false
+  for block in section.blocks
+    if block.settings.product != blank
+      assign has_picked_products = true
+      break
+    endif
+  endfor
+
+  assign source_collection = section.settings.collection
+  unless has_picked_products
+    if source_collection != blank and source_collection.products.size > 0
+      assign fallback_products = source_collection.products
+    else
+      assign fallback_products = collections.all.products
+    endif
+  endunless
+
+  assign heading_text = section.settings.heading
+  if heading_text == blank
+    assign heading_text = source_collection.title
+  endif
+-%}
+
 <div class="page-width section-pad">
   <div class="section-header">
     <div>
       {%- if section.settings.eyebrow != blank -%}
         <p class="text-small text-secondary lowercase" style="margin: 0 0 6px; letter-spacing: 0.08em;">{{ section.settings.eyebrow }}</p>
       {%- endif -%}
-      <h2 class="h-section" style="margin: 0;">{{ section.settings.heading | default: section.settings.collection.title | downcase }}</h2>
+      {%- if heading_text != blank -%}
+        <h2 class="h-section" style="margin: 0;">{{ heading_text | downcase }}</h2>
+      {%- endif -%}
     </div>
-    <a class="link-underline" href="{{ section.settings.collection.url | default: routes.all_products_collection_url }}">shop all</a>
+    <a class="link-underline" href="{{ source_collection.url | default: routes.all_products_collection_url }}">shop all</a>
   </div>
 
   <div class="{% if section.settings.layout == 'grid' %}product-grid{% else %}product-rail{% endif %}">
-    {%- assign col = section.settings.collection -%}
-    {%- if col != blank and col.products.size > 0 -%}
-      {%- for product in col.products limit: section.settings.limit -%}
+    {%- if has_picked_products -%}
+      {%- for block in section.blocks -%}
+        {%- if block.settings.product != blank -%}
+          {% render 'product-card', product: block.settings.product, block_attributes: block.shopify_attributes %}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- elsif fallback_products.size > 0 -%}
+      {%- for product in fallback_products limit: section.settings.limit -%}
         {% render 'product-card', product: product %}
       {%- endfor -%}
     {%- else -%}
@@ -22,7 +53,7 @@
             <span class="product-card__shot">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</span>
             <span class="product-card__scrim"></span>
             <span class="product-card__info">
-              <span class="product-card__eyebrow">choose a collection</span>
+              <span class="product-card__eyebrow">add products to this section</span>
               <h3 class="product-card__title">example product</h3>
               <span class="product-card__row">
                 <span class="product-card__price">$0.00</span>
@@ -37,11 +68,10 @@
 
 {% schema %}
 {
-  "name": "Featured collection",
+  "name": "Featured products",
   "settings": [
-    { "type": "collection", "id": "collection", "label": "Collection" },
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
-    { "type": "text", "id": "heading", "label": "Heading (optional — collection title used if empty)" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "core collection" },
+    { "type": "text", "id": "heading", "label": "Heading" },
     {
       "type": "select",
       "id": "layout",
@@ -53,15 +83,44 @@
       "default": "rail"
     },
     {
+      "type": "header",
+      "content": "Fallback"
+    },
+    {
+      "type": "paragraph",
+      "content": "Used only when no products are added above. Leave the collection empty to show the newest products in the store."
+    },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    {
       "type": "range",
       "id": "limit",
       "min": 4,
       "max": 12,
       "step": 1,
-      "label": "Products to show",
+      "label": "Fallback products to show",
       "default": 8
     }
   ],
-  "presets": [{ "name": "Featured collection" }]
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Featured products",
+      "blocks": [
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" }
+      ]
+    }
+  ]
 }
 {% endschema %}

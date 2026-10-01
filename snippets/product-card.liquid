@@ -4,6 +4,7 @@
   the product information set over that blur.
 
   Usage: {% render 'product-card', product: product %}
+  Optional: block_attributes - pass block.shopify_attributes when rendered from a section block
 {%- endcomment -%}
 
 {%- liquid
@@ -27,7 +28,7 @@
   assign swatch_overflow = swatch_total | minus: swatch_limit
 -%}
 
-<div class="product-card{% if secondary %} product-card--swap{% endif %}">
+<div class="product-card{% if secondary %} product-card--swap{% endif %}"{% if block_attributes %} {{ block_attributes }}{% endif %}>
   <a class="product-card__media" href="{{ product.url }}">
     {%- if primary -%}
       <span class="product-card__bleed" aria-hidden="true">
