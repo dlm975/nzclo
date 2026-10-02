@@ -85,7 +85,7 @@
           "settings": {
             "collection": "pants",
             "label": "shop all",
-            "badge": "new",
+            "badge": "",
             "light_text": false
           }
         },
