@@ -785,13 +785,25 @@ select.field {
    below the grid's two-up breakpoint the price keeps its line and the swatches
    take the full width underneath, wrapping if a card is narrower still. Sizes,
    spacing and the desktop row are unchanged. */
+/* five chips on mobile, seven from the two-up breakpoint upwards. All seven are
+   in the markup; the last two are hidden below 750px, and each breakpoint shows
+   the remainder count that matches what it displays. */
+.product-card__swatch-more--narrow { display: none; }
+
 @media (max-width: 749px) {
-  .product-card__row {
-    flex-wrap: wrap;
-    gap: 6px 10px;
-  }
+  .product-card__swatch:nth-of-type(n+6) { display: none; }
+  .product-card__swatch-more--wide { display: none; }
+  .product-card__swatch-more--narrow { display: inline; }
+
+  /* On a narrow card the price must not be squeezed, so it keeps its natural
+     width and the swatch strip takes whatever is left, wrapping rather than
+     overflowing on the smallest handsets. */
   .product-card__price { flex: 0 0 auto; }
-  .product-card__swatches { flex: 1 0 100%; }
+  .product-card__swatches {
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: flex-end;
+  }
 }
 
 /* horizontal product rail */

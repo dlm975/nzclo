@@ -206,9 +206,22 @@
               {%- endunless -%}
             {%- endfor -%}
 
-            {%- assign swatch_overflow = swatch_total | minus: swatch_shown -%}
-            {%- if swatch_overflow > 0 -%}
-              <span class="product-card__swatch-more">+{{ swatch_overflow }}</span>
+            {%- comment -%}
+              Seven chips are rendered; CSS hides the last two on mobile, so each
+              breakpoint needs its own remainder count.
+            {%- endcomment -%}
+            {%- assign mobile_shown = swatch_shown -%}
+            {%- if mobile_shown > 5 -%}
+              {%- assign mobile_shown = 5 -%}
+            {%- endif -%}
+            {%- assign overflow_wide = swatch_total | minus: swatch_shown -%}
+            {%- assign overflow_narrow = swatch_total | minus: mobile_shown -%}
+
+            {%- if overflow_wide > 0 -%}
+              <span class="product-card__swatch-more product-card__swatch-more--wide">+{{ overflow_wide }}</span>
+            {%- endif -%}
+            {%- if overflow_narrow > 0 -%}
+              <span class="product-card__swatch-more product-card__swatch-more--narrow">+{{ overflow_narrow }}</span>
             {%- endif -%}
           </span>
         {%- endif -%}
