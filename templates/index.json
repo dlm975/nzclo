@@ -65,8 +65,8 @@
         "tile-mens": {
           "type": "tile",
           "settings": {
-            "collection": "",
-            "label": "mens",
+            "collection": "tops",
+            "label": "TOPS",
             "badge": "",
             "light_text": false
           }
@@ -74,7 +74,7 @@
         "tile-womens": {
           "type": "tile",
           "settings": {
-            "collection": "",
+            "collection": "shorts",
             "label": "womens",
             "badge": "",
             "light_text": false
@@ -83,9 +83,18 @@
         "tile-all": {
           "type": "tile",
           "settings": {
-            "collection": "",
+            "collection": "pants",
             "label": "shop all",
             "badge": "new",
+            "light_text": false
+          }
+        },
+        "tile_6NbcPH": {
+          "type": "tile",
+          "settings": {
+            "collection": "uniqlo",
+            "label": "shop all",
+            "badge": "",
             "light_text": false
           }
         }
@@ -93,7 +102,8 @@
       "block_order": [
         "tile-mens",
         "tile-womens",
-        "tile-all"
+        "tile-all",
+        "tile_6NbcPH"
       ],
       "settings": {
         "heading": ""
