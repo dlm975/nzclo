@@ -144,10 +144,22 @@
         "heading": "join the list",
         "text": "restocks, new drops, and nz-only offers. no spam."
       }
+    },
+    "authenticity": {
+      "type": "authenticity",
+      "settings": {
+        "text": "100% authentic product",
+        "badge_alt": "Verified authentic",
+        "badge_height": 18,
+        "uniqlo_alt": "UNIQLO",
+        "airism_alt": "AIRism",
+        "logo_height": 20
+      }
     }
   },
   "order": [
     "hero",
+    "authenticity",
     "tiles",
     "featured",
     "mission",
