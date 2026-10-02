@@ -345,7 +345,7 @@ select.field {
 
 .hero {
   position: relative;
-  min-height: min(85vh, 820px);
+  min-height: min(68vh, 656px);
   display: flex;
   align-items: flex-end;
   overflow: hidden;
@@ -777,7 +777,7 @@ select.field {
 /* section rhythm helpers */
 .section-pad--flush-bottom { padding-bottom: 0; }
 .section-pad--close-top { padding-top: clamp(22px, 2.8vw, 40px); }
-.section-pad--shadow-room { padding-bottom: clamp(24px, 3vw, 44px); }
+.section-pad--shadow-room { padding-bottom: clamp(4px, 0.8vw, 10px); }
 
 /* horizontal product rail */
 .product-rail {
