@@ -792,7 +792,7 @@ select.field {
 /* section rhythm helpers */
 .section-pad--flush-bottom { padding-bottom: 0; }
 .section-pad--close-top { padding-top: clamp(22px, 2.8vw, 40px); }
-.section-pad--shadow-room { padding-bottom: clamp(4px, 0.8vw, 10px); }
+.section-pad--shadow-room { padding-bottom: clamp(2px, 0.4vw, 5px); }
 
 /* Up to seven swatches will not sit beside the price on a narrow card, so
    below the grid's two-up breakpoint the price keeps its line and the swatches
