@@ -692,6 +692,7 @@ select.field {
 .product-card__swatches {
   display: flex;
   flex: 0 0 auto;
+  flex-wrap: wrap;
   align-items: center;
   gap: 6px;
   pointer-events: auto;
@@ -779,6 +780,19 @@ select.field {
 .section-pad--flush-bottom { padding-bottom: 0; }
 .section-pad--close-top { padding-top: clamp(22px, 2.8vw, 40px); }
 .section-pad--shadow-room { padding-bottom: clamp(4px, 0.8vw, 10px); }
+
+/* Up to seven swatches will not sit beside the price on a narrow card, so
+   below the grid's two-up breakpoint the price keeps its line and the swatches
+   take the full width underneath, wrapping if a card is narrower still. Sizes,
+   spacing and the desktop row are unchanged. */
+@media (max-width: 749px) {
+  .product-card__row {
+    flex-wrap: wrap;
+    gap: 6px 10px;
+  }
+  .product-card__price { flex: 0 0 auto; }
+  .product-card__swatches { flex: 1 0 100%; }
+}
 
 /* horizontal product rail */
 .product-rail {
