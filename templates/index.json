@@ -125,6 +125,7 @@
           "type": "tile",
           "settings": {
             "collection": "pants",
+            "image": "shopify://shop_images/Gray_and_Black_Wide-Leg_Sweatpants.png",
             "label": "pants",
             "badge": "",
             "light_text": false
@@ -134,6 +135,7 @@
           "type": "tile",
           "settings": {
             "collection": "uniqlo",
+            "image": "shopify://shop_images/Centered_Red_UNIQLO_Logo.png",
             "label": "shop all",
             "badge": "",
             "light_text": false
