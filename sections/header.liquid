@@ -6,17 +6,40 @@
 -%}
 
 {% style %}
-  /* sticky in both modes, so switching never reflows the page */
-  #shopify-section-{{ section.id }} {
-    position: sticky;
-    top: 0;
-    z-index: 40;
-  }
-
   {% if overlay %}
-    /* cancel the header's own height so the hero sits beneath it, as before */
+    /* Over the hero the header starts in normal flow and scrolls away with the
+       page; JS pins it once the hero is half scrolled. Its own height is
+       cancelled so the hero sits beneath it, which also means pinning costs no
+       layout: in flow it is 64px minus a 64px margin (net 0), and fixed it is
+       out of flow (also net 0), so content never shifts. */
     #shopify-section-{{ section.id }} {
+      position: relative;
+      z-index: 40;
       margin-bottom: calc(-1 * var(--header-height));
+    }
+
+    #shopify-section-{{ section.id }}.header--pinned {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      animation: header-drop 0.28s ease;
+    }
+
+    @keyframes header-drop {
+      from { transform: translateY(-100%); }
+      to { transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #shopify-section-{{ section.id }}.header--pinned { animation: none; }
+    }
+  {% else %}
+    /* no hero to measure against, so the header stays sticky from the top */
+    #shopify-section-{{ section.id }} {
+      position: sticky;
+      top: 0;
+      z-index: 40;
     }
   {% endif %}
 {% endstyle %}

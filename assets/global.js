@@ -48,6 +48,21 @@
       overlayHeader.classList.toggle('site-header--solid', solid);
     };
 
+    /* Pin the header once the hero is half scrolled. The threshold is read
+       from the hero's live rect on every frame, so it follows whatever height
+       the hero actually has at the current breakpoint with no stored value to
+       go stale on resize or orientation change. */
+    var headerSection = overlayHeader.closest('.shopify-section') || overlayHeader.parentElement;
+    if (headerSection && heroEl) {
+      var applyPin = function () {
+        var rect = heroEl.getBoundingClientRect();
+        headerSection.classList.toggle('header--pinned', rect.top <= -(rect.height / 2));
+      };
+      window.addEventListener('scroll', applyPin, { passive: true });
+      window.addEventListener('resize', applyPin, { passive: true });
+      applyPin();
+    }
+
     if (heroEl && 'IntersectionObserver' in window) {
       var headerH = overlayHeader.offsetHeight || 64;
       new IntersectionObserver(function (entries) {
