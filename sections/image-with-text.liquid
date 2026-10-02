@@ -1,21 +1,21 @@
 <div class="page-width section-pad" style="padding-top: 0;">
-  <div class="iwt"{% if section.settings.reverse %} style="direction: rtl;"{% endif %}>
-    <div class="iwt__media"{% if section.settings.reverse %} style="direction: ltr;"{% endif %}>
+  <div class="iwt{% if section.settings.reverse %} iwt--left{% endif %}">
+    <div class="iwt__media">
       {%- if section.settings.image -%}
         <img
-          src="{{ section.settings.image | image_url: width: 1200 }}"
-          srcset="{{ section.settings.image | image_url: width: 700 }} 700w, {{ section.settings.image | image_url: width: 1200 }} 1200w"
-          sizes="(max-width: 899px) 100vw, 50vw"
+          src="{{ section.settings.image | image_url: width: 1600 }}"
+          srcset="{{ section.settings.image | image_url: width: 800 }} 800w, {{ section.settings.image | image_url: width: 1600 }} 1600w, {{ section.settings.image | image_url: width: 2400 }} 2400w"
+          sizes="100vw"
           alt="{{ section.settings.image.alt | escape }}"
           loading="lazy"
-          width="1200"
-          height="1500"
+          width="1600"
+          height="700"
         >
       {%- else -%}
         {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
       {%- endif -%}
     </div>
-    <div class="iwt__content"{% if section.settings.reverse %} style="direction: ltr;"{% endif %}>
+    <div class="iwt__content">
       {%- if section.settings.heading != blank -%}
         <h2 class="h-section"{% render 'text-attrs', s: section.settings, p: 'heading' %}>{{ section.settings.heading }}</h2>
       {%- endif -%}

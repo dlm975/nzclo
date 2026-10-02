@@ -1034,20 +1034,103 @@ select.field {
 
 /* ---------- image with text ---------- */
 
-.iwt { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: stretch; }
-@media (max-width: 899px) { .iwt { grid-template-columns: 1fr; } }
-.iwt__media { background: rgb(var(--color-tile)); border-radius: var(--radius-tile); overflow: hidden; }
-.iwt__media img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4 / 5; }
-.iwt__content {
+.iwt { position: relative; }
+
+.iwt__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 7;
   background: rgb(var(--color-tile));
   border-radius: var(--radius-tile);
+  overflow: hidden;
+}
+.iwt__media img,
+.iwt__media svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Narrow screens: a 16:7 frame is only ~170px tall at phone widths, far too
+   short to hold the copy, so the card sits below the image instead. */
+.iwt__content {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: flex-start;
-  padding: clamp(28px, 4vw, 64px);
+  margin-top: 12px;
+  padding: clamp(20px, 5vw, 32px);
+  background: rgb(var(--color-tile));
+  border-radius: var(--radius-tile);
 }
-.iwt__content p { color: rgb(var(--color-text-secondary)); font-size: 14px; line-height: 1.6; max-width: 46ch; margin: 0 0 24px; }
+.iwt__content p {
+  color: rgb(var(--color-text-secondary));
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 46ch;
+  margin: 0 0 24px;
+}
+
+/* From the two-up breakpoint the frame is tall enough to float the copy over
+   it, bottom right, as a frosted glass card. */
+@media (min-width: 750px) {
+  .iwt {
+    --iwt-inset: clamp(18px, 2.4vw, 40px);
+  }
+  .iwt__content {
+    position: absolute;
+    right: var(--iwt-inset);
+    bottom: var(--iwt-inset);
+    width: min(42%, 440px);
+    max-height: calc(100% - (var(--iwt-inset) * 2));
+    overflow: auto;
+    margin-top: 0;
+    padding: clamp(20px, 1.9vw, 30px);
+    border-radius: 20px;
+    color: #fff;
+    /* a light tint alone leaves white copy unreadable over bright photography,
+       so the material carries a gentle dark gradient as well; at ~26% the image
+       still reads clearly through it */
+    background: linear-gradient(
+      150deg,
+      rgba(22, 22, 24, 0.3) 0%,
+      rgba(22, 22, 24, 0.2) 100%
+    );
+    -webkit-backdrop-filter: blur(24px) saturate(1.6);
+    backdrop-filter: blur(24px) saturate(1.6);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    box-shadow:
+      0 12px 36px rgba(0, 0, 0, 0.24),
+      inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  }
+  .iwt--left .iwt__content {
+    right: auto;
+    left: var(--iwt-inset);
+  }
+  .iwt__content > * { color: #fff; }
+  .iwt__content .h-section {
+    font-size: clamp(18px, 1.6vw, 26px);
+    margin-bottom: 8px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  }
+  .iwt__content p {
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 13px;
+    margin-bottom: 16px;
+    max-width: none;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  }
+  .iwt__content .btn {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.65);
+    color: #fff;
+  }
+  .iwt__content .btn:hover {
+    background: #fff;
+    border-color: #fff;
+    color: #1a1a1a;
+  }
+}
 
 /* ---------- social strip ---------- */
 
