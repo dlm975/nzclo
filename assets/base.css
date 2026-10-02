@@ -567,6 +567,14 @@ select.field {
 .pc-img--secondary { opacity: 0; }
 
 /* readability scrim — a soft gradient, never a solid block */
+/* whole-card link, beneath the interactive controls */
+.product-card__link {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+}
+
 .product-card__scrim {
   position: absolute;
   inset: 0;
@@ -598,6 +606,9 @@ select.field {
   }
   .product-card--swap:hover .pc-img--primary { opacity: 0; }
   .product-card--swap:hover .pc-img--secondary { opacity: 1; }
+  /* once a colour is chosen, hover must not swap away from it */
+  .product-card--variant-selected:hover .pc-img--primary { opacity: 1; }
+  .product-card--variant-selected:hover .pc-img--secondary { opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -629,10 +640,11 @@ select.field {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 2;
+  z-index: 3;
   display: block;
   padding: clamp(14px, 1.3vw, 20px);
   color: #fff;
+  pointer-events: none;
 }
 .product-card__eyebrow {
   display: block;
@@ -679,14 +691,80 @@ select.field {
   flex: 0 0 auto;
   align-items: center;
   gap: 6px;
+  pointer-events: auto;
 }
 .product-card__swatch {
+  position: relative;
   width: 13px;
   height: 13px;
+  padding: 0;
+  border: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
   border-radius: 50%;
   background-size: cover;
   background-position: center;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.85), 0 1px 3px rgba(0, 0, 0, 0.35);
+  transition: box-shadow 0.2s ease;
+}
+/* comfortable tap target without changing the visual size */
+.product-card__swatch::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+}
+.product-card__swatch[aria-pressed="true"] {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.95),
+    0 0 0 3.5px rgba(255, 255, 255, 0.5),
+    0 1px 3px rgba(0, 0, 0, 0.4);
+}
+.product-card__swatch:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+/* compact add-to-cart, top right, inside the image area */
+.product-card__add {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  pointer-events: auto;
+  color: #141414;
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: blur(8px) saturate(1.4);
+  backdrop-filter: blur(8px) saturate(1.4);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+.product-card__add:hover { background: #fff; opacity: 1; transform: scale(1.06); }
+.product-card__add:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.product-card__add-icon {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.product-card__add-icon--check { display: none; }
+.product-card__add.is-busy { opacity: 0.55; pointer-events: none; }
+.product-card__add.is-added { background: #1d7a46; color: #fff; }
+.product-card__add.is-added .product-card__add-icon--plus { display: none; }
+.product-card__add.is-added .product-card__add-icon--check { display: block; }
+@media (prefers-reduced-motion: reduce) {
+  .product-card__add, .product-card__swatch { transition: none; }
+  .product-card__add:hover { transform: none; }
 }
 .product-card__swatch-more {
   font-size: 11px;
@@ -844,9 +922,9 @@ select.field {
 .site-footer__links a { font-size: 14px; text-transform: lowercase; }
 .site-footer__note { font-size: 14px; color: rgb(var(--color-text-secondary)); max-width: 34ch; text-transform: lowercase; }
 .site-footer__wordmark {
-  font-size: clamp(80px, 16vw, 260px);
+  font-size: clamp(24px, 3.2vw, 46px);
   font-weight: 700;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
   text-transform: lowercase;
   line-height: 0.9;
   text-align: center;

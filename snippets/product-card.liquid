@@ -44,10 +44,25 @@
       assign available_values = available_values | append: variant_value | append: '||'
     endif
   endfor
+
+  comment
+    Quick add is only safe when a variant is fully determined: a single-variant
+    product, or one whose only option is the colour the swatches already set.
+    Anything with an unresolved option (size, etc.) goes to the product page.
+  endcomment
+  assign default_variant = product.selected_or_first_available_variant
+  assign can_quick_add = false
+  if product.available
+    if product.variants.size == 1
+      assign can_quick_add = true
+    elsif product.options.size == 1 and color_option
+      assign can_quick_add = true
+    endif
+  endif
 -%}
 
 <div class="product-card{% if secondary %} product-card--swap{% endif %}"{% if block_attributes %} {{ block_attributes }}{% endif %}>
-  <a class="product-card__media" href="{{ product.url }}">
+  <div class="product-card__media">
     {%- if primary -%}
       <span class="product-card__bleed" aria-hidden="true">
         <img
@@ -98,7 +113,30 @@
       <span class="product-card__shot">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</span>
     {%- endif -%}
 
+    <a class="product-card__link" href="{{ product.url }}" aria-label="{{ product.title | escape }}"></a>
+
     <span class="product-card__scrim"></span>
+
+    {%- if can_quick_add -%}
+      <button
+        type="button"
+        class="product-card__add"
+        data-card-add
+        data-variant-id="{{ default_variant.id }}"
+        aria-label="{{ 'products.product.add_to_cart' | t }} — {{ product.title | escape }}"
+      >
+        <svg class="product-card__add-icon product-card__add-icon--plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg>
+        <svg class="product-card__add-icon product-card__add-icon--check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+      </button>
+    {%- elsif product.available -%}
+      <a
+        class="product-card__add product-card__add--options"
+        href="{{ product.url }}"
+        aria-label="{{ 'products.product.choose_options' | t }} — {{ product.title | escape }}"
+      >
+        <svg class="product-card__add-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg>
+      </a>
+    {%- endif -%}
 
     {%- if product.available == false -%}
       <span class="product-card__badge">sold out</span>
@@ -119,13 +157,13 @@
         <span class="product-card__price">{% render 'price', product: product %}</span>
 
         {%- if color_option -%}
-          <span class="product-card__swatches" aria-hidden="true">
+          <span class="product-card__swatches">
             {%- assign swatch_shown = 0 -%}
 
             {%- for value in color_option.values -%}
               {%- assign needle = '||' | append: value | append: '||' -%}
               {%- if available_values contains needle and swatch_shown < swatch_limit -%}
-                {% render 'product-swatch', value: value, is_available: true %}
+                {% render 'product-swatch', value: value, is_available: true, product: product, color_position: color_position %}
                 {%- assign swatch_shown = swatch_shown | plus: 1 -%}
               {%- endif -%}
             {%- endfor -%}
@@ -134,7 +172,7 @@
               {%- assign needle = '||' | append: value | append: '||' -%}
               {%- unless available_values contains needle -%}
                 {%- if swatch_shown < swatch_limit -%}
-                  {% render 'product-swatch', value: value, is_available: false %}
+                  {% render 'product-swatch', value: value, is_available: false, product: product, color_position: color_position %}
                   {%- assign swatch_shown = swatch_shown | plus: 1 -%}
                 {%- endif -%}
               {%- endunless -%}
@@ -148,5 +186,5 @@
         {%- endif -%}
       </span>
     </span>
-  </a>
+  </div>
 </div>

@@ -31,7 +31,8 @@
       "unavailable": "unavailable",
       "regular_price": "regular price",
       "sale_price": "sale price",
-      "quantity": "quantity"
+      "quantity": "quantity",
+      "choose_options": "choose options"
     }
   },
   "cart": {

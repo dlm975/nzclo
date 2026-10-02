@@ -95,6 +95,98 @@
     input.dispatchEvent(new Event('change', { bubbles: true }));
   });
 
+  /* ---------- product card: colour swatches + quick add ---------- */
+  /* Delegated, so cards rendered later (sections re-render, paginated grids)
+     behave identically to those present at first paint. */
+
+  document.addEventListener('click', function (e) {
+    var swatch = e.target.closest('[data-swatch]');
+    if (!swatch) return;
+    e.preventDefault();
+
+    var card = swatch.closest('.product-card');
+    if (!card) return;
+
+    qsa('[data-swatch]', card).forEach(function (other) {
+      other.setAttribute('aria-pressed', other === swatch ? 'true' : 'false');
+    });
+
+    var src = swatch.getAttribute('data-src');
+    if (src) {
+      var shot = qs('.product-card__shot .pc-img--primary', card);
+      var bleed = qs('.product-card__bleed .pc-img--primary', card);
+      if (shot) {
+        shot.src = src;
+        var srcset = swatch.getAttribute('data-srcset');
+        if (srcset) shot.srcset = srcset;
+        var alt = swatch.getAttribute('data-alt');
+        if (alt) shot.alt = alt;
+      }
+      if (bleed) {
+        var bleedSrc = swatch.getAttribute('data-bleed');
+        if (bleedSrc) {
+          bleed.removeAttribute('srcset');
+          bleed.src = bleedSrc;
+        }
+      }
+      /* pin the chosen image so the hover swap cannot replace it */
+      card.classList.add('product-card--variant-selected');
+    }
+
+    var variantId = swatch.getAttribute('data-variant-id');
+    var addButton = qs('[data-card-add]', card);
+    if (variantId && addButton) addButton.setAttribute('data-variant-id', variantId);
+  });
+
+  function updateCartCount() {
+    return fetch('/cart.js', { headers: { 'Accept': 'application/json' } })
+      .then(function (r) { return r.json(); })
+      .then(function (cart) {
+        qsa('[data-cart-count]').forEach(function (el) { el.textContent = cart.item_count; });
+      });
+  }
+
+  document.addEventListener('click', function (e) {
+    var button = e.target.closest('[data-card-add]');
+    if (!button) return;
+    e.preventDefault();
+
+    var variantId = button.getAttribute('data-variant-id');
+    if (!variantId || button.classList.contains('is-busy')) return;
+
+    if (!window.fetch) {
+      var card = button.closest('.product-card');
+      var link = card && qs('.product-card__link', card);
+      if (link) window.location.href = link.href;
+      return;
+    }
+
+    button.classList.add('is-busy');
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ items: [{ id: Number(variantId), quantity: 1 }] })
+    })
+      .then(function (r) {
+        if (!r.ok) {
+          return r.json().then(function (data) {
+            throw new Error(data.description || data.message || 'could not add to bag');
+          });
+        }
+        return r.json();
+      })
+      .then(function () {
+        button.classList.remove('is-busy');
+        button.classList.add('is-added');
+        setTimeout(function () { button.classList.remove('is-added'); }, 1800);
+        return drawerEnabled ? refreshCartDrawer(true) : updateCartCount();
+      })
+      .catch(function (err) {
+        button.classList.remove('is-busy');
+        alert(err.message || 'could not add to bag');
+      });
+  });
+
   /* ---------- variant picker ---------- */
 
   qsa('[data-product-form-wrapper]').forEach(function (wrapper) {
