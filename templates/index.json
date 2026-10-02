@@ -295,8 +295,9 @@
     "iwt": {
       "type": "image-with-text",
       "settings": {
-        "heading": "made for every day",
-        "text": "airism cotton, relaxed fits, and wardrobe staples that work as hard as you do — delivered to your door anywhere in aotearoa.",
+        "image": "shopify://shop_images/Minimalist_Clothing_Stacks_on_White_Pedestal.png",
+        "heading": "the most versatile pieces.",
+        "text": "clothing made for every occsaion. classy, elevated clothing at value pricing.",
         "button_label": "shop the range",
         "button_link": "",
         "reverse": false,
