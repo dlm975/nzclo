@@ -1,0 +1,75 @@
+{%- comment -%}
+  Compact trust strip, sharing the authenticity strip's markup and styling so the
+  two read as one system. The flag is merchant-uploaded and hidden when absent.
+{%- endcomment -%}
+
+{%- liquid
+  assign flag_src = ''
+  if section.settings.flag_svg_url != blank
+    assign flag_src = section.settings.flag_svg_url
+  elsif section.settings.flag_image
+    assign flag_src = section.settings.flag_image | image_url: width: 300
+  endif
+
+  assign flag_h = section.settings.flag_height
+  if section.settings.flag_svg_url != blank
+    assign flag_w = flag_h | times: 2
+  elsif section.settings.flag_image
+    assign flag_w = flag_h | times: section.settings.flag_image.aspect_ratio | round
+  endif
+-%}
+
+{%- if flag_src != blank or section.settings.text != blank -%}
+  <div class="page-width authenticity local-stock" style="--authenticity-badge-height: {{ flag_h }}px;">
+    <div class="authenticity__row">
+      <span class="authenticity__badge">
+        {%- if flag_src != blank -%}
+          <img
+            class="authenticity__mark authenticity__mark--badge"
+            src="{{ flag_src }}"
+            alt="{{ section.settings.flag_alt | escape }}"
+            loading="lazy"
+            width="{{ flag_w | default: flag_h }}"
+            height="{{ flag_h }}"
+          >
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <span class="authenticity__text">{{ section.settings.text }}</span>
+        {%- endif -%}
+      </span>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Local stock strip",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "ALL STOCK HELD LOCALLY IN NEW ZEALAND"
+    },
+    { "type": "header", "content": "Flag" },
+    {
+      "type": "paragraph",
+      "content": "PNG, JPEG, WEBP and GIF can be selected with the image picker. For an SVG, upload it under Content > Files, copy its URL and paste it below. Leave both empty to hide the flag."
+    },
+    { "type": "image_picker", "id": "flag_image", "label": "Flag image" },
+    { "type": "text", "id": "flag_svg_url", "label": "Flag SVG URL (optional, overrides image)" },
+    { "type": "text", "id": "flag_alt", "label": "Flag alt text", "default": "New Zealand" },
+    {
+      "type": "range",
+      "id": "flag_height",
+      "min": 10,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Flag height",
+      "default": 16
+    }
+  ],
+  "presets": [{ "name": "Local stock strip" }]
+}
+{% endschema %}

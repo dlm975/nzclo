@@ -161,12 +161,21 @@
         "heading": "join the list",
         "text": "restocks, new drops, and nz-only offers. no spam."
       }
+    },
+    "local_stock": {
+      "type": "local-stock",
+      "settings": {
+        "text": "ALL STOCK HELD LOCALLY IN NEW ZEALAND",
+        "flag_alt": "New Zealand",
+        "flag_height": 16
+      }
     }
   },
   "order": [
     "hero",
     "authenticity",
     "featured",
+    "local_stock",
     "tiles",
     "mission",
     "iwt",

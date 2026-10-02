@@ -413,6 +413,8 @@ select.field {
   padding-top: clamp(28px, 3.4vw, 44px);
   padding-bottom: 0;
 }
+/* second strip sits inside an existing gap, so it carries less of its own */
+.local-stock { padding-top: clamp(14px, 2vw, 28px); }
 .authenticity__row {
   display: flex;
   flex-wrap: wrap;
@@ -809,7 +811,9 @@ select.field {
   grid-template-columns: repeat(var(--tiles, 3), 1fr);
   gap: 14px;
 }
-@media (max-width: 749px) { .collection-tiles { grid-template-columns: 1fr; } }
+@media (max-width: 749px) {
+  .collection-tiles { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+}
 .collection-tile {
   position: relative;
   border-radius: var(--radius-tile);
