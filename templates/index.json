@@ -22,6 +22,23 @@
         "height": "tall"
       }
     },
+    "authenticity": {
+      "type": "authenticity",
+      "settings": {
+        "text": "100% authentic product",
+        "badge_image": "shopify://shop_images/Twitter_Verified_Badge_1.svg",
+        "badge_svg_url": "",
+        "badge_alt": "Verified authentic",
+        "badge_height": 18,
+        "uniqlo_logo": "shopify://shop_images/Uniqlo_logo_Japanese_1.svg",
+        "uniqlo_svg_url": "",
+        "uniqlo_alt": "UNIQLO",
+        "airism_logo": "shopify://shop_images/airism-logo-vector.png",
+        "airism_svg_url": "",
+        "airism_alt": "AIRism",
+        "logo_height": 20
+      }
+    },
     "tiles": {
       "type": "collection-tiles",
       "blocks": {
@@ -143,17 +160,6 @@
       "settings": {
         "heading": "join the list",
         "text": "restocks, new drops, and nz-only offers. no spam."
-      }
-    },
-    "authenticity": {
-      "type": "authenticity",
-      "settings": {
-        "text": "100% authentic product",
-        "badge_alt": "Verified authentic",
-        "badge_height": 18,
-        "uniqlo_alt": "UNIQLO",
-        "airism_alt": "AIRism",
-        "logo_height": 20
       }
     }
   },
