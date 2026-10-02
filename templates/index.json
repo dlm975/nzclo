@@ -49,6 +49,16 @@
         "limit": 8
       }
     },
+    "local_stock": {
+      "type": "local-stock",
+      "settings": {
+        "text": "ALL STOCK HELD LOCALLY IN NEW ZEALAND",
+        "flag_image": "shopify://shop_images/Flag_of_New_Zealand.svg",
+        "flag_svg_url": "",
+        "flag_alt": "New Zealand",
+        "flag_height": 16
+      }
+    },
     "tiles": {
       "type": "collection-tiles",
       "blocks": {
@@ -160,14 +170,6 @@
       "settings": {
         "heading": "join the list",
         "text": "restocks, new drops, and nz-only offers. no spam."
-      }
-    },
-    "local_stock": {
-      "type": "local-stock",
-      "settings": {
-        "text": "ALL STOCK HELD LOCALLY IN NEW ZEALAND",
-        "flag_alt": "New Zealand",
-        "flag_height": 16
       }
     }
   },
