@@ -173,10 +173,9 @@
     <span class="product-card__badge product-card__badge--preorder">{{ settings.preorder_label | default: 'Pre-Order' }}</span>
 
     <span class="product-card__info">
+      {%- comment -%} product type is deliberately not shown here {%- endcomment -%}
       {%- if product.metafields.custom.subtitle != blank -%}
         <span class="product-card__eyebrow">{{ product.metafields.custom.subtitle }}</span>
-      {%- elsif product.type != blank -%}
-        <span class="product-card__eyebrow">{{ product.type }}</span>
       {%- endif -%}
 
       <h3 class="product-card__title">{{ product.title }}</h3>
