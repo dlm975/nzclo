@@ -105,6 +105,7 @@
           "type": "tile",
           "settings": {
             "collection": "tops",
+            "image": "shopify://shop_images/Chocolate_and_Black_T-Shirt_Flat_Lay.png",
             "label": "TOPS",
             "badge": "",
             "light_text": false
@@ -114,7 +115,8 @@
           "type": "tile",
           "settings": {
             "collection": "shorts",
-            "label": "womens",
+            "image": "shopify://shop_images/Three_Shorts_on_White_Background.png",
+            "label": "shorts",
             "badge": "",
             "light_text": false
           }
@@ -123,7 +125,7 @@
           "type": "tile",
           "settings": {
             "collection": "pants",
-            "label": "shop all",
+            "label": "pants",
             "badge": "",
             "light_text": false
           }
