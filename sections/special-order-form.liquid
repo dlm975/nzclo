@@ -1,0 +1,152 @@
+{%- comment -%}
+  Ported from the previous nzclo theme. Field names, the 3-item minimum, the
+  add/remove behaviour and the ?product= / ?link= prefill are preserved exactly;
+  only the styling is reworked to use this theme's form components.
+{%- endcomment -%}
+
+<div
+  class="page-width special-order"
+  style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="special-order__inner">
+    {%- if section.settings.heading != blank -%}
+      <h1 class="h-section text-center">{{ section.settings.heading }}</h1>
+    {%- endif -%}
+
+    {%- if section.settings.note != blank -%}
+      <p class="special-order__note">{{ section.settings.note }}</p>
+    {%- endif -%}
+
+    {%- form 'contact', id: 'SpecialOrderForm' -%}
+      {%- if form.posted_successfully? -%}
+        <p class="form-success" role="status">{{ section.settings.success_message }}</p>
+      {%- endif -%}
+      {%- if form.errors -%}
+        <p class="form-errors" role="alert">{{ form.errors | default_errors }}</p>
+      {%- endif -%}
+
+      <input type="hidden" name="contact[Request type]" value="Special Order (3+ items)">
+
+      <div class="form-row special-order__contact-row">
+        <div>
+          <label class="field-label" for="SpecialOrderName">your name</label>
+          <input class="field" type="text" id="SpecialOrderName" name="contact[Name]" autocomplete="name" required>
+        </div>
+        <div>
+          <label class="field-label" for="SpecialOrderEmail">email</label>
+          <input class="field" type="email" id="SpecialOrderEmail" name="contact[email]" autocomplete="email" required>
+        </div>
+      </div>
+
+      <div id="SpecialOrderItems"></div>
+
+      <button type="button" class="btn btn--full special-order__add" id="AddSpecialOrderItem">+ add another item</button>
+
+      <div class="form-row" style="margin-top: 16px;">
+        <label class="field-label" for="SpecialOrderNote">anything else? (optional)</label>
+        <textarea class="field" id="SpecialOrderNote" name="contact[Note]" rows="3"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn--solid btn--full">send special order request</button>
+    {%- endform -%}
+  </div>
+</div>
+
+<template id="SpecialOrderItemTemplate">
+  <div class="special-order-item">
+    <div class="special-order-item__head">
+      <span class="special-order-item__legend">Item</span>
+      <button type="button" class="special-order-item__remove link-underline">remove</button>
+    </div>
+    <div class="form-row">
+      <label class="field-label">product name</label>
+      <input class="field" type="text" data-field="name" placeholder="e.g. Airism Oversized T-Shirt" required>
+    </div>
+    <div class="form-row">
+      <label class="field-label">product link or image link</label>
+      <input class="field" type="url" data-field="link" placeholder="https://" required>
+    </div>
+    <div class="form-row special-order-item__row">
+      <div>
+        <label class="field-label">size</label>
+        <input class="field" type="text" data-field="size" placeholder="e.g. M" required>
+      </div>
+      <div>
+        <label class="field-label">colour</label>
+        <input class="field" type="text" data-field="colour" placeholder="e.g. Navy" required>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  (function () {
+    var MIN_ITEMS = 3;
+    var container = document.getElementById('SpecialOrderItems');
+    var template = document.getElementById('SpecialOrderItemTemplate');
+    var addButton = document.getElementById('AddSpecialOrderItem');
+    if (!container || !template || !addButton) return;
+
+    function renumber() {
+      var items = container.querySelectorAll('.special-order-item');
+      items.forEach(function (item, index) {
+        var n = index + 1;
+        item.querySelector('.special-order-item__legend').textContent = 'Item ' + n;
+        item.querySelector('[data-field="name"]').name = 'contact[Item ' + n + ' - Product name]';
+        item.querySelector('[data-field="link"]').name = 'contact[Item ' + n + ' - Product or image link]';
+        item.querySelector('[data-field="size"]').name = 'contact[Item ' + n + ' - Size]';
+        item.querySelector('[data-field="colour"]').name = 'contact[Item ' + n + ' - Colour]';
+        item.querySelectorAll('input').forEach(function (input) {
+          input.required = n <= MIN_ITEMS;
+        });
+        item.querySelector('.special-order-item__remove').style.display = items.length > MIN_ITEMS ? '' : 'none';
+      });
+    }
+
+    function addItem() {
+      var node = template.content.firstElementChild.cloneNode(true);
+      node.querySelector('.special-order-item__remove').addEventListener('click', function () {
+        if (container.querySelectorAll('.special-order-item').length > MIN_ITEMS) {
+          node.remove();
+          renumber();
+        }
+      });
+      container.appendChild(node);
+      renumber();
+    }
+
+    for (var i = 0; i < MIN_ITEMS; i++) addItem();
+    addButton.addEventListener('click', addItem);
+
+    var params = new URLSearchParams(window.location.search);
+    var firstItem = container.querySelector('.special-order-item');
+    if (firstItem) {
+      if (params.get('product')) firstItem.querySelector('[data-field="name"]').value = params.get('product');
+      if (params.get('link')) firstItem.querySelector('[data-field="link"]').value = params.get('link');
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Special order form",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Special Order Request" },
+    {
+      "type": "textarea",
+      "id": "note",
+      "label": "Note",
+      "default": "Special Orders must be 3 or more items. Paste a link to each product (or a link to an image of it), plus your size and colour, and we'll get back to you with pricing and availability."
+    },
+    {
+      "type": "textarea",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thanks! Your special order request has been sent — we'll be in touch shortly."
+    },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Top padding", "default": 24 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Bottom padding", "default": 52 }
+  ],
+  "presets": [{ "name": "Special order form" }]
+}
+{% endschema %}

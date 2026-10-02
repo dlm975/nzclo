@@ -7,6 +7,12 @@
     "color_tile": "#f1f0ed",
     "color_button": "#000000",
     "color_button_text": "#ffffff",
-    "enable_cart_drawer": true
+    "enable_cart_drawer": true,
+    "preorder_label": "Pre-Order",
+    "preorder_cta_label": "Create an order request",
+    "preorder_message": "This item is currently out of stock. Send us a request and we'll come back to you with pricing and availability.",
+    "preorder_page_url": "/pages/special-order",
+    "preorder_color": "#2563eb",
+    "preorder_text_color": "#ffffff"
   }
 }

@@ -50,6 +50,25 @@
     product, or one whose only option is the colour the swatches already set.
     Anything with an unresolved option (size, etc.) goes to the product page.
   endcomment
+  comment
+    Pre-order request link, built exactly as the original module did:
+    /pages/special-order?product=<title>&link=<absolute product url>
+  endcomment
+  assign po_product = product.title | url_encode
+  capture po_link_raw
+    echo shop.url
+    echo product.url
+  endcapture
+  assign po_link = po_link_raw | url_encode
+  assign po_base = settings.preorder_page_url | default: '/pages/special-order'
+  capture preorder_href
+    echo po_base
+    echo '?product='
+    echo po_product
+    echo '&link='
+    echo po_link
+  endcapture
+
   assign default_variant = product.selected_or_first_available_variant
   assign can_quick_add = false
   if product.available
@@ -61,7 +80,7 @@
   endif
 -%}
 
-<div class="product-card{% if secondary %} product-card--swap{% endif %}"{% if block_attributes %} {{ block_attributes }}{% endif %}>
+<div class="product-card{% if secondary %} product-card--swap{% endif %}{% unless product.available %} product-card--preorder{% endunless %}"{% if block_attributes %} {{ block_attributes }}{% endif %}>
   <div class="product-card__media">
     {%- if primary -%}
       <span class="product-card__bleed" aria-hidden="true">
@@ -138,11 +157,20 @@
       </a>
     {%- endif -%}
 
-    {%- if product.available == false -%}
-      <span class="product-card__badge">sold out</span>
-    {%- elsif product.compare_at_price > product.price -%}
+    {%- comment -%} shown instead of the above whenever the card is in its pre-order state {%- endcomment -%}
+    <a
+      class="product-card__add product-card__add--preorder"
+      href="{{ preorder_href }}"
+      data-preorder-link
+      aria-label="{{ settings.preorder_cta_label | default: 'Create an order request' }} — {{ product.title | escape }}"
+    >
+      <svg class="product-card__add-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg>
+    </a>
+
+    {%- if product.compare_at_price > product.price and product.available -%}
       <span class="product-card__badge">sale</span>
     {%- endif -%}
+    <span class="product-card__badge product-card__badge--preorder">{{ settings.preorder_label | default: 'Pre-Order' }}</span>
 
     <span class="product-card__info">
       {%- if product.metafields.custom.subtitle != blank -%}

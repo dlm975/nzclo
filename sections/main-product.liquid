@@ -1,3 +1,20 @@
+{%- liquid
+  assign po_product = product.title | url_encode
+  capture po_link_raw
+    echo shop.url
+    echo product.url
+  endcapture
+  assign po_link = po_link_raw | url_encode
+  assign po_base = settings.preorder_page_url | default: '/pages/special-order'
+  capture preorder_href
+    echo po_base
+    echo '?product='
+    echo po_product
+    echo '&link='
+    echo po_link
+  endcapture
+-%}
+
 <div class="page-width">
   <div class="product-page" data-product-form-wrapper data-update-url data-money-format="{{ shop.money_format | escape }}">
     <script type="application/json" data-product-json>{{ product | json }}</script>
@@ -34,8 +51,9 @@
         <p class="product-info__vendor">{{ product.vendor | downcase }}</p>
       {%- endif -%}
       <h1 class="product-info__title">{{ product.title | downcase }}</h1>
-      <div class="product-info__price" data-price>
-        {% render 'price', variant: product.selected_or_first_available_variant %}
+      <div class="product-info__price">
+        <span data-price>{% render 'price', variant: product.selected_or_first_available_variant %}</span>
+        <span class="preorder-badge">{{ settings.preorder_label | default: 'Pre-Order' }}</span>
       </div>
 
       {%- if product.description != blank -%}
@@ -78,6 +96,10 @@
 
         <input type="hidden" name="id" value="{{ current_variant.id }}">
 
+        {%- if settings.preorder_message != blank -%}
+          <p class="preorder-note">{{ settings.preorder_message }}</p>
+        {%- endif -%}
+
         <div class="product-form__buttons">
           <button
             type="submit"
@@ -95,6 +117,12 @@
             </span>
           </button>
           {{ form | payment_button }}
+
+          {%- comment -%} replaces the buy buttons whenever the chosen variant is unavailable {%- endcomment -%}
+          <a class="preorder-cta" href="{{ preorder_href }}">
+            <span aria-hidden="true">+</span>
+            {{ settings.preorder_cta_label | default: 'Create an order request' }}
+          </a>
         </div>
       {%- endform -%}
 

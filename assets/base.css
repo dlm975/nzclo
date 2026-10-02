@@ -804,6 +804,137 @@ select.field {
 @media (max-width: 1099px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 749px) { .product-grid { grid-template-columns: repeat(2, 1fr); --card-gap: 10px; } }
 
+/* ---------- pre-order ---------- */
+/* A product with no stock is offered as a pre-order request rather than a
+   dead "sold out" state. Visibility is driven by a single class on the card
+   (and by the disabled buy button on the product page), so variant switching
+   updates everything without bespoke JS. */
+
+.product-card__badge--preorder {
+  display: none;
+  background: rgb(var(--color-preorder, 37 99 235));
+  color: rgb(var(--color-preorder-text, 255 255 255));
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.product-card--preorder .product-card__badge--preorder { display: inline-flex; }
+.product-card--preorder .product-card__badge:not(.product-card__badge--preorder) { display: none; }
+
+.product-card__add--preorder {
+  display: none;
+  background: rgb(var(--color-preorder, 37 99 235));
+  color: rgb(var(--color-preorder-text, 255 255 255));
+}
+.product-card__add--preorder:hover {
+  background: rgb(var(--color-preorder, 37 99 235));
+  color: rgb(var(--color-preorder-text, 255 255 255));
+  opacity: 0.88;
+}
+.product-card--preorder .product-card__add--preorder { display: inline-flex; }
+.product-card--preorder .product-card__add:not(.product-card__add--preorder) { display: none; }
+
+/* product page */
+.preorder-badge {
+  display: none;
+  align-items: center;
+  margin-left: 10px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: rgb(var(--color-preorder, 37 99 235));
+  color: rgb(var(--color-preorder-text, 255 255 255));
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+.preorder-note {
+  display: none;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgb(var(--color-text-secondary));
+  margin: 0 0 14px;
+}
+.preorder-cta {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 28px;
+  border: 1px solid rgb(var(--color-preorder, 37 99 235));
+  border-radius: var(--radius-pill);
+  background: rgb(var(--color-preorder, 37 99 235));
+  color: rgb(var(--color-preorder-text, 255 255 255));
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.preorder-cta:hover {
+  opacity: 0.88;
+  color: rgb(var(--color-preorder-text, 255 255 255));
+}
+
+/* the original module's mechanism: when the buy button is disabled, the
+   request CTA takes its place. Shopify's variant switching toggles that
+   attribute, so this stays in sync with no extra wiring. */
+.product-form__buttons:has([data-add-to-cart][disabled]) .preorder-cta { display: inline-flex; }
+.product-form__buttons:has([data-add-to-cart][disabled]) [data-add-to-cart],
+.product-form__buttons:has([data-add-to-cart][disabled]) .shopify-payment-button { display: none; }
+.product-info:has([data-add-to-cart][disabled]) .preorder-note { display: block; }
+.product-info:has([data-add-to-cart][disabled]) .preorder-badge { display: inline-flex; }
+
+/* special order request form */
+.special-order__inner { max-width: 640px; margin: 0 auto; }
+.special-order__note {
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgb(var(--color-text-secondary));
+  background: rgb(var(--color-tile));
+  border-left: 3px solid rgb(var(--color-text));
+  padding: 12px 16px;
+  margin: 0 0 24px;
+  border-radius: 0 var(--radius-tile) var(--radius-tile) 0;
+}
+.special-order__contact-row,
+.special-order-item__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 599px) {
+  .special-order__contact-row,
+  .special-order-item__row { grid-template-columns: 1fr; gap: 0; }
+}
+.special-order-item {
+  border: 1px solid rgba(var(--color-text), 0.14);
+  border-radius: var(--radius-tile);
+  padding: 18px 18px 4px;
+  margin: 0 0 14px;
+}
+.special-order-item__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.special-order-item__legend {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.special-order-item__remove {
+  background: none;
+  border: 0;
+  padding: 2px;
+  cursor: pointer;
+  color: rgb(var(--color-text-secondary));
+  font-family: inherit;
+}
+.special-order__add { margin-bottom: 18px; }
+
 /* ---------- collection tiles ---------- */
 
 .collection-tiles {

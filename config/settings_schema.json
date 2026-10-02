@@ -93,5 +93,50 @@
         "label": "TikTok URL"
       }
     ]
+  },
+  {
+    "name": "Pre-order",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Products with no stock are offered as pre-order: they show a pre-order badge and their buy button becomes a request link to the special order page."
+      },
+      {
+        "type": "text",
+        "id": "preorder_label",
+        "label": "Badge label",
+        "default": "Pre-Order"
+      },
+      {
+        "type": "text",
+        "id": "preorder_cta_label",
+        "label": "Request button label",
+        "default": "Create an order request"
+      },
+      {
+        "type": "textarea",
+        "id": "preorder_message",
+        "label": "Product page message",
+        "default": "This item is currently out of stock. Send us a request and we'll come back to you with pricing and availability."
+      },
+      {
+        "type": "text",
+        "id": "preorder_page_url",
+        "label": "Special order page path",
+        "default": "/pages/special-order"
+      },
+      {
+        "type": "color",
+        "id": "preorder_color",
+        "label": "Pre-order colour",
+        "default": "#2563eb"
+      },
+      {
+        "type": "color",
+        "id": "preorder_text_color",
+        "label": "Pre-order text colour",
+        "default": "#ffffff"
+      }
+    ]
   }
 ]

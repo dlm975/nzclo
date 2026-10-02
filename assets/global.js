@@ -136,6 +136,13 @@
     var variantId = swatch.getAttribute('data-variant-id');
     var addButton = qs('[data-card-add]', card);
     if (variantId && addButton) addButton.setAttribute('data-variant-id', variantId);
+
+    /* a colour with no stock puts the card into its pre-order state, which
+       swaps the badge and the add control over to the request link */
+    card.classList.toggle(
+      'product-card--preorder',
+      swatch.getAttribute('data-available') === 'false'
+    );
   });
 
   function updateCartCount() {
