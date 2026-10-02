@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "name": "Header group",
   "type": "header",
@@ -8,22 +17,29 @@
         "announcement-1": {
           "type": "announcement",
           "settings": {
-            "text": "authentic uniqlo — delivered across new zealand"
+            "text": "FREE SHIPPING ON ORDERS $75",
+            "link": ""
           }
         }
       },
-      "block_order": ["announcement-1"],
+      "block_order": [
+        "announcement-1"
+      ],
       "settings": {
-        "background": "#f1f0ed",
-        "text_color": "#000000"
+        "background": "#06A700",
+        "text_color": "#FAFFF9"
       }
     },
     "header": {
       "type": "header",
       "settings": {
-        "menu": "main-menu"
+        "menu": "main-menu",
+        "transparent_on_home": true
       }
     }
   },
-  "order": ["announcement", "header"]
+  "order": [
+    "announcement",
+    "header"
+  ]
 }
