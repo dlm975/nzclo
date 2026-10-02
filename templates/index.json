@@ -39,6 +39,16 @@
         "logo_height": 20
       }
     },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "core collection",
+        "heading": "",
+        "layout": "rail",
+        "collection": "",
+        "limit": 8
+      }
+    },
     "tiles": {
       "type": "collection-tiles",
       "blocks": {
@@ -77,16 +87,6 @@
       ],
       "settings": {
         "heading": ""
-      }
-    },
-    "featured": {
-      "type": "featured-collection",
-      "settings": {
-        "eyebrow": "core collection",
-        "heading": "",
-        "layout": "rail",
-        "collection": "",
-        "limit": 8
       }
     },
     "mission": {
@@ -166,8 +166,8 @@
   "order": [
     "hero",
     "authenticity",
-    "tiles",
     "featured",
+    "tiles",
     "mission",
     "iwt",
     "social",
