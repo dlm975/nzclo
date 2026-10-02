@@ -53,29 +53,35 @@
        the hero actually has at the current breakpoint with no stored value to
        go stale on resize or orientation change. */
     var headerSection = overlayHeader.closest('.shopify-section') || overlayHeader.parentElement;
-    if (headerSection && heroEl) {
-      var applyPin = function () {
-        var rect = heroEl.getBoundingClientRect();
-        headerSection.classList.toggle('header--pinned', rect.top <= -(rect.height / 2));
-      };
-      window.addEventListener('scroll', applyPin, { passive: true });
-      window.addEventListener('resize', applyPin, { passive: true });
-      applyPin();
-    }
+    var heroCopy = heroEl ? qs('.hero__content', heroEl) : null;
 
-    if (heroEl && 'IntersectionObserver' in window) {
-      var headerH = overlayHeader.offsetHeight || 64;
-      new IntersectionObserver(function (entries) {
-        setSolid(!entries[0].isIntersecting);
-      }, { rootMargin: '-' + headerH + 'px 0px 0px 0px', threshold: 0 }).observe(heroEl);
-    } else {
-      var onScroll = function () {
-        var h = overlayHeader.offsetHeight || 64;
-        var limit = heroEl ? heroEl.offsetHeight - h : h;
-        setSolid(window.pageYOffset > limit);
+    if (heroEl) {
+      var updateHeader = function () {
+        var rect = heroEl.getBoundingClientRect();
+        var headerH = overlayHeader.offsetHeight || 64;
+
+        /* unchanged: pin once the hero is half scrolled */
+        if (headerSection) {
+          headerSection.classList.toggle('header--pinned', rect.top <= -(rect.height / 2));
+        }
+
+        /* Go solid before the header can reach the hero copy rather than once
+           the hero has scrolled past. Measured from the live position of the
+           hero's own text/button block, with one header height of lead, so the
+           background is already in place by the time they would overlap. Both
+           terms are measured, so this follows the hero at any breakpoint. */
+        var copyTop = heroCopy ? heroCopy.getBoundingClientRect().top : rect.bottom;
+        setSolid(copyTop <= headerH * 2);
       };
-      window.addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
+      window.addEventListener('scroll', updateHeader, { passive: true });
+      window.addEventListener('resize', updateHeader, { passive: true });
+      updateHeader();
+    } else {
+      var onScrollNoHero = function () {
+        setSolid(window.pageYOffset > (overlayHeader.offsetHeight || 64));
+      };
+      window.addEventListener('scroll', onScrollNoHero, { passive: true });
+      onScrollNoHero();
     }
   }
 
