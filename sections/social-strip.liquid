@@ -1,8 +1,8 @@
 <div class="page-width section-pad" style="padding-top: 0;">
   <div class="section-header">
-    <h2 class="h-section" style="margin: 0;">{{ section.settings.heading }}</h2>
+    <h2 class="h-section"{% render 'text-attrs', s: section.settings, p: 'heading' %}>{{ section.settings.heading }}</h2>
     {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
-      <a class="btn" href="{{ section.settings.button_link }}" target="_blank" rel="noopener">{{ section.settings.button_label }}</a>
+      <a class="btn" href="{{ section.settings.button_link }}" target="_blank" rel="noopener"{% render 'text-attrs', s: section.settings, p: 'button' %}>{{ section.settings.button_label }}</a>
     {%- endif -%}
   </div>
   <div class="social-strip__grid">
@@ -34,17 +34,333 @@
 {
   "name": "Social strip",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "default": "nzclo + you" },
-    { "type": "text", "id": "button_label", "label": "Button label", "default": "find us on social" },
-    { "type": "url", "id": "button_link", "label": "Button link" }
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "nzclo + you"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "find us on social"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Heading type"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_font_enable",
+      "label": "Use a custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 0,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — desktop (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 0,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — mobile (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Weight",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extrabold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "min": -10,
+      "max": 40,
+      "step": 1,
+      "label": "Letter spacing — /100 em (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "label": "Line height — /10 (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "heading_transform",
+      "label": "Capitalisation",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalise"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "heading_align",
+      "label": "Alignment",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Colour"
+    },
+    {
+      "type": "header",
+      "content": "Button type"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_font_enable",
+      "label": "Use a custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "button_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "button_size",
+      "min": 0,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — desktop (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_size_mobile",
+      "min": 0,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — mobile (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "button_weight",
+      "label": "Weight",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extrabold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "button_spacing",
+      "min": -10,
+      "max": 40,
+      "step": 1,
+      "label": "Letter spacing — /100 em (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_line_height",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "label": "Line height — /10 (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "button_transform",
+      "label": "Capitalisation",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalise"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "button_align",
+      "label": "Alignment",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Colour"
+    }
   ],
   "blocks": [
     {
       "type": "photo",
       "name": "Photo",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Image" },
-        { "type": "url", "id": "link", "label": "Link" }
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
       ]
     }
   ],
@@ -53,11 +369,21 @@
     {
       "name": "Social strip",
       "blocks": [
-        { "type": "photo" },
-        { "type": "photo" },
-        { "type": "photo" },
-        { "type": "photo" },
-        { "type": "photo" }
+        {
+          "type": "photo"
+        },
+        {
+          "type": "photo"
+        },
+        {
+          "type": "photo"
+        },
+        {
+          "type": "photo"
+        },
+        {
+          "type": "photo"
+        }
       ]
     }
   ]

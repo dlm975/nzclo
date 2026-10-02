@@ -17,13 +17,13 @@
   <div class="hero__content{% if section.settings.dark_text %} hero__content--dark{% endif %}">
     {%- if section.settings.heading != blank -%}
       {%- if section.settings.heading_style == 'display' -%}
-        <h2 class="h-hero">{{ section.settings.heading }}</h2>
+        <h2 class="h-hero"{% render 'text-attrs', s: section.settings, p: 'heading' %}>{{ section.settings.heading }}</h2>
       {%- else -%}
-        <p class="hero__tagline">{{ section.settings.heading }}</p>
+        <p class="hero__tagline"{% render 'text-attrs', s: section.settings, p: 'heading' %}>{{ section.settings.heading }}</p>
       {%- endif -%}
     {%- endif -%}
     {%- if section.settings.button_label != blank -%}
-      <a class="btn {% if section.settings.dark_text %}btn--outline{% else %}btn--glass{% endif %}" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}</a>
+      <a class="btn {% if section.settings.dark_text %}btn--outline{% else %}btn--glass{% endif %}" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}"{% render 'text-attrs', s: section.settings, p: 'button' %}>{{ section.settings.button_label }}</a>
     {%- endif -%}
   </div>
 </div>
@@ -32,44 +32,390 @@
 {
   "name": "Hero",
   "settings": [
-    { "type": "image_picker", "id": "image", "label": "Image" },
-    { "type": "video", "id": "video", "label": "Video (overrides image)" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Everyday essentials, finally in NZ." },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video (overrides image)"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Everyday essentials, finally in NZ."
+    },
     {
       "type": "select",
       "id": "heading_style",
       "label": "Heading style",
       "options": [
-        { "value": "tagline", "label": "Small tagline" },
-        { "value": "display", "label": "Large display" }
+        {
+          "value": "tagline",
+          "label": "Small tagline"
+        },
+        {
+          "value": "display",
+          "label": "Large display"
+        }
       ],
       "default": "tagline"
     },
-    { "type": "text", "id": "button_label", "label": "Button label", "default": "shop the drop" },
-    { "type": "url", "id": "button_link", "label": "Button link" },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "shop the drop"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
     {
       "type": "select",
       "id": "text_position",
       "label": "Text position",
       "options": [
-        { "value": "left", "label": "Bottom left" },
-        { "value": "right", "label": "Bottom right" },
-        { "value": "center", "label": "Bottom center" }
+        {
+          "value": "left",
+          "label": "Bottom left"
+        },
+        {
+          "value": "right",
+          "label": "Bottom right"
+        },
+        {
+          "value": "center",
+          "label": "Bottom center"
+        }
       ],
       "default": "right"
     },
-    { "type": "checkbox", "id": "dark_text", "label": "Dark text", "default": false },
+    {
+      "type": "checkbox",
+      "id": "dark_text",
+      "label": "Dark text",
+      "default": false
+    },
     {
       "type": "select",
       "id": "height",
       "label": "Height",
       "options": [
-        { "value": "tall", "label": "Tall" },
-        { "value": "short", "label": "Short" }
+        {
+          "value": "tall",
+          "label": "Tall"
+        },
+        {
+          "value": "short",
+          "label": "Short"
+        }
       ],
       "default": "tall"
+    },
+    {
+      "type": "header",
+      "content": "Heading type"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_font_enable",
+      "label": "Use a custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 0,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — desktop (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 0,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — mobile (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Weight",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extrabold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "min": -10,
+      "max": 40,
+      "step": 1,
+      "label": "Letter spacing — /100 em (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "label": "Line height — /10 (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "heading_transform",
+      "label": "Capitalisation",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalise"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "heading_align",
+      "label": "Alignment",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Colour"
+    },
+    {
+      "type": "header",
+      "content": "Button type"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_font_enable",
+      "label": "Use a custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "button_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "button_size",
+      "min": 0,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — desktop (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_size_mobile",
+      "min": 0,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — mobile (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "button_weight",
+      "label": "Weight",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extrabold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "button_spacing",
+      "min": -10,
+      "max": 40,
+      "step": 1,
+      "label": "Letter spacing — /100 em (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_line_height",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "label": "Line height — /10 (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "button_transform",
+      "label": "Capitalisation",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalise"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "button_align",
+      "label": "Alignment",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Colour"
     }
   ],
-  "presets": [{ "name": "Hero" }]
+  "presets": [
+    {
+      "name": "Hero"
+    }
+  ]
 }
 {% endschema %}

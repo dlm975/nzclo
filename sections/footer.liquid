@@ -2,23 +2,23 @@
   <div class="page-width">
     <div class="site-footer__grid">
       <div>
-        <p class="site-footer__note">{{ section.settings.blurb }}</p>
+        <p class="site-footer__note"{% render 'text-attrs', s: section.settings, p: 'note' %}>{{ section.settings.blurb }}</p>
       </div>
 
       {%- for block in section.blocks -%}
         {%- case block.type -%}
           {%- when 'link_list' -%}
             <div {{ block.shopify_attributes }}>
-              <h3 class="site-footer__heading">{{ block.settings.heading | downcase }}</h3>
+              <h3 class="site-footer__heading"{% render 'text-attrs', s: section.settings, p: 'heading' %}>{{ block.settings.heading | downcase }}</h3>
               <ul class="site-footer__links">
                 {%- for link in block.settings.menu.links -%}
-                  <li><a href="{{ link.url }}">{{ link.title | downcase }}</a></li>
+                  <li><a href="{{ link.url }}"{% render 'text-attrs', s: section.settings, p: 'link' %}>{{ link.title | downcase }}</a></li>
                 {%- endfor -%}
               </ul>
             </div>
           {%- when 'newsletter' -%}
             <div {{ block.shopify_attributes }}>
-              <h3 class="site-footer__heading">{{ block.settings.heading | downcase }}</h3>
+              <h3 class="site-footer__heading"{% render 'text-attrs', s: section.settings, p: 'heading' %}>{{ block.settings.heading | downcase }}</h3>
               {%- form 'customer' -%}
                 {%- if form.posted_successfully? -%}
                   <p class="form-success">thanks for signing up</p>
@@ -39,11 +39,11 @@
     </div>
 
     {%- if section.settings.show_wordmark -%}
-      <p class="site-footer__wordmark" aria-hidden="true">{{ shop.name | downcase }}</p>
+      <p class="site-footer__wordmark" aria-hidden="true"{% render 'text-attrs', s: section.settings, p: 'wordmark' %}>{{ shop.name | downcase }}</p>
     {%- endif -%}
 
     <div class="site-footer__bottom">
-      <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name | downcase }} — aotearoa new zealand</span>
+      <span{% render 'text-attrs', s: section.settings, p: 'bottom' %}>&copy; {{ 'now' | date: '%Y' }} {{ shop.name | downcase }}{% if section.settings.bottom_suffix != blank %} — {{ section.settings.bottom_suffix }}{% endif %}</span>
       <span style="display: flex; gap: 16px;">
         {%- if settings.social_instagram != blank -%}
           <a href="{{ settings.social_instagram }}" target="_blank" rel="noopener">instagram</a>
@@ -74,6 +74,747 @@
       "id": "show_wordmark",
       "label": "Show large wordmark",
       "default": true
+    },
+    {
+      "type": "text",
+      "id": "bottom_suffix",
+      "label": "Copyright suffix",
+      "default": "aotearoa new zealand"
+    },
+    {
+      "type": "header",
+      "content": "Column heading type"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_font_enable",
+      "label": "Use a custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 0,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — desktop (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 0,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — mobile (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Weight",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extrabold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "min": -10,
+      "max": 40,
+      "step": 1,
+      "label": "Letter spacing — /100 em (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "label": "Line height — /10 (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "heading_transform",
+      "label": "Capitalisation",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalise"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "heading_align",
+      "label": "Alignment",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Colour"
+    },
+    {
+      "type": "header",
+      "content": "Link type"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_font_enable",
+      "label": "Use a custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "link_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "link_size",
+      "min": 0,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — desktop (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "link_size_mobile",
+      "min": 0,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — mobile (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "link_weight",
+      "label": "Weight",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extrabold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "link_spacing",
+      "min": -10,
+      "max": 40,
+      "step": 1,
+      "label": "Letter spacing — /100 em (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "link_line_height",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "label": "Line height — /10 (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "link_transform",
+      "label": "Capitalisation",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalise"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "link_align",
+      "label": "Alignment",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Colour"
+    },
+    {
+      "type": "header",
+      "content": "Blurb type"
+    },
+    {
+      "type": "checkbox",
+      "id": "note_font_enable",
+      "label": "Use a custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "note_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "note_size",
+      "min": 0,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — desktop (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "note_size_mobile",
+      "min": 0,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — mobile (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "note_weight",
+      "label": "Weight",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extrabold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "note_spacing",
+      "min": -10,
+      "max": 40,
+      "step": 1,
+      "label": "Letter spacing — /100 em (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "note_line_height",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "label": "Line height — /10 (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "note_transform",
+      "label": "Capitalisation",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalise"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "note_align",
+      "label": "Alignment",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "note_color",
+      "label": "Colour"
+    },
+    {
+      "type": "header",
+      "content": "Wordmark type"
+    },
+    {
+      "type": "checkbox",
+      "id": "wordmark_font_enable",
+      "label": "Use a custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "wordmark_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "wordmark_size",
+      "min": 0,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — desktop (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "wordmark_size_mobile",
+      "min": 0,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — mobile (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "wordmark_weight",
+      "label": "Weight",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extrabold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "wordmark_spacing",
+      "min": -10,
+      "max": 40,
+      "step": 1,
+      "label": "Letter spacing — /100 em (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "wordmark_line_height",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "label": "Line height — /10 (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "wordmark_transform",
+      "label": "Capitalisation",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalise"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "wordmark_align",
+      "label": "Alignment",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "wordmark_color",
+      "label": "Colour"
+    },
+    {
+      "type": "header",
+      "content": "Bottom line type"
+    },
+    {
+      "type": "checkbox",
+      "id": "bottom_font_enable",
+      "label": "Use a custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "bottom_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "bottom_size",
+      "min": 0,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — desktop (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "bottom_size_mobile",
+      "min": 0,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — mobile (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "bottom_weight",
+      "label": "Weight",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extrabold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "bottom_spacing",
+      "min": -10,
+      "max": 40,
+      "step": 1,
+      "label": "Letter spacing — /100 em (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "bottom_line_height",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "label": "Line height — /10 (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "bottom_transform",
+      "label": "Capitalisation",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalise"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "bottom_align",
+      "label": "Alignment",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "bottom_color",
+      "label": "Colour"
     }
   ],
   "blocks": [

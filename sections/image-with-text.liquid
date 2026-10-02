@@ -17,13 +17,13 @@
     </div>
     <div class="iwt__content"{% if section.settings.reverse %} style="direction: ltr;"{% endif %}>
       {%- if section.settings.heading != blank -%}
-        <h2 class="h-section">{{ section.settings.heading }}</h2>
+        <h2 class="h-section"{% render 'text-attrs', s: section.settings, p: 'heading' %}>{{ section.settings.heading }}</h2>
       {%- endif -%}
       {%- if section.settings.text != blank -%}
-        <p>{{ section.settings.text }}</p>
+        <p{% render 'text-attrs', s: section.settings, p: 'body' %}>{{ section.settings.text }}</p>
       {%- endif -%}
       {%- if section.settings.button_label != blank -%}
-        <a class="btn" href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a>
+        <a class="btn" href="{{ section.settings.button_link }}"{% render 'text-attrs', s: section.settings, p: 'button' %}>{{ section.settings.button_label }}</a>
       {%- endif -%}
     </div>
   </div>
@@ -33,18 +33,486 @@
 {
   "name": "Image with text",
   "settings": [
-    { "type": "image_picker", "id": "image", "label": "Image" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "made for every day" },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "made for every day"
+    },
     {
       "type": "textarea",
       "id": "text",
       "label": "Text",
       "default": "airism cotton, relaxed fits, and wardrobe staples that work as hard as you do — delivered to your door anywhere in aotearoa."
     },
-    { "type": "text", "id": "button_label", "label": "Button label", "default": "shop the range" },
-    { "type": "url", "id": "button_link", "label": "Button link" },
-    { "type": "checkbox", "id": "reverse", "label": "Image on right", "default": false }
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "shop the range"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "reverse",
+      "label": "Image on right",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Heading type"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_font_enable",
+      "label": "Use a custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 0,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — desktop (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 0,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — mobile (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Weight",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extrabold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "min": -10,
+      "max": 40,
+      "step": 1,
+      "label": "Letter spacing — /100 em (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "label": "Line height — /10 (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "heading_transform",
+      "label": "Capitalisation",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalise"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "heading_align",
+      "label": "Alignment",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Colour"
+    },
+    {
+      "type": "header",
+      "content": "Body type"
+    },
+    {
+      "type": "checkbox",
+      "id": "body_font_enable",
+      "label": "Use a custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "body_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "min": 0,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — desktop (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "body_size_mobile",
+      "min": 0,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — mobile (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "body_weight",
+      "label": "Weight",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extrabold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "body_spacing",
+      "min": -10,
+      "max": 40,
+      "step": 1,
+      "label": "Letter spacing — /100 em (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "body_line_height",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "label": "Line height — /10 (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "body_transform",
+      "label": "Capitalisation",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalise"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "body_align",
+      "label": "Alignment",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Colour"
+    },
+    {
+      "type": "header",
+      "content": "Button type"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_font_enable",
+      "label": "Use a custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "button_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "button_size",
+      "min": 0,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — desktop (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_size_mobile",
+      "min": 0,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — mobile (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "button_weight",
+      "label": "Weight",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extrabold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "button_spacing",
+      "min": -10,
+      "max": 40,
+      "step": 1,
+      "label": "Letter spacing — /100 em (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_line_height",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "label": "Line height — /10 (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "button_transform",
+      "label": "Capitalisation",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalise"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "button_align",
+      "label": "Alignment",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Colour"
+    }
   ],
-  "presets": [{ "name": "Image with text" }]
+  "presets": [
+    {
+      "name": "Image with text"
+    }
+  ]
 }
 {% endschema %}

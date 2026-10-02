@@ -33,8 +33,28 @@
         --logo-width: {{ settings.logo_width }}px;
         --color-preorder: {{ settings.preorder_color.rgb | replace: ' ', ', ' }};
         --color-preorder-text: {{ settings.preorder_text_color.rgb | replace: ' ', ', ' }};
+        {%- if settings.type_body_font_enable %}
+          --font-body: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+        {%- endif %}
+        {%- if settings.type_heading_font_enable %}
+          --font-heading: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
+        {%- endif %}
+        {%- if settings.type_button_font_enable %}
+          --font-button: {{ settings.type_button_font.family }}, {{ settings.type_button_font.fallback_families }};
+        {%- endif %}
       }
     {% endstyle %}
+
+    {%- if settings.type_body_font_enable -%}
+      {{ settings.type_body_font | font_face: font_display: 'swap' }}
+      {{ settings.type_body_font | font_modify: 'weight', 'bolder' | font_face: font_display: 'swap' }}
+    {%- endif -%}
+    {%- if settings.type_heading_font_enable -%}
+      {{ settings.type_heading_font | font_face: font_display: 'swap' }}
+    {%- endif -%}
+    {%- if settings.type_button_font_enable -%}
+      {{ settings.type_button_font | font_face: font_display: 'swap' }}
+    {%- endif -%}
 
     {{ 'base.css' | asset_url | stylesheet_tag }}
     <script src="{{ 'global.js' | asset_url }}" defer></script>

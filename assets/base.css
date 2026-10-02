@@ -55,6 +55,7 @@ a, button { transition: opacity var(--transition), background-color var(--transi
 button { font-family: inherit; cursor: pointer; }
 
 h1, h2, h3, h4, h5 {
+  font-family: var(--font-heading, var(--font-body));
   font-weight: 600;
   letter-spacing: -0.01em;
   text-transform: lowercase;
@@ -99,6 +100,13 @@ h1, h2, h3, h4, h5 {
 }
 .skip-link:focus { top: 12px; }
 
+/* Type overrides from the theme editor. data-ts is only present when a size
+   was actually set, so untouched elements keep their stylesheet size. */
+[data-ts] { font-size: var(--ts-fs-m, var(--ts-fs)); }
+@media (min-width: 750px) {
+  [data-ts] { font-size: var(--ts-fs, var(--ts-fs-m)); }
+}
+
 /* ---------- buttons ---------- */
 
 .btn {
@@ -111,6 +119,7 @@ h1, h2, h3, h4, h5 {
   border-radius: var(--radius-pill);
   background: transparent;
   color: rgb(var(--color-text));
+  font-family: var(--font-button, var(--font-body));
   font-size: 11px;
   font-weight: 400;
   letter-spacing: 0.08em;
@@ -494,6 +503,10 @@ select.field {
 @media (prefers-reduced-motion: reduce) {
   .marquee__track { animation: none; }
 }
+
+.section-header h2 { margin: 0; }
+.section-eyebrow { margin: 0 0 6px; letter-spacing: 0.08em; }
+.newsletter__text { margin: 0; }
 
 /* ---------- product cards ---------- */
 

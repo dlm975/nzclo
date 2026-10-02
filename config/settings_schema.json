@@ -69,6 +69,51 @@
     ]
   },
   {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Fonts are off by default so the theme keeps its current system typeface. Turn one on to pick a Shopify font for that role; individual sections can still override it."
+      },
+      {
+        "type": "checkbox",
+        "id": "type_body_font_enable",
+        "label": "Use a custom body font",
+        "default": false
+      },
+      {
+        "type": "font_picker",
+        "id": "type_body_font",
+        "label": "Body font",
+        "default": "assistant_n4"
+      },
+      {
+        "type": "checkbox",
+        "id": "type_heading_font_enable",
+        "label": "Use a custom heading font",
+        "default": false
+      },
+      {
+        "type": "font_picker",
+        "id": "type_heading_font",
+        "label": "Heading font",
+        "default": "assistant_n4"
+      },
+      {
+        "type": "checkbox",
+        "id": "type_button_font_enable",
+        "label": "Use a custom button font",
+        "default": false
+      },
+      {
+        "type": "font_picker",
+        "id": "type_button_font",
+        "label": "Button font",
+        "default": "assistant_n4"
+      }
+    ]
+  },
+  {
     "name": "Cart",
     "settings": [
       {
@@ -100,6 +145,12 @@
       {
         "type": "paragraph",
         "content": "Products with no stock are offered as pre-order: they show a pre-order badge and their buy button becomes a request link to the special order page."
+      },
+      {
+        "type": "text",
+        "id": "sale_label",
+        "label": "Sale badge label",
+        "default": "sale"
       },
       {
         "type": "text",

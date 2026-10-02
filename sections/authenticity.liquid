@@ -80,7 +80,7 @@
             >
           {%- endif -%}
           {%- if section.settings.text != blank -%}
-            <span class="authenticity__text">{{ section.settings.text }}</span>
+            <span class="authenticity__text"{% render 'text-attrs', s: section.settings, p: 'text' %}>{{ section.settings.text }}</span>
           {%- endif -%}
         </span>
       {%- endif -%}
@@ -121,15 +121,36 @@
 {
   "name": "Authenticity",
   "settings": [
-    { "type": "text", "id": "text", "label": "Statement", "default": "100% authentic product" },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Statement",
+      "default": "100% authentic product"
+    },
     {
       "type": "paragraph",
       "content": "Upload each mark below. PNG, JPEG, WEBP and GIF can be selected with the image picker. For an SVG, upload it under Content > Files in the admin, copy its URL, and paste it into the SVG field. Anything left empty is hidden."
     },
-    { "type": "header", "content": "Verified badge" },
-    { "type": "image_picker", "id": "badge_image", "label": "Badge image" },
-    { "type": "text", "id": "badge_svg_url", "label": "Badge SVG URL (optional, overrides image)" },
-    { "type": "text", "id": "badge_alt", "label": "Badge alt text", "default": "Verified authentic" },
+    {
+      "type": "header",
+      "content": "Verified badge"
+    },
+    {
+      "type": "image_picker",
+      "id": "badge_image",
+      "label": "Badge image"
+    },
+    {
+      "type": "text",
+      "id": "badge_svg_url",
+      "label": "Badge SVG URL (optional, overrides image)"
+    },
+    {
+      "type": "text",
+      "id": "badge_alt",
+      "label": "Badge alt text",
+      "default": "Verified authentic"
+    },
     {
       "type": "range",
       "id": "badge_height",
@@ -140,15 +161,50 @@
       "label": "Badge height",
       "default": 18
     },
-    { "type": "header", "content": "UNIQLO" },
-    { "type": "image_picker", "id": "uniqlo_logo", "label": "UNIQLO logo" },
-    { "type": "text", "id": "uniqlo_svg_url", "label": "UNIQLO SVG URL (optional, overrides image)" },
-    { "type": "text", "id": "uniqlo_alt", "label": "UNIQLO alt text", "default": "UNIQLO" },
-    { "type": "header", "content": "AIRism" },
-    { "type": "image_picker", "id": "airism_logo", "label": "AIRism logo" },
-    { "type": "text", "id": "airism_svg_url", "label": "AIRism SVG URL (optional, overrides image)" },
-    { "type": "text", "id": "airism_alt", "label": "AIRism alt text", "default": "AIRism" },
-    { "type": "header", "content": "Sizing" },
+    {
+      "type": "header",
+      "content": "UNIQLO"
+    },
+    {
+      "type": "image_picker",
+      "id": "uniqlo_logo",
+      "label": "UNIQLO logo"
+    },
+    {
+      "type": "text",
+      "id": "uniqlo_svg_url",
+      "label": "UNIQLO SVG URL (optional, overrides image)"
+    },
+    {
+      "type": "text",
+      "id": "uniqlo_alt",
+      "label": "UNIQLO alt text",
+      "default": "UNIQLO"
+    },
+    {
+      "type": "header",
+      "content": "AIRism"
+    },
+    {
+      "type": "image_picker",
+      "id": "airism_logo",
+      "label": "AIRism logo"
+    },
+    {
+      "type": "text",
+      "id": "airism_svg_url",
+      "label": "AIRism SVG URL (optional, overrides image)"
+    },
+    {
+      "type": "text",
+      "id": "airism_alt",
+      "label": "AIRism alt text",
+      "default": "AIRism"
+    },
+    {
+      "type": "header",
+      "content": "Sizing"
+    },
     {
       "type": "range",
       "id": "logo_height",
@@ -158,8 +214,159 @@
       "unit": "px",
       "label": "Logo height",
       "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Statement type"
+    },
+    {
+      "type": "checkbox",
+      "id": "text_font_enable",
+      "label": "Use a custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "text_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 0,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — desktop (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "min": 0,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — mobile (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "text_weight",
+      "label": "Weight",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extrabold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "text_spacing",
+      "min": -10,
+      "max": 40,
+      "step": 1,
+      "label": "Letter spacing — /100 em (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "text_line_height",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "label": "Line height — /10 (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "text_transform",
+      "label": "Capitalisation",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalise"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Alignment",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Colour"
     }
   ],
-  "presets": [{ "name": "Authenticity" }]
+  "presets": [
+    {
+      "name": "Authenticity"
+    }
+  ]
 }
 {% endschema %}

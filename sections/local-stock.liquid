@@ -34,7 +34,7 @@
           >
         {%- endif -%}
         {%- if section.settings.text != blank -%}
-          <span class="authenticity__text">{{ section.settings.text }}</span>
+          <span class="authenticity__text"{% render 'text-attrs', s: section.settings, p: 'text' %}>{{ section.settings.text }}</span>
         {%- endif -%}
       </span>
     </div>
@@ -51,14 +51,30 @@
       "label": "Text",
       "default": "ALL STOCK HELD LOCALLY IN NEW ZEALAND"
     },
-    { "type": "header", "content": "Flag" },
+    {
+      "type": "header",
+      "content": "Flag"
+    },
     {
       "type": "paragraph",
       "content": "PNG, JPEG, WEBP and GIF can be selected with the image picker. For an SVG, upload it under Content > Files, copy its URL and paste it below. Leave both empty to hide the flag."
     },
-    { "type": "image_picker", "id": "flag_image", "label": "Flag image" },
-    { "type": "text", "id": "flag_svg_url", "label": "Flag SVG URL (optional, overrides image)" },
-    { "type": "text", "id": "flag_alt", "label": "Flag alt text", "default": "New Zealand" },
+    {
+      "type": "image_picker",
+      "id": "flag_image",
+      "label": "Flag image"
+    },
+    {
+      "type": "text",
+      "id": "flag_svg_url",
+      "label": "Flag SVG URL (optional, overrides image)"
+    },
+    {
+      "type": "text",
+      "id": "flag_alt",
+      "label": "Flag alt text",
+      "default": "New Zealand"
+    },
     {
       "type": "range",
       "id": "flag_height",
@@ -68,8 +84,159 @@
       "unit": "px",
       "label": "Flag height",
       "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Text type"
+    },
+    {
+      "type": "checkbox",
+      "id": "text_font_enable",
+      "label": "Use a custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "text_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 0,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — desktop (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "min": 0,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "Size — mobile (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "text_weight",
+      "label": "Weight",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extrabold"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "text_spacing",
+      "min": -10,
+      "max": 40,
+      "step": 1,
+      "label": "Letter spacing — /100 em (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "text_line_height",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "label": "Line height — /10 (0 keeps theme default)",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "text_transform",
+      "label": "Capitalisation",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalise"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Alignment",
+      "default": "default",
+      "options": [
+        {
+          "value": "default",
+          "label": "Theme default"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Centre"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Colour"
     }
   ],
-  "presets": [{ "name": "Local stock strip" }]
+  "presets": [
+    {
+      "name": "Local stock strip"
+    }
+  ]
 }
 {% endschema %}

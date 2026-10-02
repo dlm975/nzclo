@@ -1,0 +1,50 @@
+{%- comment -%}
+  Outputs the data-ts flag and inline type declarations for one text element.
+
+  Every control has an unset state (checkbox off, 0, or 'default') and emits
+  nothing in that state, so an untouched section renders exactly as its
+  stylesheet already defines it. Sizes become custom properties because the
+  desktop/mobile split needs a media query; data-ts is only added when a size
+  is actually set, so elements without one keep their stylesheet size.
+
+  @param s - the settings object, e.g. section.settings
+  @param p - the setting prefix, e.g. 'heading'
+
+  Usage: <h2 class="h-section"{% render 'text-attrs', s: section.settings, p: 'heading' %}>
+{%- endcomment -%}
+{%- liquid
+  assign k_use = p | append: '_font_enable'
+  assign k_font = p | append: '_font'
+  assign k_size = p | append: '_size'
+  assign k_size_m = p | append: '_size_mobile'
+  assign k_weight = p | append: '_weight'
+  assign k_spacing = p | append: '_spacing'
+  assign k_lh = p | append: '_line_height'
+  assign k_transform = p | append: '_transform'
+  assign k_align = p | append: '_align'
+  assign k_color = p | append: '_color'
+
+  assign size = s[k_size] | default: 0
+  assign size_m = s[k_size_m] | default: 0
+  assign font = s[k_font]
+  assign weight = s[k_weight]
+  assign spacing = s[k_spacing] | default: 0
+  assign lh = s[k_lh] | default: 0
+  assign transform = s[k_transform]
+  assign align = s[k_align]
+  assign color = s[k_color]
+-%}
+{%- if size > 0 or size_m > 0 %} data-ts{% endif -%}
+{%- capture ts_style -%}
+  {%- if s[k_use] and font -%}font-family: {{ font.family }}, {{ font.fallback_families }};{%- endif -%}
+  {%- if size > 0 -%}--ts-fs: {{ size }}px;{%- endif -%}
+  {%- if size_m > 0 -%}--ts-fs-m: {{ size_m }}px;{%- endif -%}
+  {%- if weight != blank and weight != 'default' -%}font-weight: {{ weight }};{%- endif -%}
+  {%- if spacing != 0 -%}letter-spacing: {{ spacing | divided_by: 100.0 }}em;{%- endif -%}
+  {%- if lh != 0 -%}line-height: {{ lh | divided_by: 10.0 }};{%- endif -%}
+  {%- if transform != blank and transform != 'default' -%}text-transform: {{ transform }};{%- endif -%}
+  {%- if align != blank and align != 'default' -%}text-align: {{ align }};{%- endif -%}
+  {%- if color != blank -%}color: {{ color }};{%- endif -%}
+{%- endcapture -%}
+{%- assign ts_style = ts_style | strip -%}
+{%- if ts_style != blank %} style="{{ ts_style }}"{% endif -%}

@@ -168,7 +168,7 @@
     </a>
 
     {%- if product.compare_at_price > product.price and product.available -%}
-      <span class="product-card__badge">sale</span>
+      <span class="product-card__badge">{{ settings.sale_label | default: 'sale' }}</span>
     {%- endif -%}
     <span class="product-card__badge product-card__badge--preorder">{{ settings.preorder_label | default: 'Pre-Order' }}</span>
 
