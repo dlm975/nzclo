@@ -41,6 +41,45 @@
     },
     "featured": {
       "type": "featured-collection",
+      "blocks": {
+        "product_gh9A6f": {
+          "type": "product",
+          "settings": {
+            "product": "uniqlo-airism-cotton-oversized-t-shirt"
+          }
+        },
+        "product_bhFdcn": {
+          "type": "product",
+          "settings": {
+            "product": "uniqlo-jorts"
+          }
+        },
+        "product_yz8yGU": {
+          "type": "product",
+          "settings": {
+            "product": "uniqlo-airism-cotton-oversized-t-shirt-womens"
+          }
+        },
+        "product_APzWPm": {
+          "type": "product",
+          "settings": {
+            "product": "uniqlo-c-sweat-wide-shorts"
+          }
+        },
+        "product_Awbtq7": {
+          "type": "product",
+          "settings": {
+            "product": "uniqlo-c-wide-leg-sweatpants"
+          }
+        }
+      },
+      "block_order": [
+        "product_gh9A6f",
+        "product_bhFdcn",
+        "product_yz8yGU",
+        "product_APzWPm",
+        "product_Awbtq7"
+      ],
       "settings": {
         "eyebrow": "core collection",
         "heading": "",
