@@ -13,6 +13,7 @@
       "type": "hero",
       "settings": {
         "image": "shopify://shop_images/goods_465185_sub1_3x4_1.avif",
+        "overlay_opacity": 29,
         "heading": "World's best basics, now in NZ.",
         "heading_style": "tagline",
         "button_label": "shop the classics",
