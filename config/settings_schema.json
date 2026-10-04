@@ -156,6 +156,78 @@
         "unit": "px",
         "label": "Badge height",
         "default": 20
+      },
+      {
+        "type": "header",
+        "content": "Reward progress"
+      },
+      {
+        "type": "paragraph",
+        "content": "The bar reflects cart quantity only. The theme cannot create discounts: to make these rewards real, create two Automatic discounts in Shopify admin (Discounts > Create > Automatic) — 5% off with a minimum quantity of 2, and Free shipping with a minimum quantity of 3. Keep the quantities below matching those discounts."
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_reward_enable",
+        "label": "Show reward progress bar",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "cart_reward_tier1_qty",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "label": "Reward 1 — items required",
+        "default": 2
+      },
+      {
+        "type": "text",
+        "id": "cart_reward_tier1_label",
+        "label": "Reward 1 — label",
+        "default": "5% OFF"
+      },
+      {
+        "type": "range",
+        "id": "cart_reward_tier2_qty",
+        "min": 2,
+        "max": 20,
+        "step": 1,
+        "label": "Reward 2 — items required",
+        "default": 3
+      },
+      {
+        "type": "text",
+        "id": "cart_reward_tier2_label",
+        "label": "Reward 2 — label",
+        "default": "FREE SHIPPING"
+      },
+      {
+        "type": "paragraph",
+        "content": "In the messages below, [n] is replaced with the number of items still needed."
+      },
+      {
+        "type": "text",
+        "id": "cart_reward_msg_start",
+        "label": "Message — empty cart",
+        "default": "Add [n] items to unlock 5% off!"
+      },
+      {
+        "type": "text",
+        "id": "cart_reward_msg_progress",
+        "label": "Message — before reward 1",
+        "default": "Add [n] more item to unlock 5% off!"
+      },
+      {
+        "type": "text",
+        "id": "cart_reward_msg_tier1",
+        "label": "Message — reward 1 reached",
+        "default": "5% OFF unlocked! Add [n] more item for free shipping."
+      },
+      {
+        "type": "text",
+        "id": "cart_reward_msg_complete",
+        "label": "Message — reward 2 reached",
+        "default": "Free shipping unlocked!"
       }
     ]
   },

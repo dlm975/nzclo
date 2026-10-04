@@ -1402,6 +1402,97 @@ select.field {
   .cart-payments__icon { height: 20px; }
 }
 
+/* cart reward progress: track, milestone nodes and labels beneath, no card */
+.cart-rewards {
+  padding: 14px 22px 0;
+}
+.cart-rewards__message {
+  margin: 0 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  color: rgb(var(--color-text));
+}
+.cart-rewards__track {
+  position: relative;
+  height: 6px;
+  margin: 0 38px 46px;
+  border-radius: 100px;
+  background: rgba(var(--color-text), 0.1);
+}
+.cart-rewards__fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-radius: 100px;
+  background: rgb(var(--color-text));
+  transition: width 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.cart-rewards__node {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgb(var(--color-background));
+  box-shadow: inset 0 0 0 1px rgba(var(--color-text), 0.14);
+  color: rgba(var(--color-text), 0.45);
+  transition: background-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+}
+.cart-rewards__node svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cart-rewards__node.is-complete {
+  background: rgb(var(--color-text));
+  box-shadow: none;
+  color: rgb(var(--color-background));
+}
+.cart-rewards__label {
+  position: absolute;
+  top: 24px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  white-space: nowrap;
+  text-align: center;
+}
+.cart-rewards__label-name {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgb(var(--color-text));
+}
+.cart-rewards__label-qty {
+  font-size: 10px;
+  color: rgb(var(--color-text-secondary));
+}
+@media (max-width: 420px) {
+  .cart-rewards { padding: 12px 16px 0; }
+  .cart-rewards__message { font-size: 12px; margin-bottom: 14px; }
+  .cart-rewards__track { margin: 0 34px 42px; }
+  .cart-rewards__label-name,
+  .cart-rewards__label-qty { font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cart-rewards__fill { transition: none; }
+}
+
 /* ---------- search / utility pages ---------- */
 
 .page-narrow { max-width: 720px; margin: 0 auto; }

@@ -7,6 +7,84 @@
       <button class="drawer-close" data-drawer-close aria-label="close">{% render 'icon', name: 'close' %}</button>
     </div>
 
+    {%- liquid
+      assign t1 = settings.cart_reward_tier1_qty | default: 2
+      assign t2 = settings.cart_reward_tier2_qty | default: 3
+      assign count = cart.item_count
+
+      comment
+        Milestones are spaced evenly along the track, as in the reference, and the
+        fill interpolates between them, so the bar always reads as progress toward
+        the next reward rather than toward the final total.
+      endcomment
+      if count >= t1
+        assign span = t2 | minus: t1
+        if span > 0
+          assign over = count | minus: t1
+          assign extra = over | times: 50.0 | divided_by: span
+          assign pct = extra | plus: 50
+        else
+          assign pct = 100
+        endif
+      elsif t1 > 0
+        assign pct = count | times: 50.0 | divided_by: t1
+      else
+        assign pct = 100
+      endif
+      if pct > 100
+        assign pct = 100
+      endif
+
+      if count >= t2
+        assign reward_msg = settings.cart_reward_msg_complete
+      elsif count >= t1
+        assign remaining = t2 | minus: count
+        assign reward_msg = settings.cart_reward_msg_tier1 | replace: '[n]', remaining
+      elsif count == 0
+        assign reward_msg = settings.cart_reward_msg_start | replace: '[n]', t1
+      else
+        assign remaining = t1 | minus: count
+        assign reward_msg = settings.cart_reward_msg_progress | replace: '[n]', remaining
+      endif
+    -%}
+
+    {%- if settings.cart_reward_enable -%}
+      <div class="cart-rewards">
+        {%- if reward_msg != blank -%}
+          <p class="cart-rewards__message">{{ reward_msg }}</p>
+        {%- endif -%}
+
+        <div class="cart-rewards__track">
+          <span class="cart-rewards__fill" data-cart-progress data-progress="{{ pct }}"></span>
+
+          <span class="cart-rewards__node{% if count >= t1 %} is-complete{% endif %}" style="left: 50%;">
+            {%- if count >= t1 -%}
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+            {%- else -%}
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7"/><circle cx="8" cy="8" r="2.2"/><circle cx="16" cy="16" r="2.2"/></svg>
+            {%- endif -%}
+          </span>
+
+          <span class="cart-rewards__node{% if count >= t2 %} is-complete{% endif %}" style="left: 100%;">
+            {%- if count >= t2 -%}
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+            {%- else -%}
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 7.5h10v9h-10zM12.5 11h4l3 3v2.5h-7z"/><circle cx="6" cy="17.5" r="1.6"/><circle cx="16" cy="17.5" r="1.6"/></svg>
+            {%- endif -%}
+          </span>
+
+          <span class="cart-rewards__label" style="left: 50%;">
+            <span class="cart-rewards__label-name">{{ settings.cart_reward_tier1_label }}</span>
+            <span class="cart-rewards__label-qty">{{ t1 }} items</span>
+          </span>
+          <span class="cart-rewards__label" style="left: 100%;">
+            <span class="cart-rewards__label-name">{{ settings.cart_reward_tier2_label }}</span>
+            <span class="cart-rewards__label-qty">{{ t2 }} items</span>
+          </span>
+        </div>
+      </div>
+    {%- endif -%}
+
     {%- if cart.item_count == 0 -%}
       <div class="cart-drawer__empty">
         <p class="text-secondary">{{ 'cart.general.empty' | t }}</p>

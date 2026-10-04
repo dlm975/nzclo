@@ -282,6 +282,21 @@
 
   var drawerEnabled = document.documentElement.hasAttribute('data-cart-drawer');
 
+  /* The drawer is re-rendered server side on every cart change, so the fill is
+     animated from the last known value to the new one rather than snapping. */
+  var lastCartProgress = null;
+  function animateCartProgress() {
+    var fill = qs('[data-cart-progress]');
+    if (!fill) return;
+    var target = parseFloat(fill.getAttribute('data-progress')) || 0;
+    var from = lastCartProgress === null ? target : lastCartProgress;
+    fill.style.width = from + '%';
+    void fill.offsetWidth;
+    fill.style.width = target + '%';
+    lastCartProgress = target;
+  }
+  animateCartProgress();
+
   function refreshCartDrawer(open) {
     return fetch(window.location.pathname + '?sections=cart-drawer')
       .then(function (r) { return r.json(); })
@@ -299,6 +314,7 @@
           var n = freshCount ? freshCount.getAttribute('data-cart-count-source') : null;
           if (n !== null) el.textContent = n;
         });
+        animateCartProgress();
         if (open) {
           var drawer = qs('#cart-drawer');
           if (drawer) openDrawer(drawer);
