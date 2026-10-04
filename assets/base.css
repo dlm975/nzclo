@@ -1355,10 +1355,8 @@ select.field {
   justify-content: center;
   gap: 10px;
   width: 100%;
-  margin: 0 0 12px;
-  padding: 9px 12px;
-  border-radius: var(--radius-tile);
-  background: rgb(var(--color-tile));
+  margin: 0 0 10px;
+  padding: 2px 0;
 }
 .cart-social__stars { display: inline-flex; align-items: center; gap: 2px; }
 .cart-social__star {
@@ -1370,13 +1368,14 @@ select.field {
 .cart-social__badge { width: auto; max-width: 140px; object-fit: contain; }
 .cart-social__text {
   font-size: 11px;
+  font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: rgb(var(--color-text-secondary));
   white-space: nowrap;
 }
 @media (max-width: 420px) {
-  .cart-social { gap: 8px; padding: 8px 10px; }
+  .cart-social { gap: 8px; }
   .cart-social__text { font-size: 10px; letter-spacing: 0.08em; }
 }
 
