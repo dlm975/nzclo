@@ -181,8 +181,6 @@
       <h3 class="product-card__title">{{ product.title }}</h3>
 
       <span class="product-card__row">
-        <span class="product-card__price">{% render 'price', product: product %}</span>
-
         {%- if color_option -%}
           <span class="product-card__swatches">
             {%- assign swatch_shown = 0 -%}
@@ -224,6 +222,8 @@
             {%- endif -%}
           </span>
         {%- endif -%}
+
+        <span class="product-card__price">{% render 'price', product: product %}</span>
       </span>
     </span>
   </div>

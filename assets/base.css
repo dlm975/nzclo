@@ -695,23 +695,25 @@ select.field {
   margin-top: 7px;
 }
 .product-card__price {
-  flex: 1 1 auto;
-  min-width: 0;
+  flex: 0 0 auto;
+  margin-left: auto;
   font-size: 13px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-align: right;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.38);
 }
 .product-card__price s { opacity: 0.7; margin-right: 6px; }
 .product-card__swatches {
   display: flex;
-  flex: 0 0 auto;
-  flex-wrap: wrap;
+  flex: 0 1 auto;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 6px;
+  min-width: 0;
   pointer-events: auto;
 }
+/* the remainder count sits with the chips and never wraps away from them */
+.product-card__swatch-more { flex: none; }
 .product-card__swatch {
   position: relative;
   width: 13px;
@@ -810,15 +812,9 @@ select.field {
   .product-card__swatch-more--wide { display: none; }
   .product-card__swatch-more--narrow { display: inline; }
 
-  /* On a narrow card the price must not be squeezed, so it keeps its natural
-     width and the swatch strip takes whatever is left, wrapping rather than
-     overflowing on the smallest handsets. */
-  .product-card__price { flex: 0 0 auto; }
-  .product-card__swatches {
-    flex: 1 1 auto;
-    min-width: 0;
-    justify-content: flex-end;
-  }
+  /* a little less room between the chips and the price so the +X stays on
+     the line at handset widths */
+  .product-card__row { gap: 8px; }
 }
 
 /* horizontal product rail */
@@ -976,6 +972,16 @@ select.field {
   font-family: inherit;
 }
 .special-order__add { margin-bottom: 18px; }
+
+/* Collection pages show the card as a 3:4 portrait frame. Only the media box
+   changes: the sharp shot already uses 3:4, so dropping its fade lets the photo
+   fill the card edge to edge. Scoped to the collection grid so the homepage,
+   search, product pages and cart drawer are untouched. */
+.product-grid--collection .product-card__media { aspect-ratio: 3 / 4; }
+.product-grid--collection .product-card__shot {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
 
 /* ---------- collection tiles ---------- */
 
