@@ -17,11 +17,19 @@
     "color_button": "#000000",
     "color_button_text": "#ffffff",
     "enable_cart_drawer": true,
+    "cart_social_image": "shopify://shop_images/Photoroom_20261004_185725.jpg",
     "preorder_label": "Pre-Order",
     "preorder_cta_label": "Create an order request",
     "preorder_message": "This item is currently out of stock. Send us a request and we'll come back to you with pricing and availability.",
     "preorder_page_url": "/pages/special-order",
     "preorder_color": "#2563eb",
-    "preorder_text_color": "#ffffff"
+    "preorder_text_color": "#ffffff",
+    "sections": {
+      "cart-drawer": {
+        "type": "cart-drawer",
+        "settings": {}
+      }
+    },
+    "content_for_index": []
   }
 }
