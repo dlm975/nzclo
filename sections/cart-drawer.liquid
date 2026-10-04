@@ -35,6 +35,13 @@
         assign pct = 100
       endif
 
+      assign next_tier = 0
+      if count < t1
+        assign next_tier = 1
+      elsif count < t2
+        assign next_tier = 2
+      endif
+
       if count >= t2
         assign reward_msg = settings.cart_reward_msg_complete
       elsif count >= t1
@@ -55,9 +62,12 @@
         {%- endif -%}
 
         <div class="cart-rewards__track">
-          <span class="cart-rewards__fill" data-cart-progress data-progress="{{ pct }}"></span>
+          <span class="cart-rewards__bar">
+            <span class="cart-rewards__gradient"></span>
+            <span class="cart-rewards__veil" data-cart-progress data-progress="{{ pct }}"></span>
+          </span>
 
-          <span class="cart-rewards__node{% if count >= t1 %} is-complete{% endif %}" style="left: 50%;">
+          <span class="cart-rewards__node cart-rewards__node--one{% if count >= t1 %} is-complete{% elsif next_tier == 1 %} is-next{% endif %}" style="left: 50%;">
             {%- if count >= t1 -%}
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
             {%- else -%}
@@ -65,7 +75,7 @@
             {%- endif -%}
           </span>
 
-          <span class="cart-rewards__node{% if count >= t2 %} is-complete{% endif %}" style="left: 100%;">
+          <span class="cart-rewards__node cart-rewards__node--two{% if count >= t2 %} is-complete{% elsif next_tier == 2 %} is-next{% endif %}" style="left: 100%;">
             {%- if count >= t2 -%}
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
             {%- else -%}
@@ -73,11 +83,11 @@
             {%- endif -%}
           </span>
 
-          <span class="cart-rewards__label" style="left: 50%;">
+          <span class="cart-rewards__label cart-rewards__label--one{% if count >= t1 %} is-complete{% elsif next_tier == 1 %} is-next{% endif %}" style="left: 50%;">
             <span class="cart-rewards__label-name">{{ settings.cart_reward_tier1_label }}</span>
             <span class="cart-rewards__label-qty">{{ t1 }} items</span>
           </span>
-          <span class="cart-rewards__label" style="left: 100%;">
+          <span class="cart-rewards__label cart-rewards__label--two{% if count >= t2 %} is-complete{% elsif next_tier == 2 %} is-next{% endif %}" style="left: 100%;">
             <span class="cart-rewards__label-name">{{ settings.cart_reward_tier2_label }}</span>
             <span class="cart-rewards__label-qty">{{ t2 }} items</span>
           </span>

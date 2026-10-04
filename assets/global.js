@@ -449,13 +449,13 @@
      animated from the last known value to the new one rather than snapping. */
   var lastCartProgress = null;
   function animateCartProgress() {
-    var fill = qs('[data-cart-progress]');
-    if (!fill) return;
-    var target = parseFloat(fill.getAttribute('data-progress')) || 0;
+    var veil = qs('[data-cart-progress]');
+    if (!veil) return;
+    var target = parseFloat(veil.getAttribute('data-progress')) || 0;
     var from = lastCartProgress === null ? target : lastCartProgress;
-    fill.style.width = from + '%';
-    void fill.offsetWidth;
-    fill.style.width = target + '%';
+    veil.style.left = from + '%';
+    void veil.offsetWidth;
+    veil.style.left = target + '%';
     lastCartProgress = target;
   }
   animateCartProgress();

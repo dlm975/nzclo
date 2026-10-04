@@ -1439,8 +1439,18 @@ select.field {
   .cart-payments__icon { height: 20px; }
 }
 
-/* cart reward progress: track, milestone nodes and labels beneath, no card */
+/* Cart reward progress.
+   Colour carries meaning: indigo-violet for the discount, emerald-teal for free
+   shipping. The gradient is painted across the whole track and revealed by a
+   veil, so each colour stays anchored to the milestone it belongs to instead of
+   compressing as the bar fills. */
 .cart-rewards {
+  --rw-one-a: #4f46e5;
+  --rw-one-b: #7c3aed;
+  --rw-two-a: #059669;
+  --rw-two-b: #0d9488;
+  --rw-one-ink: #4338ca;
+  --rw-two-ink: #0f766e;
   padding: 14px 22px 0;
 }
 .cart-rewards__message {
@@ -1453,20 +1463,35 @@ select.field {
 }
 .cart-rewards__track {
   position: relative;
-  height: 6px;
+  height: 8px;
   margin: 0 38px 46px;
-  border-radius: 100px;
-  background: rgba(var(--color-text), 0.1);
 }
-.cart-rewards__fill {
+.cart-rewards__bar {
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 0;
+  inset: 0;
   border-radius: 100px;
-  background: rgb(var(--color-text));
-  transition: width 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+  overflow: hidden;
+}
+.cart-rewards__gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--rw-one-a) 0%, var(--rw-one-b) 52%, var(--rw-two-b) 100%);
+}
+/* covers the unearned remainder; animating left reveals the gradient */
+.cart-rewards__veil {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  /* must be opaque or the gradient reads through it; this layers the same 9%
+     grey over the drawer background, matching the old track colour exactly */
+  background-color: rgb(var(--color-background));
+  background-image: linear-gradient(
+    rgba(var(--color-text), 0.09),
+    rgba(var(--color-text), 0.09)
+  );
+  transition: left 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .cart-rewards__node {
   position: absolute;
@@ -1480,22 +1505,36 @@ select.field {
   border-radius: 50%;
   background: rgb(var(--color-background));
   box-shadow: inset 0 0 0 1px rgba(var(--color-text), 0.14);
-  color: rgba(var(--color-text), 0.45);
-  transition: background-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+  color: rgba(var(--color-text), 0.4);
+  transition: color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
 }
 .cart-rewards__node svg {
   width: 13px;
   height: 13px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.8;
+  stroke-width: 1.9;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.cart-rewards__node.is-complete {
-  background: rgb(var(--color-text));
-  box-shadow: none;
-  color: rgb(var(--color-background));
+/* the next reward is the one to chase: ringed in its own colour */
+.cart-rewards__node--one.is-next {
+  color: var(--rw-one-ink);
+  box-shadow: inset 0 0 0 2px var(--rw-one-a), 0 0 0 4px rgba(79, 70, 229, 0.14);
+}
+.cart-rewards__node--two.is-next {
+  color: var(--rw-two-ink);
+  box-shadow: inset 0 0 0 2px var(--rw-two-a), 0 0 0 4px rgba(5, 150, 105, 0.14);
+}
+/* unlocked: saturated fill, white tick, a restrained glow */
+.cart-rewards__node.is-complete { color: #fff; box-shadow: none; }
+.cart-rewards__node--one.is-complete {
+  background: linear-gradient(135deg, var(--rw-one-a), var(--rw-one-b));
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.16);
+}
+.cart-rewards__node--two.is-complete {
+  background: linear-gradient(135deg, var(--rw-two-a), var(--rw-two-b));
+  box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.16);
 }
 .cart-rewards__label {
   position: absolute;
@@ -1513,12 +1552,16 @@ select.field {
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgb(var(--color-text));
+  color: rgba(var(--color-text), 0.55);
+  transition: color 0.35s ease;
 }
-.cart-rewards__label-qty {
-  font-size: 10px;
-  color: rgb(var(--color-text-secondary));
-}
+.cart-rewards__label-qty { font-size: 10px; color: rgb(var(--color-text-secondary)); }
+.cart-rewards__label--one.is-next .cart-rewards__label-name,
+.cart-rewards__label--one.is-complete .cart-rewards__label-name { color: var(--rw-one-ink); }
+.cart-rewards__label--two.is-next .cart-rewards__label-name,
+.cart-rewards__label--two.is-complete .cart-rewards__label-name { color: var(--rw-two-ink); }
+.cart-rewards__label.is-next .cart-rewards__label-name { font-weight: 700; }
+
 @media (max-width: 420px) {
   .cart-rewards { padding: 12px 16px 0; }
   .cart-rewards__message { font-size: 12px; margin-bottom: 14px; }
@@ -1527,7 +1570,7 @@ select.field {
   .cart-rewards__label-qty { font-size: 9px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cart-rewards__fill { transition: none; }
+  .cart-rewards__veil, .cart-rewards__node { transition: none; }
 }
 
 /* cart add-ons: horizontal swipeable carousel, image and title only */
