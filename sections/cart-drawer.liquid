@@ -72,6 +72,20 @@
         <form action="{{ routes.cart_url }}" method="post">
           <button class="btn btn--solid btn--full" type="submit" name="checkout">{{ 'cart.general.checkout' | t }}</button>
         </form>
+
+        {%- comment -%}
+          Driven by the store's own payment configuration, so only methods that
+          are actually enabled appear, using Shopify's official brand SVGs.
+        {%- endcomment -%}
+        {%- if shop.enabled_payment_types.size > 0 -%}
+          <ul class="cart-payments" role="list">
+            {%- for type in shop.enabled_payment_types -%}
+              <li class="cart-payments__item">
+                {{ type | payment_type_svg_tag: class: 'cart-payments__icon' }}
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
       </div>
     {%- endif -%}
   </div>

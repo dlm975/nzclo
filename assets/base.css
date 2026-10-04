@@ -1379,6 +1379,29 @@ select.field {
   .cart-social__text { font-size: 10px; letter-spacing: 0.08em; }
 }
 
+/* payment methods below the checkout button: no container, brand assets kept
+   at their own aspect ratio and small enough to stay secondary to the CTA */
+.cart-payments {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.cart-payments__item { display: flex; }
+.cart-payments__icon {
+  display: block;
+  height: 22px;
+  width: auto;
+}
+@media (max-width: 420px) {
+  .cart-payments { gap: 5px 6px; }
+  .cart-payments__icon { height: 20px; }
+}
+
 /* ---------- search / utility pages ---------- */
 
 .page-narrow { max-width: 720px; margin: 0 auto; }
