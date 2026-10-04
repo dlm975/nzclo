@@ -1344,7 +1344,42 @@ select.field {
 .cart-drawer__header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid rgba(var(--color-text), 0.1); }
 .cart-drawer__header h2 { margin: 0; font-size: 16px; }
 .cart-drawer__lines { flex: 1; overflow-y: auto; padding: 0 22px; }
-.cart-drawer__lines .cart-line { grid-template-columns: 76px 1fr auto; padding: 16px 0; }
+/* Drawer line items: title pinned to the top of the image, compact quantity
+   control sitting on its bottom edge. Scoped to the drawer so the cart page
+   keeps its own layout. */
+.cart-drawer__lines .cart-line {
+  grid-template-columns: 76px 1fr auto;
+  gap: 12px;
+  padding: 12px 0;
+  align-items: stretch;
+}
+.cart-drawer__lines .cart-line__media { align-self: start; }
+.cart-drawer__lines .cart-line__details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+  min-width: 0;
+}
+.cart-drawer__lines .cart-line__title { margin: 0; }
+.cart-drawer__lines .cart-line__meta { margin: 0; }
+.cart-drawer__lines .cart-line__price { align-self: start; }
+
+.cart-drawer__lines .qty-input {
+  align-self: flex-start;
+  margin-top: 0;
+  border-radius: 8px;
+}
+.cart-drawer__lines .qty-input button {
+  width: 24px;
+  height: 24px;
+  font-size: 13px;
+}
+.cart-drawer__lines .qty-input input {
+  width: 26px;
+  height: 24px;
+  font-size: 11px;
+}
 .cart-drawer__footer { border-top: 1px solid rgba(var(--color-text), 0.1); padding: 12px 22px 22px; }
 /* scoped to the drawer so the cart page keeps its own rhythm */
 .cart-drawer__footer .cart-summary__total { margin: 0 0 10px; }
