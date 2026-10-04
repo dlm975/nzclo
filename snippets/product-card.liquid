@@ -23,7 +23,6 @@
     endif
   endfor
 
-  assign swatch_limit = 7
   assign swatch_total = color_option.values.size
 
   comment
@@ -181,13 +180,15 @@
       <h3 class="product-card__title">{{ product.title }}</h3>
 
       <span class="product-card__row">
+        <span class="product-card__price">{% render 'price', product: product %}</span>
+
         {%- if color_option -%}
           <span class="product-card__swatches">
             {%- assign swatch_shown = 0 -%}
 
             {%- for value in color_option.values -%}
               {%- assign needle = '||' | append: value | append: '||' -%}
-              {%- if available_values contains needle and swatch_shown < swatch_limit -%}
+              {%- if available_values contains needle -%}
                 {% render 'product-swatch', value: value, is_available: true, product: product, color_position: color_position %}
                 {%- assign swatch_shown = swatch_shown | plus: 1 -%}
               {%- endif -%}
@@ -196,34 +197,26 @@
             {%- for value in color_option.values -%}
               {%- assign needle = '||' | append: value | append: '||' -%}
               {%- unless available_values contains needle -%}
-                {%- if swatch_shown < swatch_limit -%}
-                  {% render 'product-swatch', value: value, is_available: false, product: product, color_position: color_position %}
-                  {%- assign swatch_shown = swatch_shown | plus: 1 -%}
-                {%- endif -%}
+                {% render 'product-swatch', value: value, is_available: false, product: product, color_position: color_position %}
+                {%- assign swatch_shown = swatch_shown | plus: 1 -%}
               {%- endunless -%}
             {%- endfor -%}
 
             {%- comment -%}
-              Seven chips are rendered; CSS hides the last three on mobile, so each
-              breakpoint needs its own remainder count.
+              Every colour is rendered. Desktop shows them all; CSS hides the fifth
+              onward on mobile, so only a mobile remainder count is needed.
             {%- endcomment -%}
-            {%- assign mobile_shown = swatch_shown -%}
+            {%- assign mobile_shown = swatch_total -%}
             {%- if mobile_shown > 4 -%}
               {%- assign mobile_shown = 4 -%}
             {%- endif -%}
-            {%- assign overflow_wide = swatch_total | minus: swatch_shown -%}
             {%- assign overflow_narrow = swatch_total | minus: mobile_shown -%}
 
-            {%- if overflow_wide > 0 -%}
-              <span class="product-card__swatch-more product-card__swatch-more--wide">+{{ overflow_wide }}</span>
-            {%- endif -%}
             {%- if overflow_narrow > 0 -%}
               <span class="product-card__swatch-more product-card__swatch-more--narrow">+{{ overflow_narrow }}</span>
             {%- endif -%}
           </span>
         {%- endif -%}
-
-        <span class="product-card__price">{% render 'price', product: product %}</span>
       </span>
     </span>
   </div>

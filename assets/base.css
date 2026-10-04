@@ -696,18 +696,19 @@ select.field {
 }
 .product-card__price {
   flex: 0 0 auto;
-  margin-left: auto;
   font-size: 13px;
   white-space: nowrap;
-  text-align: right;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.38);
 }
 .product-card__price s { opacity: 0.7; margin-right: 6px; }
 .product-card__swatches {
   display: flex;
   flex: 0 1 auto;
-  flex-wrap: nowrap;
+  /* every colour shows on desktop, so the strip wraps instead of overflowing
+     when a product carries more than the card width can hold on one line */
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: 6px;
   min-width: 0;
   pointer-events: auto;
@@ -809,8 +810,8 @@ select.field {
 
 @media (max-width: 749px) {
   .product-card__swatch:nth-of-type(n+5) { display: none; }
-  .product-card__swatch-more--wide { display: none; }
   .product-card__swatch-more--narrow { display: inline; }
+  .product-card__swatches { flex-wrap: nowrap; }
 
   /* a little less room between the chips and the price so the +X stays on
      the line at handset widths */
