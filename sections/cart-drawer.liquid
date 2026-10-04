@@ -203,7 +203,6 @@
           <span>{{ 'cart.general.subtotal' | t }}</span>
           <span>{{ cart.total_price | money }}</span>
         </div>
-        <p class="text-small text-secondary" style="margin: 0 0 14px;">{{ 'cart.general.taxes_and_shipping_at_checkout' | t }}</p>
         {%- if settings.cart_social_enable and settings.cart_social_text != blank -%}
           <div class="cart-social">
             {%- if settings.cart_social_image -%}
