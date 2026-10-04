@@ -121,6 +121,41 @@
         "id": "enable_cart_drawer",
         "label": "Open cart drawer when adding to cart",
         "default": true
+      },
+      {
+        "type": "header",
+        "content": "Social proof"
+      },
+      {
+        "type": "paragraph",
+        "content": "Shown just above the checkout button. Stars are decorative and make no third-party rating claim. To show a real review score, upload the official badge supplied by your reviews provider."
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_social_enable",
+        "label": "Show social proof strip",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "cart_social_text",
+        "label": "Text",
+        "default": "100+ HAPPY CUSTOMERS"
+      },
+      {
+        "type": "image_picker",
+        "id": "cart_social_image",
+        "label": "Badge image (replaces the stars)"
+      },
+      {
+        "type": "range",
+        "id": "cart_social_image_height",
+        "min": 12,
+        "max": 40,
+        "step": 2,
+        "unit": "px",
+        "label": "Badge height",
+        "default": 20
       }
     ]
   },

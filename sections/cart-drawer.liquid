@@ -46,6 +46,29 @@
           <span>{{ cart.total_price | money }}</span>
         </div>
         <p class="text-small text-secondary" style="margin: 0 0 14px;">{{ 'cart.general.taxes_and_shipping_at_checkout' | t }}</p>
+        {%- if settings.cart_social_enable and settings.cart_social_text != blank -%}
+          <div class="cart-social">
+            {%- if settings.cart_social_image -%}
+              <img
+                class="cart-social__badge"
+                src="{{ settings.cart_social_image | image_url: width: 400 }}"
+                alt="{{ settings.cart_social_text | escape }}"
+                loading="lazy"
+                width="{{ settings.cart_social_image_height | times: settings.cart_social_image.aspect_ratio | round }}"
+                height="{{ settings.cart_social_image_height }}"
+                style="height: {{ settings.cart_social_image_height }}px;"
+              >
+            {%- else -%}
+              <span class="cart-social__stars" aria-hidden="true">
+                {%- for i in (1..5) -%}
+                  <svg class="cart-social__star" viewBox="0 0 24 24"><path d="M12 2.6l2.9 6.1 6.6.9-4.8 4.6 1.2 6.6-5.9-3.2-5.9 3.2 1.2-6.6L2.5 9.6l6.6-.9z"/></svg>
+                {%- endfor -%}
+              </span>
+            {%- endif -%}
+            <span class="cart-social__text">{{ settings.cart_social_text }}</span>
+          </div>
+        {%- endif -%}
+
         <form action="{{ routes.cart_url }}" method="post">
           <button class="btn btn--solid btn--full" type="submit" name="checkout">{{ 'cart.general.checkout' | t }}</button>
         </form>
