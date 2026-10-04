@@ -388,14 +388,16 @@ select.field {
   );
 }
 
-/* light veil across the whole image; composites with the scrim above */
+/* Merchant-controlled veil across the whole image, independent of the scrim
+   above and sitting below the hero copy (z-index 1 vs 2) so text and buttons
+   are never dimmed and stay clickable. */
 .hero::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: rgba(0, 0, 0, 0.13);
+  background: rgba(0, 0, 0, var(--hero-overlay, 0.13));
 }
 .hero__media, .hero__media img, .hero__media video {
   position: absolute;

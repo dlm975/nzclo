@@ -1,4 +1,7 @@
-<div class="hero{% if section.settings.height == 'short' %} hero--short{% endif %} hero--{{ section.settings.text_position }}">
+<div
+  class="hero{% if section.settings.height == 'short' %} hero--short{% endif %} hero--{{ section.settings.text_position }}"
+  style="--hero-overlay: {{ section.settings.overlay_opacity | default: 20 | divided_by: 100.0 }};"
+>
   <div class="hero__media">
     {%- if section.settings.video != blank -%}
       {{ section.settings.video | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true }}
@@ -41,6 +44,17 @@
       "type": "video",
       "id": "video",
       "label": "Video (overrides image)"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 70,
+      "step": 1,
+      "unit": "%",
+      "label": "Hero image overlay opacity",
+      "default": 20,
+      "info": "Darkens the image only. The previous fixed value was 13%."
     },
     {
       "type": "text",
