@@ -152,32 +152,27 @@
             {%- assign addon_needle = '|' | append: addon.id | append: '|' -%}
             {%- if in_cart_ids contains addon_needle -%}{%- continue -%}{%- endif -%}
 
-            <div class="cart-addon">
-              <a class="cart-addon__media" href="{{ addon.url }}" tabindex="-1" aria-hidden="true">
+            <button
+              type="button"
+              class="cart-addon-card"
+              data-addon-handle="{{ addon.handle }}"
+              aria-label="{{ addon.title | escape }}"
+            >
+              <span class="cart-addon-card__media">
                 {%- if addon.featured_media -%}
-                  <img src="{{ addon.featured_media | image_url: width: 120 }}" alt="" loading="lazy" width="44" height="55">
+                  <img
+                    src="{{ addon.featured_media | image_url: width: 300 }}"
+                    srcset="{{ addon.featured_media | image_url: width: 200 }} 200w, {{ addon.featured_media | image_url: width: 300 }} 300w"
+                    sizes="110px"
+                    alt=""
+                    loading="lazy"
+                    width="110"
+                    height="138"
+                  >
                 {%- endif -%}
-              </a>
-              <span class="cart-addon__info">
-                <a class="cart-addon__title" href="{{ addon.url }}">{{ addon.title }}</a>
-                <span class="cart-addon__price">{% render 'price', product: addon %}</span>
               </span>
-              {%- if addon.variants.size == 1 -%}
-                <button
-                  type="button"
-                  class="cart-addon__add"
-                  data-card-add
-                  data-variant-id="{{ addon.selected_or_first_available_variant.id }}"
-                  aria-label="{{ 'products.product.add_to_cart' | t }} — {{ addon.title | escape }}"
-                >+ {{ 'cart.general.add' | t }}</button>
-              {%- else -%}
-                <a
-                  class="cart-addon__add"
-                  href="{{ addon.url }}"
-                  aria-label="{{ 'products.product.choose_options' | t }} — {{ addon.title | escape }}"
-                >{{ 'products.product.choose_options' | t }}</a>
-              {%- endif -%}
-            </div>
+              <span class="cart-addon-card__title">{{ addon.title }}</span>
+            </button>
 
             {%- assign addon_shown = addon_shown | plus: 1 -%}
           {%- endfor -%}
@@ -185,10 +180,20 @@
 
         {%- if addon_rows != blank -%}
           <div class="cart-addons">
-            {%- if settings.cart_addon_heading != blank -%}
-              <p class="cart-addons__heading">{{ settings.cart_addon_heading }}</p>
-            {%- endif -%}
-            {{ addon_rows }}
+            <div class="cart-addons__head">
+              {%- if settings.cart_addon_heading != blank -%}
+                <p class="cart-addons__heading">{{ settings.cart_addon_heading }}</p>
+              {%- endif -%}
+              <span class="cart-addons__nav">
+                <button type="button" class="cart-addons__arrow" data-addon-prev aria-label="Previous">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+                </button>
+                <button type="button" class="cart-addons__arrow" data-addon-next aria-label="Next">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+                </button>
+              </span>
+            </div>
+            <div class="cart-addons__track" data-addon-track>{{ addon_rows }}</div>
           </div>
         {%- endif -%}
       {%- endif -%}
@@ -241,6 +246,16 @@
         {%- endif -%}
       </div>
     {%- endif -%}
+
+    <div class="mini-pdp" id="mini-pdp" data-money-format="{{ shop.money_format | escape }}" hidden>
+      <div class="mini-pdp__scrim" data-minipdp-close></div>
+      <div class="mini-pdp__sheet" role="dialog" aria-modal="true" aria-label="{{ 'products.product.choose_options' | t }}">
+        <button type="button" class="mini-pdp__close" data-minipdp-close aria-label="{{ 'cart.general.remove' | t }}">
+          {% render 'icon', name: 'close' %}
+        </button>
+        <div class="mini-pdp__body" data-minipdp-body></div>
+      </div>
+    </div>
   </div>
 </div>
 
