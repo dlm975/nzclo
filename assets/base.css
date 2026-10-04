@@ -806,7 +806,7 @@ select.field {
 .product-card__swatch-more--narrow { display: none; }
 
 @media (max-width: 749px) {
-  .product-card__swatch:nth-of-type(n+6) { display: none; }
+  .product-card__swatch:nth-of-type(n+5) { display: none; }
   .product-card__swatch-more--wide { display: none; }
   .product-card__swatch-more--narrow { display: inline; }
 

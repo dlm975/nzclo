@@ -206,12 +206,12 @@
             {%- endfor -%}
 
             {%- comment -%}
-              Seven chips are rendered; CSS hides the last two on mobile, so each
+              Seven chips are rendered; CSS hides the last three on mobile, so each
               breakpoint needs its own remainder count.
             {%- endcomment -%}
             {%- assign mobile_shown = swatch_shown -%}
-            {%- if mobile_shown > 5 -%}
-              {%- assign mobile_shown = 5 -%}
+            {%- if mobile_shown > 4 -%}
+              {%- assign mobile_shown = 4 -%}
             {%- endif -%}
             {%- assign overflow_wide = swatch_total | minus: swatch_shown -%}
             {%- assign overflow_narrow = swatch_total | minus: mobile_shown -%}
