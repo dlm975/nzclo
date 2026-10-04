@@ -228,6 +228,40 @@
         "id": "cart_reward_msg_complete",
         "label": "Message — reward 2 reached",
         "default": "Free shipping unlocked!"
+      },
+      {
+        "type": "header",
+        "content": "Order add-ons"
+      },
+      {
+        "type": "paragraph",
+        "content": "Shown in the drawer only while a reward is still locked, and hidden once the last threshold is met. Products come from the collection below; sort that collection by price (low to high) so the cheapest, easiest add-ons appear first. Items already in the cart and anything out of stock are skipped."
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_addon_enable",
+        "label": "Show add-ons",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "cart_addon_heading",
+        "label": "Heading",
+        "default": "Complete your order"
+      },
+      {
+        "type": "collection",
+        "id": "cart_addon_collection",
+        "label": "Add-on collection"
+      },
+      {
+        "type": "range",
+        "id": "cart_addon_count",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "label": "Products to show",
+        "default": 3
       }
     ]
   },

@@ -118,6 +118,81 @@
           </div>
         {%- endfor -%}
       </div>
+      {%- comment -%}
+        Add-ons appear only while a reward is still out of reach, and disappear as
+        soon as the final threshold is met. The drawer re-renders on every cart
+        change, so this re-evaluates itself without extra scripting.
+      {%- endcomment -%}
+      {%- liquid
+        assign addon_t2 = settings.cart_reward_tier2_qty | default: 3
+        assign show_addons = false
+        if settings.cart_addon_enable and cart.item_count < addon_t2
+          assign show_addons = true
+        endif
+      -%}
+
+      {%- if show_addons -%}
+        {%- liquid
+          assign addon_source = settings.cart_addon_collection
+          if addon_source == blank
+            assign addon_source = collections.all
+          endif
+          assign addon_limit = settings.cart_addon_count | default: 3
+          assign addon_shown = 0
+          assign in_cart_ids = '|'
+          for item in cart.items
+            assign in_cart_ids = in_cart_ids | append: item.product_id | append: '|'
+          endfor
+        -%}
+
+        {%- capture addon_rows -%}
+          {%- for addon in addon_source.products -%}
+            {%- if addon_shown >= addon_limit -%}{%- break -%}{%- endif -%}
+            {%- unless addon.available -%}{%- continue -%}{%- endunless -%}
+            {%- assign addon_needle = '|' | append: addon.id | append: '|' -%}
+            {%- if in_cart_ids contains addon_needle -%}{%- continue -%}{%- endif -%}
+
+            <div class="cart-addon">
+              <a class="cart-addon__media" href="{{ addon.url }}" tabindex="-1" aria-hidden="true">
+                {%- if addon.featured_media -%}
+                  <img src="{{ addon.featured_media | image_url: width: 120 }}" alt="" loading="lazy" width="44" height="55">
+                {%- endif -%}
+              </a>
+              <span class="cart-addon__info">
+                <a class="cart-addon__title" href="{{ addon.url }}">{{ addon.title }}</a>
+                <span class="cart-addon__price">{% render 'price', product: addon %}</span>
+              </span>
+              {%- if addon.variants.size == 1 -%}
+                <button
+                  type="button"
+                  class="cart-addon__add"
+                  data-card-add
+                  data-variant-id="{{ addon.selected_or_first_available_variant.id }}"
+                  aria-label="{{ 'products.product.add_to_cart' | t }} — {{ addon.title | escape }}"
+                >+ {{ 'cart.general.add' | t }}</button>
+              {%- else -%}
+                <a
+                  class="cart-addon__add"
+                  href="{{ addon.url }}"
+                  aria-label="{{ 'products.product.choose_options' | t }} — {{ addon.title | escape }}"
+                >{{ 'products.product.choose_options' | t }}</a>
+              {%- endif -%}
+            </div>
+
+            {%- assign addon_shown = addon_shown | plus: 1 -%}
+          {%- endfor -%}
+        {%- endcapture -%}
+
+        {%- if addon_rows != blank -%}
+          <div class="cart-addons">
+            {%- if settings.cart_addon_heading != blank -%}
+              <p class="cart-addons__heading">{{ settings.cart_addon_heading }}</p>
+            {%- endif -%}
+            {{ addon_rows }}
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+
       <div class="cart-drawer__footer">
         <div class="cart-summary__total">
           <span>{{ 'cart.general.subtotal' | t }}</span>

@@ -52,7 +52,8 @@
       "checkout": "checkout",
       "subtotal": "subtotal",
       "remove": "remove",
-      "taxes_and_shipping_at_checkout": "shipping + taxes calculated at checkout"
+      "taxes_and_shipping_at_checkout": "shipping + taxes calculated at checkout",
+      "add": "add"
     }
   },
   "customer": {
