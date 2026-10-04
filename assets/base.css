@@ -974,14 +974,34 @@ select.field {
 }
 .special-order__add { margin-bottom: 18px; }
 
-/* Collection pages show the card as a 3:4 portrait frame. Only the media box
-   changes: the sharp shot already uses 3:4, so dropping its fade lets the photo
-   fill the card edge to edge. Scoped to the collection grid so the homepage,
-   search, product pages and cart drawer are untouched. */
+/* Collection pages show the card as a 3:4 portrait frame, reusing the homepage
+   card's two layers: the blurred, bottom-anchored copy of the image sits behind
+   and the sharp shot above it is masked away toward the bottom. The mask steps
+   through partial alphas rather than cutting off, so the sharp layer dissolves
+   progressively and the blur reads as strengthening downward with no horizontal
+   edge. The shot fills the whole card here, so the fade starts lower than it
+   does on the 9:16 card. Scoped to the collection grid, so the homepage, search,
+   product pages and cart drawer are untouched. */
 .product-grid--collection .product-card__media { aspect-ratio: 3 / 4; }
 .product-grid--collection .product-card__shot {
-  -webkit-mask-image: none;
-  mask-image: none;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 56%,
+    rgba(0, 0, 0, 0.88) 66%,
+    rgba(0, 0, 0, 0.6) 76%,
+    rgba(0, 0, 0, 0.28) 86%,
+    rgba(0, 0, 0, 0) 95%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 56%,
+    rgba(0, 0, 0, 0.88) 66%,
+    rgba(0, 0, 0, 0.6) 76%,
+    rgba(0, 0, 0, 0.28) 86%,
+    rgba(0, 0, 0, 0) 95%
+  );
 }
 
 /* ---------- collection tiles ---------- */
