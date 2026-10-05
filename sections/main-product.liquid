@@ -7,11 +7,12 @@
   assign po_link = po_link_raw | url_encode
   comment
     Desktop lays three shots out beside the information column, so it needs to
-    know which media belong to which colour. Shopify only ties a single image to a
-    variant, so each colour is anchored at its variant image's position and owns
-    every media item from there up to the next colour's anchor -- which is how
-    the shots are uploaded, grouped per colour in order. Nothing is hardcoded;
-    a colour with no variant image simply falls back to the whole media list.
+    know which media belong to which colour.
+
+    The variant's own featured_media is the authority: it is Shopify's real
+    variant-to-media relationship, and it is what IMG 1 becomes. Position is
+    only ever used afterwards, to pick up the shots uploaded alongside it, and
+    it can never override a media item another colour's variant points at.
   endcomment
   assign color_option = null
   for product_option in product.options_with_values
@@ -26,9 +27,26 @@
   if color_option and product.media.size > 0
     assign color_position = color_option.position
 
-    capture anchor_csv
+    comment
+      Every media item any variant points at, so a positional range can be
+      stopped from claiming a shot that demonstrably belongs to another colour.
+    endcomment
+    capture variant_media_all
+      for variant in product.variants
+        if variant.featured_media
+          echo '|'
+          echo variant.featured_media.id
+        endif
+      endfor
+      echo '|'
+    endcapture
+
+    comment
+      Per colour, in colour order: the media its own variants point at, the
+      first of those (IMG 1), and that one's position (the range anchor).
+    endcomment
+    capture colour_media_csv
       for value in color_option.values
-        assign anchor = 0
         for variant in product.variants
           if color_position == 1
             assign variant_value = variant.option1
@@ -38,59 +56,96 @@
             assign variant_value = variant.option3
           endif
           if variant_value == value and variant.featured_media
-            assign anchor = variant.featured_media.position
+            echo '|'
+            echo variant.featured_media.id
+          endif
+        endfor
+        echo '|'
+        unless forloop.last
+          echo '~'
+        endunless
+      endfor
+    endcapture
+    assign colour_media = colour_media_csv | split: '~'
+
+    capture primary_csv
+      for value in color_option.values
+        assign primary_id = 0
+        assign primary_pos = 0
+        for variant in product.variants
+          if color_position == 1
+            assign variant_value = variant.option1
+          elsif color_position == 2
+            assign variant_value = variant.option2
+          else
+            assign variant_value = variant.option3
+          endif
+          if variant_value == value and variant.featured_media
+            assign primary_id = variant.featured_media.id
+            assign primary_pos = variant.featured_media.position
             break
           endif
         endfor
-        echo anchor
+        echo primary_id
+        echo ':'
+        echo primary_pos
         unless forloop.last
           echo ','
         endunless
       endfor
     endcapture
-    assign anchors = anchor_csv | split: ','
-
-    comment
-      Media sitting ahead of the earliest anchor belong to that first colour,
-      so its range starts at the top of the list rather than at its own anchor.
-    endcomment
-    assign min_anchor = 99999
-    for a in anchors
-      assign an = a | strip | times: 1
-      if an > 0 and an < min_anchor
-        assign min_anchor = an
-      endif
-    endfor
+    assign primaries = primary_csv | split: ','
 
     capture media_groups
       echo '{'
       for value in color_option.values
-        assign anchor = anchors[forloop.index0] | strip | times: 1
-        assign start = anchor
-        if anchor == min_anchor
-          assign start = 1
-        endif
+        assign pair = primaries[forloop.index0] | strip | split: ':'
+        assign primary_id = pair[0] | times: 1
+        assign anchor = pair[1] | times: 1
+        assign mine = colour_media[forloop.index0]
+
+        comment
+          The range runs from this colour's anchor to the next colour's. Shots
+          ahead of the very first anchor are deliberately left out: they belong
+          to no variant, and folding them in is what used to put a generic
+          product shot into IMG 1.
+        endcomment
         assign stop = 99999
-        for b in anchors
-          assign bn = b | strip | times: 1
-          if bn > anchor and bn < stop
-            assign stop = bn
+        for other in primaries
+          assign other_pos = other | strip | split: ':' | last | times: 1
+          if other_pos > anchor and other_pos < stop
+            assign stop = other_pos
           endif
         endfor
 
         unless forloop.first
           echo ','
         endunless
-        assign group_key = value | append: '' | downcase
+        assign group_key = value | append: '' | downcase | strip
         echo group_key | json
-        echo ':['
+        echo ':{"primary":'
+        echo primary_id
+        echo ',"media":['
+
         assign written = 0
+        if primary_id > 0
+          echo primary_id
+          assign written = 1
+        endif
         for media in product.media
+          assign needle = '|' | append: media.id | append: '|'
           assign include = false
-          if anchor == 0
+          if media.id == primary_id
+            assign include = false
+          elsif mine contains needle
+            comment
+              another of this colour's variants points at it, wherever it sits
+            endcomment
             assign include = true
-          elsif media.position >= start and media.position < stop
-            assign include = true
+          elsif anchor > 0 and media.position > anchor and media.position < stop
+            unless variant_media_all contains needle
+              assign include = true
+            endunless
           endif
           if include
             if written > 0
@@ -100,7 +155,7 @@
             assign written = written | plus: 1
           endif
         endfor
-        echo ']'
+        echo ']}'
       endfor
       echo '}'
     endcapture

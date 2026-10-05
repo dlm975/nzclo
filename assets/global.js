@@ -255,9 +255,12 @@
         if (i === -1) el.removeAttribute('data-slot');
         else el.setAttribute('data-slot', String(i));
       });
-      /* the carousel is everything the grid is not showing */
+      /* the carousel is what is left of the current ordering, so once a colour
+         is chosen it holds that colour's remaining shots and nothing from the
+         colour before it */
       qsa('[data-gallery-thumb]', scope).forEach(function (t) {
-        if (shown.indexOf(t.getAttribute('data-media-id')) === -1) t.removeAttribute('data-thumb-hidden');
+        var id = t.getAttribute('data-media-id');
+        if (shown.indexOf(id) === -1 && api.order.indexOf(id) !== -1) t.removeAttribute('data-thumb-hidden');
         else t.setAttribute('data-thumb-hidden', '');
       });
       root.setAttribute('data-slots', String(shown.length || 1));
@@ -278,16 +281,29 @@
       apply();
     };
 
-    /* The selected colour's shots take the grid and lead the carousel; the other
-       colours follow it rather than disappearing, so every shot stays reachable
-       and the carousel is never empty while the product has more than four. */
-    api.setColor = function (value) {
-      var key = String(value == null ? '' : value).toLowerCase();
+    /* The chosen variant's own media is IMG 1 -- Shopify's real variant-to-media
+       relationship, handed in by the picker, with the section's own mapping as
+       the fallback for a product JSON that carries no featured_media. The rest
+       of that colour's shots follow it, and nothing else is in the ordering at
+       all, so no thumbnail from the colour before is left behind.
+
+       A colour whose variants point at no media has none of its own, and there
+       the product's default set is the honest answer. */
+    api.setVariant = function (value, variantMediaId) {
+      var key = String(value == null ? '' : value).toLowerCase().trim();
       var group = groups[key];
-      var owned = group && group.length ? group.map(String) : allIds.slice();
-      var rest = allIds.filter(function (id) { return owned.indexOf(id) === -1; });
-      api.order = owned.concat(rest);
-      api.limit = Math.min(3, owned.length) || 1;
+      var owned = group && group.media ? group.media.map(String) : [];
+
+      var primary = variantMediaId != null && variantMediaId !== ''
+        ? String(variantMediaId)
+        : (group && group.primary ? String(group.primary) : null);
+      if (primary && allIds.indexOf(primary) !== -1) {
+        owned = [primary].concat(owned.filter(function (id) { return id !== primary; }));
+      }
+      owned = owned.filter(function (id) { return allIds.indexOf(id) !== -1; });
+
+      api.order = owned.length ? owned : allIds.slice();
+      api.limit = Math.min(3, api.order.length) || 1;
       apply();
     };
 
@@ -622,6 +638,37 @@
     var priceEl = wrapper.querySelector('[data-price]');
     var barPrice = qs('[data-pdp-bar-price]');
     var barImage = qs('[data-pdp-bar-image]');
+
+    /* The variant a colour stands for while the size is still open: that is
+       what carries the featured_media the gallery has to show, so the shot
+       changes on the colour click rather than waiting for a full selection.
+       An in-stock one is preferred, since that is the one being offered. */
+    function variantForColor(color) {
+      var match = null;
+      product.variants.forEach(function (v) {
+        if (v.options[colorIndex] !== color) return;
+        if (!match || (!match.available && v.available)) match = v;
+      });
+      return match;
+    }
+
+    function smallImage(src) {
+      if (!src) return src;
+      return src + (src.indexOf('?') === -1 ? '?' : '&') + 'width=160';
+    }
+
+    function showColor(color) {
+      var representative = variantForColor(color);
+      var mediaId = representative && representative.featured_media
+        ? representative.featured_media.id
+        : null;
+      var gallery = galleryFor(wrapper);
+      if (gallery) gallery.setVariant(color, mediaId);
+      if (barImage && representative && representative.featured_image && representative.featured_image.src) {
+        barImage.src = smallImage(representative.featured_image.src);
+        barImage.removeAttribute('srcset');
+      }
+    }
     var buyBtn = wrapper.querySelector('[data-add-to-cart]');
     var buyText = wrapper.querySelector('[data-add-to-cart-text]');
 
@@ -663,8 +710,7 @@
         var color = options[colorIndex];
         if (color && color !== lastColor) {
           lastColor = color;
-          var gallery = galleryFor(wrapper);
-          if (gallery) gallery.setColor(color);
+          showColor(color);
         }
       }
 
@@ -701,8 +747,7 @@
       /* the bar follows the variant's own shot where it has one; a variant
          without its own image leaves the product's default in place */
       if (barImage && variant.featured_image && variant.featured_image.src) {
-        var src = variant.featured_image.src;
-        barImage.src = src + (src.indexOf('?') === -1 ? '?' : '&') + 'width=160';
+        barImage.src = smallImage(variant.featured_image.src);
         barImage.removeAttribute('srcset');
       }
       if (buyBtn && buyText) {
@@ -721,10 +766,7 @@
        media set, and a colour carrying fewer than three shots still never
        borrows one from the next colour once it is picked. */
     var lastColor = colorIndex >= 0 ? selectedOptions()[colorIndex] : null;
-    if (lastColor) {
-      var initialGallery = galleryFor(wrapper);
-      if (initialGallery) initialGallery.setColor(lastColor);
-    }
+    if (lastColor) showColor(lastColor);
 
     wrapper.addEventListener('change', function (e) {
       if (e.target.closest('[data-option-group]')) update();
