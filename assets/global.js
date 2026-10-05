@@ -215,14 +215,14 @@
       });
   });
 
-  /* ---------- desktop product gallery (2x2 grid + carousel) ---------- */
+  /* ---------- desktop product gallery (1 + 2 grid + carousel) ---------- */
 
-  /* Desktop shows the first four shots as a grid and keeps the rest in the
-     carousel; mobile keeps its single stage, so every branch here is gated on
-     the media query. One ordered list of media ids drives both: entries 0-3 are
-     the grid, the remainder is the carousel, and every interaction is a swap
-     inside that list -- which is what leaves IMG 2-4 untouched when a carousel
-     shot is promoted. A colour change replaces the list outright. */
+  /* Desktop shows three shots on the grid and keeps the rest in the carousel;
+     mobile keeps its single stage, so every branch here is gated on the media
+     query. One ordered list of media ids drives both: entries 0-2 are the grid,
+     the remainder is the carousel, and every interaction is a swap inside that
+     list -- which is what leaves IMG 2 and IMG 3 untouched when a carousel shot
+     is promoted. A colour change replaces the list outright. */
   var desktopGallery = window.matchMedia('(min-width: 900px)');
   var galleries = [];
 
@@ -238,10 +238,10 @@
       try { groups = JSON.parse(groupsEl.textContent) || {}; } catch (err) { groups = {}; }
     }
 
-    /* `limit` is how many slots the grid claims -- four, or fewer when the
+    /* `limit` is how many slots the grid claims -- three, or fewer when the
        selected colour has fewer shots, which is what keeps a short colour from
-       borrowing a fourth image off the next one. */
-    var api = { scope: scope, order: allIds.slice(), limit: Math.min(4, allIds.length) || 1 };
+       borrowing a third image off the next one. */
+    var api = { scope: scope, order: allIds.slice(), limit: Math.min(3, allIds.length) || 1 };
 
     function apply() {
       var shown = api.order.slice(0, api.limit);
@@ -282,7 +282,7 @@
       var owned = group && group.length ? group.map(String) : allIds.slice();
       var rest = allIds.filter(function (id) { return owned.indexOf(id) === -1; });
       api.order = owned.concat(rest);
-      api.limit = Math.min(4, owned.length) || 1;
+      api.limit = Math.min(3, owned.length) || 1;
       apply();
     };
 
@@ -301,7 +301,7 @@
 
   qsa('[data-gallery-grid]').forEach(function (root) { galleries.push(buildGallery(root)); });
 
-  /* clicking IMG 2, 3 or 4 makes it the primary */
+  /* clicking IMG 2 or IMG 3 makes it the primary */
   document.addEventListener('click', function (e) {
     if (!desktopGallery.matches) return;
     var item = e.target.closest('[data-gallery-item]');
@@ -338,7 +338,7 @@
       item.classList.toggle('is-active', item.getAttribute('data-media-id') === id);
     });
 
-    /* desktop additionally moves it into IMG 1, leaving IMG 2-4 where they are */
+    /* desktop additionally moves it into IMG 1, leaving IMG 2 and 3 where they are */
     if (desktopGallery.matches) {
       var gallery = galleryFor(thumb);
       if (gallery) gallery.promote(id);
@@ -585,7 +585,7 @@
     }
 
     /* Seed the gallery from the colour that is actually selected on load, so a
-       colour carrying fewer than four shots never borrows one from the next
+       colour carrying fewer than three shots never borrows one from the next
        colour -- and so a ?variant= link opens on its own colour's shots. On the
        ordinary case this is the media order the section already rendered. */
     var lastColor = colorIndex >= 0 ? selectedOptions()[colorIndex] : null;

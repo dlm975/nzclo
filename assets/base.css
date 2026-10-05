@@ -1298,42 +1298,54 @@ select.field {
   object-position: center center;
 }
 
-/* Desktop sets the first four shots out as a 2x2 block filling the left column
-   and leaves the rest to the carousel above the title. Mobile keeps the single
-   stage it already had, so every rule here is inside the desktop query. */
+/* Desktop sets three shots out beside the information column -- a 9:16 IMG 1
+   with a 3:4 IMG 2 and IMG 3 stacked next to it -- and leaves the rest to the
+   carousel above the title. Mobile keeps the single stage it already had, so
+   every rule here is inside the desktop query. */
 @media (min-width: 900px) {
   .product-gallery {
+    --gallery-gap: clamp(8px, 0.8vw, 12px);
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(8px, 0.8vw, 12px);
+    /* The columns are proportioned so both sides come out the same height from
+       their own ratios -- 16/9 * left == 2 * 4/3 * right + gap -- rather than a
+       frame being stretched to meet a row height. The two widths and the gap
+       still add up to the full width. */
+    grid-template-columns:
+      calc(60% - 0.375 * var(--gallery-gap))
+      calc(40% - 0.625 * var(--gallery-gap));
+    gap: var(--gallery-gap);
+    /* belt and braces: a frame is never stretched to its row, whatever the
+       shots happen to be, so no ratio can be distorted */
+    align-items: start;
   }
   /* only the slotted shots are on the grid. Written as :not() so it outranks
      .product-gallery__item.is-active, which carries the mobile stage and has
      no meaning here. */
   .product-gallery__item:not([data-slot]) { display: none; }
   .product-gallery__item[data-slot] { display: flex; }
-  .product-gallery__item[data-slot="0"] { order: 0; }
+  .product-gallery__item[data-slot="0"] {
+    order: 0;
+    grid-row: span 2;
+    aspect-ratio: 9 / 16;
+  }
+  /* IMG 2 and IMG 3 keep the 3:4 the item carries by default */
   .product-gallery__item[data-slot="1"] { order: 1; }
   .product-gallery__item[data-slot="2"] { order: 2; }
-  .product-gallery__item[data-slot="3"] { order: 3; }
   /* any shot but the primary promotes itself into IMG 1 when clicked */
   .product-gallery__item[data-slot]:not([data-slot="0"]) { cursor: pointer; }
 
-  /* A lone shot keeps what it had before the grid: one frame, its 3:4 ratio
-     held by a width limit, since a height limit would break the ratio. */
+  /* Two shots sit side by side instead of leaving a hole under IMG 2, and a
+     lone shot keeps one frame held to the viewport by a width limit -- a
+     height limit would break the ratio. */
+  .product-gallery[data-slots="2"] .product-gallery__item[data-slot="0"] { grid-row: auto; }
   .product-gallery[data-slots="1"] {
     grid-template-columns: minmax(0, 1fr);
-    max-width: calc((100vh - var(--header-height) - 56px) * 0.75);
+    max-width: calc((100vh - var(--header-height) - 56px) * 0.5625);
     margin-inline: auto;
   }
-  /* three shots make a mosaic rather than leaving a hole in the grid */
-  .product-gallery[data-slots="3"] .product-gallery__item[data-slot="0"] {
-    grid-row: span 2;
-    aspect-ratio: auto;
-  }
+  .product-gallery[data-slots="1"] .product-gallery__item[data-slot="0"] { grid-row: auto; }
 
-  /* a shot on the grid is not repeated in the carousel, and neither is one
-     belonging to a colour that is not selected */
+  /* a shot on the grid is not repeated in the carousel */
   .product-thumb[data-thumb-hidden] { display: none; }
   .product-thumbs-wrap[data-thumbs-empty] { display: none; }
 }

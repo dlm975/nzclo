@@ -6,8 +6,8 @@
   endcapture
   assign po_link = po_link_raw | url_encode
   comment
-    Desktop lays the first four shots out as a 2x2 grid, so it needs to know
-    which media belong to which colour. Shopify only ties a single image to a
+    Desktop lays three shots out beside the information column, so it needs to
+    know which media belong to which colour. Shopify only ties a single image to a
     variant, so each colour is anchored at its variant image's position and owns
     every media item from there up to the next colour's anchor -- which is how
     the shots are uploaded, grouped per colour in order. Nothing is hardcoded;
@@ -126,8 +126,8 @@
 
     {%- liquid
       assign slot_count = product.media.size
-      if slot_count > 4
-        assign slot_count = 4
+      if slot_count > 3
+        assign slot_count = 3
       endif
       if slot_count < 1
         assign slot_count = 1
@@ -141,8 +141,8 @@
             data-gallery-item
             data-media-id="{{ media.id }}"
             data-media-type="{{ media.media_type }}"
-            {%- comment -%} the first four fill the desktop grid; mobile ignores the slot {%- endcomment -%}
-            {% if forloop.index0 < 4 %}data-slot="{{ forloop.index0 }}"{% endif %}
+            {%- comment -%} the first three fill the desktop grid; mobile ignores the slot {%- endcomment -%}
+            {% if forloop.index0 < 3 %}data-slot="{{ forloop.index0 }}"{% endif %}
           >
             {%- case media.media_type -%}
               {%- when 'image' -%}
@@ -170,10 +170,10 @@
     <div class="product-info">
       {%- if product.media.size > 1 -%}
         {%- comment -%}
-          With four shots or fewer the desktop grid holds them all, so the
+          With three shots or fewer the desktop grid holds them all, so the
           carousel has nothing left to show there. Mobile still shows it.
         {%- endcomment -%}
-        <div class="product-thumbs-wrap"{% if product.media.size <= 4 %} data-thumbs-empty{% endif %}>
+        <div class="product-thumbs-wrap"{% if product.media.size <= 3 %} data-thumbs-empty{% endif %}>
           <button type="button" class="product-thumbs__arrow product-thumbs__arrow--prev" data-thumbs-prev aria-label="Previous images">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
           </button>
@@ -185,7 +185,7 @@
               data-gallery-thumb
               data-media-id="{{ media.id }}"
               {%- comment -%} already on the desktop grid, so kept out of the desktop carousel {%- endcomment -%}
-              {% if forloop.index0 < 4 %}data-thumb-hidden{% endif %}
+              {% if forloop.index0 < 3 %}data-thumb-hidden{% endif %}
               aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
               aria-label="{{ product.title | escape }} — {{ forloop.index }}"
             >
