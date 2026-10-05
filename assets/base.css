@@ -1286,30 +1286,97 @@ select.field {
   margin: auto;
 }
 
+.product-gallery__item { aspect-ratio: 3 / 4; }
+.product-gallery__item img,
+.product-gallery__item video {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  object-fit: cover;
+  /* centred crop takes from the top and bottom, which is where product shots
+     carry the least information */
+  object-position: center center;
+}
+
 @media (min-width: 900px) {
-  /* Keep the whole image inside the viewport: the sticky header plus a little
-     breathing room are subtracted, and the image is contained rather than
-     cropped, centred in whatever space that leaves. */
-  .product-gallery__item {
-    height: calc(100vh - var(--header-height) - 56px);
-    max-height: 820px;
-    align-items: center;
-    justify-content: center;
-  }
-  .product-gallery__item img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+  /* The frame keeps its 3:4 ratio, so the viewport-height limit is applied to
+     the width instead -- height would otherwise break the ratio. */
+  .product-gallery {
+    max-width: calc((100vh - var(--header-height) - 56px) * 0.75);
+    margin-inline: auto;
   }
 }
 
-/* thumbnail row above the title */
-.product-thumbs {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+/* thumbnail slider above the title, confined to the information column */
+.product-thumbs-wrap {
+  position: relative;
+  min-width: 0;
   margin-bottom: 14px;
 }
+/* edges blur softly into the centre; the blur itself is faded by a mask so
+   there is no hard boundary, and it never intercepts clicks or scrolling */
+.product-thumbs-wrap::before,
+.product-thumbs-wrap::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 30px;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(2.5px);
+  backdrop-filter: blur(2.5px);
+  -webkit-mask-image: linear-gradient(to right, #000 0%, rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(to right, #000 0%, rgba(0, 0, 0, 0) 100%);
+}
+.product-thumbs-wrap::before { left: 0; }
+.product-thumbs-wrap::after { right: 0; transform: scaleX(-1); }
+
+.product-thumbs {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 74px;
+  gap: 8px;
+  padding: 0 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.product-thumbs::-webkit-scrollbar { display: none; }
+.product-thumbs .product-thumb { scroll-snap-align: start; }
+
+.product-thumbs__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid rgba(var(--color-text), 0.14);
+  border-radius: 50%;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-text));
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+.product-thumbs__arrow svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.product-thumbs__arrow--prev { left: -4px; }
+.product-thumbs__arrow--next { right: -4px; }
+.product-thumbs__arrow:hover { background: rgb(var(--color-tile)); }
 .product-thumb {
   padding: 0;
   border: 0;
@@ -1332,10 +1399,18 @@ select.field {
 .product-thumb:focus-visible { outline: 2px solid rgb(var(--color-text)); outline-offset: 2px; }
 
 @media (max-width: 899px) {
-  .product-thumbs { grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+  .product-thumbs { grid-auto-columns: 64px; gap: 6px; padding: 0 10px; }
+  .product-thumbs-wrap { margin-bottom: 12px; }
 }
 
-.product-info { position: sticky; top: calc(var(--header-height) + 24px); align-self: start; }
+.product-info {
+  position: sticky;
+  top: calc(var(--header-height) + 24px);
+  align-self: start;
+  /* a grid item defaults to min-width: auto, which would let the thumbnail
+     track expand to its content and push the page wide instead of scrolling */
+  min-width: 0;
+}
 @media (max-width: 899px) { .product-info { position: static; } }
 .product-info__title { font-size: clamp(24px, 3vw, 34px); margin-bottom: 8px; }
 .product-info__price { font-size: 17px; margin-bottom: 20px; }

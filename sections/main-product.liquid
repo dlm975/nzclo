@@ -52,7 +52,11 @@
 
     <div class="product-info">
       {%- if product.media.size > 1 -%}
-        <div class="product-thumbs">
+        <div class="product-thumbs-wrap">
+          <button type="button" class="product-thumbs__arrow product-thumbs__arrow--prev" data-thumbs-prev aria-label="Previous images">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <div class="product-thumbs" data-thumbs-track>
           {%- for media in product.media -%}
             <button
               type="button"
@@ -65,6 +69,10 @@
               <img src="{{ media | image_url: width: 220 }}" alt="" loading="lazy" width="110" height="138">
             </button>
           {%- endfor -%}
+          </div>
+          <button type="button" class="product-thumbs__arrow product-thumbs__arrow--next" data-thumbs-next aria-label="More images">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+          </button>
         </div>
       {%- endif -%}
 

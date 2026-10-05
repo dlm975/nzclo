@@ -218,6 +218,16 @@
   /* ---------- product gallery thumbnails ---------- */
 
   document.addEventListener('click', function (e) {
+    var arrow = e.target.closest('[data-thumbs-prev], [data-thumbs-next]');
+    if (!arrow) return;
+    var track = qs('[data-thumbs-track]', arrow.closest('.product-thumbs-wrap') || document);
+    if (!track) return;
+    var first = qs('.product-thumb', track);
+    var step = (first ? first.offsetWidth + 8 : 82) * 2;
+    track.scrollBy({ left: arrow.hasAttribute('data-thumbs-next') ? step : -step, behavior: 'smooth' });
+  });
+
+  document.addEventListener('click', function (e) {
     var thumb = e.target.closest('[data-gallery-thumb]');
     if (!thumb) return;
     var id = thumb.getAttribute('data-media-id');
