@@ -9,10 +9,17 @@
   Usage: {% render 'product-swatch', value: value, is_available: true, product: product, color_position: 1 %}
 {%- endcomment -%}
 {%- liquid
-  assign swatch_image = value.swatch.image
+  comment
+    The chip is a flat colour, never a photograph: the value's own swatch colour
+    where the merchant has set one, otherwise its name read as a CSS colour,
+    since black, white, navy, grey and the rest are colour keywords already. A
+    name that is neither leaves the neutral colour underneath standing. The
+    variant's media still rides along in the data attributes -- that is what the
+    click swaps the card to.
+  endcomment
   assign swatch_color = value.swatch.color
   if swatch_color == blank
-    assign swatch_color = value | downcase | strip | replace: ' ', ''
+    assign swatch_color = value | append: '' | downcase | strip | replace: ' ', ''
   endif
 
   assign swatch_title = value
@@ -61,5 +68,5 @@
     data-bleed="{{ variant_media | image_url: width: 400 }}"
     data-alt="{{ variant_media.alt | default: product.title | escape }}"
   {% endif -%}
-  style="background-color: #cfcbc4;{% if swatch_image %} background-image: url({{ swatch_image | image_url: width: 40 }});{% else %} background-color: {{ swatch_color | escape }};{% endif %}"
+  style="background-color: #cfcbc4; background-color: {{ swatch_color | escape }};"
 ></button>

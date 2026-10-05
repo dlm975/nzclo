@@ -725,9 +725,12 @@ select.field {
   -webkit-appearance: none;
   cursor: pointer;
   border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.85), 0 1px 3px rgba(0, 0, 0, 0.35);
+  /* the inset ring draws the chip's own edge, so white, cream and the palest
+     greys still read as a disc rather than dissolving into the ring outside it */
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(255, 255, 255, 0.85),
+    0 1px 3px rgba(0, 0, 0, 0.35);
   transition: box-shadow 0.2s ease;
 }
 /* comfortable tap target without changing the visual size */
@@ -739,6 +742,7 @@ select.field {
 }
 .product-card__swatch[aria-pressed="true"] {
   box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.22),
     0 0 0 1px rgba(255, 255, 255, 0.95),
     0 0 0 3.5px rgba(255, 255, 255, 0.5),
     0 1px 3px rgba(0, 0, 0, 0.4);
