@@ -917,12 +917,17 @@ select.field {
 
 /* the original module's mechanism: when the buy button is disabled, the
    request CTA takes its place. Shopify's variant switching toggles that
-   attribute, so this stays in sync with no extra wiring. */
-.product-form__buttons:has([data-add-to-cart][disabled]) .preorder-cta { display: inline-flex; }
-.product-form__buttons:has([data-add-to-cart][disabled]) [data-add-to-cart],
-.product-form__buttons:has([data-add-to-cart][disabled]) .shopify-payment-button { display: none; }
-.product-info:has([data-add-to-cart][disabled]) .preorder-note { display: block; }
-.product-info:has([data-add-to-cart][disabled]) .preorder-badge { display: inline-flex; }
+   attribute, so this stays in sync with no extra wiring.
+   data-needs-options is excluded throughout: a customer who has not chosen yet
+   is not looking at something sold out, so the button keeps its prompt and the
+   pre-order CTA, note and badge stay out of the way. */
+.product-form__buttons:has([data-add-to-cart][disabled]:not([data-needs-options])) .preorder-cta { display: inline-flex; }
+.product-form__buttons:has([data-add-to-cart][disabled]:not([data-needs-options])) [data-add-to-cart],
+.product-form__buttons:has([data-add-to-cart][disabled]:not([data-needs-options])) .shopify-payment-button { display: none; }
+.product-info:has([data-add-to-cart][disabled]:not([data-needs-options])) .preorder-note { display: block; }
+.product-info:has([data-add-to-cart][disabled]:not([data-needs-options])) .preorder-badge { display: inline-flex; }
+/* nothing chosen yet means there is no variant to buy now either */
+.product-form__buttons:has([data-add-to-cart][data-needs-options]) .shopify-payment-button { display: none; }
 
 /* special order request form */
 .special-order__inner { max-width: 640px; margin: 0 auto; }

@@ -536,22 +536,36 @@
       return fmt.replace(/\{\{\s*amount[^}]*\}\}/, amount);
     }
 
+    /* the real option fieldsets only -- the quantity stepper shares the
+       .option-group class and is not a variant option */
+    var optionGroups = qsa('[data-option-group]', wrapper);
+
     function selectedOptions() {
-      return qsa('.option-group', wrapper).map(function (group) {
+      return optionGroups.map(function (group) {
         var checked = group.querySelector('input:checked');
         return checked ? checked.value : null;
       });
     }
 
+    function allChosen(options) {
+      return options.every(function (value) { return value !== null; });
+    }
+
     function findVariant(options) {
+      /* a product with no options has exactly one variant to find */
+      if (!optionGroups.length) return product.variants[0];
       return product.variants.find(function (v) {
         return v.options.every(function (opt, i) { return opt === options[i]; });
       });
     }
 
     function update() {
+      var options = selectedOptions();
+
+      /* the gallery follows the colour only once one is actually picked, so an
+         untouched page keeps the product's default media set */
       if (colorIndex >= 0) {
-        var color = selectedOptions()[colorIndex];
+        var color = options[colorIndex];
         if (color && color !== lastColor) {
           lastColor = color;
           var gallery = galleryFor(wrapper);
@@ -559,8 +573,23 @@
         }
       }
 
-      var variant = findVariant(selectedOptions());
+      /* Nothing chosen yet is its own state: the button prompts for the
+         options rather than claiming the product is unavailable, carries no
+         variant id, and leaves the pre-order CTA alone. */
+      if (!allChosen(options)) {
+        if (idInput) idInput.value = '';
+        if (buyBtn) {
+          buyBtn.disabled = true;
+          buyBtn.setAttribute('data-needs-options', '');
+        }
+        if (buyText) buyText.textContent = (buyBtn && buyBtn.getAttribute('data-label-choose')) || 'choose options';
+        return;
+      }
+      if (buyBtn) buyBtn.removeAttribute('data-needs-options');
+
+      var variant = findVariant(options);
       if (!variant) {
+        if (idInput) idInput.value = '';
         if (buyBtn) { buyBtn.disabled = true; }
         if (buyText) { buyText.textContent = 'unavailable'; }
         return;
@@ -584,10 +613,10 @@
       }
     }
 
-    /* Seed the gallery from the colour that is actually selected on load, so a
-       colour carrying fewer than three shots never borrows one from the next
-       colour -- and so a ?variant= link opens on its own colour's shots. On the
-       ordinary case this is the media order the section already rendered. */
+    /* Seed the gallery only when a colour is already selected -- a ?variant=
+       link, say. With nothing chosen the gallery keeps the product's default
+       media set, and a colour carrying fewer than three shots still never
+       borrows one from the next colour once it is picked. */
     var lastColor = colorIndex >= 0 ? selectedOptions()[colorIndex] : null;
     if (lastColor) {
       var initialGallery = galleryFor(wrapper);
@@ -595,7 +624,7 @@
     }
 
     wrapper.addEventListener('change', function (e) {
-      if (e.target.closest('.option-group')) update();
+      if (e.target.closest('[data-option-group]')) update();
     });
   });
 

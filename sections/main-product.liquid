@@ -206,11 +206,24 @@
       </div>
 
       {%- form 'product', product, data-ajax-add: '' -%}
-        {%- assign current_variant = product.selected_or_first_available_variant -%}
+        {%- liquid
+          comment
+            Nothing is selected on arrival: the customer picks the options
+            themselves. A ?variant= link is an explicit choice, so that one is
+            honoured, and a product with no options has nothing to choose.
+          endcomment
+          assign current_variant = product.selected_variant
+          assign needs_options = false
+          if product.has_only_default_variant
+            assign current_variant = product.variants.first
+          elsif current_variant == nil
+            assign needs_options = true
+          endif
+        -%}
 
         {%- unless product.has_only_default_variant -%}
           {%- for option in product.options_with_values -%}
-            <fieldset class="option-group" style="border: none; padding: 0; margin: 0 0 20px;">
+            <fieldset class="option-group" data-option-group style="border: none; padding: 0; margin: 0 0 20px;">
               <legend class="option-group__label">{{ option.name | downcase }}</legend>
               <div class="option-pills">
                 {%- for value in option.values -%}
@@ -220,7 +233,7 @@
                       id="Option-{{ section.id }}-{{ option.position }}-{{ forloop.index }}"
                       name="option-{{ option.position }}"
                       value="{{ value | escape }}"
-                      {% if option.selected_value == value %}checked{% endif %}
+                      {% if current_variant and option.selected_value == value %}checked{% endif %}
                     >
                     <label for="Option-{{ section.id }}-{{ option.position }}-{{ forloop.index }}">{{ value | downcase }}</label>
                   </span>
@@ -239,6 +252,7 @@
           </div>
         </div>
 
+        {%- comment -%} empty until the customer has chosen, so no variant is assumed {%- endcomment -%}
         <input type="hidden" name="id" value="{{ current_variant.id }}">
 
         {%- if settings.preorder_message != blank -%}
@@ -251,10 +265,19 @@
             class="btn btn--solid btn--full"
             data-add-to-cart
             data-label-add="{{ 'products.product.add_to_cart' | t }}"
-            {% unless current_variant.available %}disabled{% endunless %}
+            data-label-choose="{{ 'products.product.choose_options' | t }}"
+            {%- comment -%}
+              data-needs-options is what separates "has not chosen yet" from
+              "chose something that cannot be bought": both disable the button,
+              but only the second one brings out the pre-order CTA.
+            {%- endcomment -%}
+            {% if needs_options %}data-needs-options{% endif %}
+            {% if needs_options or current_variant.available == false %}disabled{% endif %}
           >
             <span data-add-to-cart-text>
-              {%- if current_variant.available -%}
+              {%- if needs_options -%}
+                {{ 'products.product.choose_options' | t }}
+              {%- elsif current_variant.available -%}
                 {{ 'products.product.add_to_cart' | t }}
               {%- else -%}
                 {{ 'products.product.sold_out' | t }}
