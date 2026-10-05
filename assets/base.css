@@ -2134,16 +2134,41 @@ body:has(.mini-pdp--standalone) .pdp-bar {
   visibility: hidden;
   transform: translateY(14px);
 }
-/* on a wide screen a full-bleed bottom sheet reads as a mistake, so it becomes
-   a centred dialog; the phone keeps the bottom sheet exactly as it is */
-@media (min-width: 750px) {
-  .mini-pdp--standalone .mini-pdp__sheet {
-    left: 0;
-    right: 0;
-    bottom: 24px;
-    margin-inline: auto;
-    max-width: 460px;
-    max-height: calc(100vh - 48px);
-    border-radius: var(--radius-tile);
-  }
+/* Opened from the bar it is a centred dialog at three quarters of the viewport,
+   on every size, leaving the remaining quarter as visible page around it. The
+   inset: 0 + margin: auto pair centres it on both axes without a transform, so
+   the entrance animation below is free to use one. */
+.mini-pdp--standalone .mini-pdp__sheet {
+  inset: 0;
+  margin: auto;
+  width: 75vw;
+  height: 75vh;
+  /* dynamic units where they exist: on a phone they track the browser chrome
+     rather than assuming the largest possible viewport */
+  width: 75dvw;
+  height: 75dvh;
+  /* the quarter left over already clears every current safe area, but this
+     keeps that true rather than assumed */
+  max-width: calc(100dvw - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px) - 24px);
+  max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 24px);
+  border-radius: var(--radius-tile);
+  /* the body scrolls, not the sheet, so the close button cannot scroll away */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: mini-pdp-rise 0.24s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.mini-pdp--standalone .mini-pdp__body {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+}
+/* the sheet's own slide-up is a translateY, which would fight the centring */
+@keyframes mini-pdp-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mini-pdp--standalone .mini-pdp__sheet { animation: none; }
 }
