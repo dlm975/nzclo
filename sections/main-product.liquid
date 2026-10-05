@@ -107,7 +107,9 @@
     assign primaries = primary_csv | split: ','
 
     capture media_groups
-      echo '{'
+      echo '{"option_index":'
+      echo color_position | minus: 1
+      echo ',"colors":{'
       for value in color_option.values
         assign pair = primaries[forloop.index0] | strip | split: ':'
         assign primary_id = pair[0] | times: 1
@@ -167,7 +169,7 @@
         endfor
         echo ']}'
       endfor
-      echo '}'
+      echo '}}'
     endcapture
   endif
 

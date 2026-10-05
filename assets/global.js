@@ -228,6 +228,15 @@
      the remainder is the carousel, and every interaction is a swap inside that
      list -- which is what leaves IMG 2 and IMG 3 untouched when a carousel shot
      is promoted. A colour change replaces the list outright. */
+  /* Option names the storefront might use for colour. The section publishes the
+     index outright, so this only stands in when that is unavailable. */
+  var COLOR_OPTION_NAMES = ['color', 'colour', 'couleur', 'farbe', 'colore', 'kleur', 'cor', 'kolor'];
+
+  function isColorOptionName(name) {
+    var n = String(name == null ? '' : name).toLowerCase();
+    return COLOR_OPTION_NAMES.some(function (word) { return n.indexOf(word) !== -1; });
+  }
+
   var desktopGallery = window.matchMedia('(min-width: 900px)');
   var galleries = [];
 
@@ -237,10 +246,22 @@
     var thumbsWrap = qs('.product-thumbs-wrap', scope);
     var allIds = items.map(function (el) { return el.getAttribute('data-media-id'); });
 
+    /* The section publishes which option is the colour and what each colour
+       value maps to. Reading the index from there means the page, the bar and
+       the sheet can never disagree with the Liquid about which option matters. */
     var groups = {};
+    var sectionColorIndex = -1;
     var groupsEl = qs('[data-media-groups]', scope);
     if (groupsEl) {
-      try { groups = JSON.parse(groupsEl.textContent) || {}; } catch (err) { groups = {}; }
+      try {
+        var parsed = JSON.parse(groupsEl.textContent) || {};
+        if (parsed.colors) {
+          groups = parsed.colors;
+          if (typeof parsed.option_index === 'number') sectionColorIndex = parsed.option_index;
+        } else {
+          groups = parsed;
+        }
+      } catch (err) { groups = {}; }
     }
 
     /* `limit` is how many slots the grid claims -- three, or fewer when the
@@ -302,11 +323,10 @@
       return k && keyToId[k] ? keyToId[k] : null;
     }
 
-    var colorIndex = -1;
-    if (productJson) {
+    var colorIndex = sectionColorIndex;
+    if (colorIndex < 0 && productJson) {
       (productJson.options || []).forEach(function (option, i) {
-        var name = String(option && option.name ? option.name : option).toLowerCase();
-        if (name.indexOf('color') !== -1 || name.indexOf('colour') !== -1) colorIndex = i;
+        if (isColorOptionName(option && option.name ? option.name : option)) colorIndex = i;
       });
     }
 
@@ -315,6 +335,7 @@
        first shot and the next colour's -- never one another colour's variant
        points at. */
     var variantGroups = {};
+    var designatedMedia = {};
     if (productJson && productJson.variants && colorIndex >= 0) {
       var keyOrder = [];
       var ownMedia = {};
@@ -325,10 +346,23 @@
         if (mid && ownMedia[key].indexOf(mid) === -1) ownMedia[key].push(mid);
       });
 
+      /* The colour's designated shot: the one on the first of its variants that
+         carries an image, in the product's own variant order. Deliberately not
+         the first in-stock variant -- that would let a size selling out change
+         which image a colour shows. */
+      productJson.variants.forEach(function (v) {
+        var key = normKey(v.options ? v.options[colorIndex] : null);
+        if (designatedMedia[key]) return;
+        var mid = mediaIdForVariant(v);
+        if (mid) designatedMedia[key] = mid;
+      });
+
       var anchorOf = {};
       var claimed = {};
       keyOrder.forEach(function (key) {
         if (!ownMedia[key].length) return;
+        /* the range starts at the colour's earliest shot, which is where its
+           other shots were uploaded from, even when the designated one is later */
         anchorOf[key] = ownMedia[key].reduce(function (best, id) {
           return allIds.indexOf(id) < allIds.indexOf(best) ? id : best;
         });
@@ -348,9 +382,10 @@
           if (ownMedia[key].indexOf(id) !== -1) list.push(id);
           else if (i > start && i < stop && !claimed[id]) list.push(id);
         }
-        var p = allIds[start];
+        var p = designatedMedia[key] || allIds[start];
         var at = list.indexOf(p);
         if (at > 0) list = [p].concat(list.slice(0, at), list.slice(at + 1));
+        else if (at < 0) list = [p].concat(list);
         variantGroups[key] = { primary: p, media: list };
       });
     }
@@ -362,7 +397,8 @@
       media: mediaInfo,
       defaultOrder: allIds.slice(),
       mediaIdForVariant: mediaIdForVariant,
-      colorIndex: colorIndex
+      colorIndex: colorIndex,
+      designatedMediaFor: function (color) { return designatedMedia[normKey(color)] || null; }
     };
 
     function apply() {
@@ -511,6 +547,15 @@
     return match.featured_media ? match.featured_media.id : null;
   }
 
+  /* the colour's designated shot, exactly as the page gallery resolves it */
+  function miniDesignatedMedia(color) {
+    if (miniGallery && miniGallery.designatedMediaFor) {
+      var id = miniGallery.designatedMediaFor(color);
+      if (id) return id;
+    }
+    return miniVariantMediaId(color);
+  }
+
   function miniShowMedia(id) {
     if (!miniGallery) return;
     var entry = miniGallery.media[id];
@@ -534,7 +579,7 @@
     if (!strip) return;
     var color = miniPdp.colorIndex >= 0 ? miniPdp.selected[miniPdp.colorIndex] : null;
     var order = color
-      ? miniGallery.orderFor(color, miniVariantMediaId(color))
+      ? miniGallery.orderFor(color, miniDesignatedMedia(color))
       : miniGallery.defaultOrder.slice();
     order = order.filter(function (id) { return miniGallery.media[id]; });
     if (!order.length) return;
@@ -701,8 +746,7 @@
 
     miniPdp.colorIndex = -1;
     miniPdp.names.forEach(function (name, i) {
-      var n = String(name).toLowerCase();
-      if (n.indexOf('color') !== -1 || n.indexOf('colour') !== -1) miniPdp.colorIndex = i;
+      if (isColorOptionName(name)) miniPdp.colorIndex = i;
     });
     miniGallery = options.gallery || null;
 
@@ -849,7 +893,8 @@
         media: gallery.media,
         orderFor: gallery.orderFor,
         defaultOrder: gallery.defaultOrder,
-        mediaIdForVariant: gallery.mediaIdForVariant
+        mediaIdForVariant: gallery.mediaIdForVariant,
+        designatedMediaFor: gallery.designatedMediaFor
       } : null
     });
   });
@@ -891,7 +936,7 @@
     var colorIndex = -1;
     (product.options || []).forEach(function (option, i) {
       var name = String(option && option.name ? option.name : option).toLowerCase();
-      if (name.indexOf('color') !== -1 || name.indexOf('colour') !== -1) colorIndex = i;
+      if (isColorOptionName(name)) colorIndex = i;
     });
 
     var idInput = wrapper.querySelector('input[name="id"]');
@@ -899,15 +944,15 @@
     var barPrice = qs('[data-pdp-bar-price]');
     var barImage = qs('[data-pdp-bar-image]');
 
-    /* The variant a colour stands for while the size is still open: that is
-       what carries the featured_media the gallery has to show, so the shot
-       changes on the colour click rather than waiting for a full selection.
-       An in-stock one is preferred, since that is the one being offered. */
-    function variantForColor(color) {
+    /* The first variant carrying this colour, in the product's own order. Not
+       the first in-stock one: the gallery must not change because a size sold
+       out. Used for the bar's thumbnail only -- the gallery is driven by the
+       colour's designated media, not by this variant. */
+    function firstVariantForColor(color) {
       var match = null;
       product.variants.forEach(function (v) {
-        if (v.options[colorIndex] !== color) return;
-        if (!match || (!match.available && v.available)) match = v;
+        if (match || v.options[colorIndex] !== color) return;
+        match = v;
       });
       return match;
     }
@@ -917,19 +962,18 @@
       return src + (src.indexOf('?') === -1 ? '?' : '&') + 'width=160';
     }
 
+    /* Colour in, gallery out. The colour's own designated media decides IMG 1 --
+       no variant id is handed over, so no size can influence it. */
     function showColor(color) {
-      var representative = variantForColor(color);
       var gallery = galleryFor(wrapper);
-      /* one resolver for the whole page: featured_media id, else the
-         featured_image matched to a gallery shot by its file, else the
-         section's mapping */
-      var mediaId = gallery && representative ? gallery.mediaIdForVariant(representative) : null;
-      if (gallery) gallery.setVariant(color, mediaId);
+      if (gallery) gallery.setVariant(color);
+
+      var representative = firstVariantForColor(color);
       if (barImage && representative && representative.featured_image && representative.featured_image.src) {
         barImage.src = smallImage(representative.featured_image.src);
         barImage.removeAttribute('srcset');
       }
-      galleryDebug(color, representative, mediaId, gallery);
+      galleryDebug(color, representative, gallery ? gallery.designatedMediaFor(color) : null, gallery);
     }
     var buyBtn = wrapper.querySelector('[data-add-to-cart]');
     var buyText = wrapper.querySelector('[data-add-to-cart-text]');
