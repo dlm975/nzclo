@@ -5,9 +5,19 @@
 
   Usage: {% render 'product-card', product: product %}
   Optional: block_attributes - pass block.shopify_attributes when rendered from a section block
+  Optional: show_swatches  - pass false to render the card without its colour strip
+                             (the collection page does this; everywhere else keeps them)
 {%- endcomment -%}
 
 {%- liquid
+  comment
+    Callers opt out of the colour strip with show_swatches: false; an absent
+    parameter arrives as nil, so every other call site keeps its swatches.
+  endcomment
+  if show_swatches == nil
+    assign show_swatches = true
+  endif
+
   assign primary = product.featured_media
   assign secondary = null
   if product.media.size > 1
@@ -182,7 +192,7 @@
       <span class="product-card__row">
         <span class="product-card__price">{% render 'price', product: product %}</span>
 
-        {%- if color_option -%}
+        {%- if color_option and show_swatches -%}
           <span class="product-card__swatches">
             {%- assign swatch_shown = 0 -%}
 

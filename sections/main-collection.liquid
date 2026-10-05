@@ -23,7 +23,8 @@
     {%- if collection.products.size > 0 -%}
       <div class="product-grid product-grid--collection">
         {%- for product in collection.products -%}
-          {% render 'product-card', product: product %}
+          {%- comment -%} collection cards carry no colour strip {%- endcomment -%}
+          {% render 'product-card', product: product, show_swatches: false %}
         {%- endfor -%}
       </div>
     {%- else -%}
