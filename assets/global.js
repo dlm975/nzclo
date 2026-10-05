@@ -390,80 +390,72 @@
       });
     }
 
+    /* The gallery is three fixed slots and a fixed carousel. Only slot 0 ever
+       changes -- a colour selection or a carousel click re-points it. IMG 2,
+       IMG 3 and the carousel are set once from the product's media order and
+       are never rebuilt, filtered or re-rendered afterwards. */
+    var baseOrder = allIds.slice();
+    var fixedSlots = baseOrder.slice(1, 3);   /* IMG 2 and IMG 3, for good */
+    var carouselIds = baseOrder.slice(3);     /* the carousel, for good */
+    var primaryId = baseOrder[0] || null;     /* IMG 1, the only moving part */
+
     var api = {
       scope: scope,
-      order: allIds.slice(),
-      limit: Math.min(3, allIds.length) || 1,
       media: mediaInfo,
-      defaultOrder: allIds.slice(),
+      defaultOrder: baseOrder.slice(),
       mediaIdForVariant: mediaIdForVariant,
       colorIndex: colorIndex,
       designatedMediaFor: function (color) { return designatedMedia[normKey(color)] || null; }
     };
 
+    /* IMG 1, then the two fixed slots. If IMG 1 has become one of those two,
+       that slot shows the shot IMG 1 used to hold, so the three stay distinct
+       without the fixed pair being rebuilt from anything. */
+    function gridIds() {
+      if (!primaryId) return baseOrder.slice(0, 3);
+      var rest = fixedSlots.slice();
+      var clash = rest.indexOf(primaryId);
+      if (clash !== -1) rest[clash] = baseOrder[0];
+      return [primaryId].concat(rest);
+    }
+
     function apply() {
-      var shown = api.order.slice(0, api.limit);
+      var shown = gridIds();
       items.forEach(function (el) {
         var i = shown.indexOf(el.getAttribute('data-media-id'));
         if (i === -1) el.removeAttribute('data-slot');
         else el.setAttribute('data-slot', String(i));
       });
-      /* the carousel is what is left of the current ordering, so once a colour
-         is chosen it holds that colour's remaining shots and nothing from the
-         colour before it */
+      /* the carousel never moves: the same thumbs, before and after any colour
+         selection, which is why this reads from carouselIds and not from what
+         is currently on the grid */
       qsa('[data-gallery-thumb]', scope).forEach(function (t) {
         var id = t.getAttribute('data-media-id');
-        if (shown.indexOf(id) === -1 && api.order.indexOf(id) !== -1) t.removeAttribute('data-thumb-hidden');
+        if (carouselIds.indexOf(id) !== -1) t.removeAttribute('data-thumb-hidden');
         else t.setAttribute('data-thumb-hidden', '');
       });
       root.setAttribute('data-slots', String(shown.length || 1));
       if (thumbsWrap) {
-        if (api.order.length > shown.length) thumbsWrap.removeAttribute('data-thumbs-empty');
+        /* empty only when the product itself has no secondary shots, never
+           because of a colour */
+        if (carouselIds.length) thumbsWrap.removeAttribute('data-thumbs-empty');
         else thumbsWrap.setAttribute('data-thumbs-empty', '');
       }
     }
 
-    /* promoting swaps with the primary, so whatever was IMG 1 takes the
-       promoted shot's old place instead of disappearing */
-    api.promote = function (id) {
-      var i = api.order.indexOf(id);
-      if (i < 1) return;
-      var head = api.order[0];
-      api.order[0] = api.order[i];
-      api.order[i] = head;
+    /* the one mutation: re-point IMG 1 */
+    api.setPrimary = function (id) {
+      var next = String(id);
+      if (!id || baseOrder.indexOf(next) === -1 || next === primaryId) return;
+      primaryId = next;
       apply();
     };
 
-    /* The chosen variant's own media is IMG 1 -- Shopify's real variant-to-media
-       relationship, handed in by the picker, with the section's own mapping as
-       the fallback for a product JSON that carries no featured_media. The rest
-       of that colour's shots follow it, and nothing else is in the ordering at
-       all, so no thumbnail from the colour before is left behind.
+    api.primaryId = function () { return primaryId; };
 
-       A colour whose variants point at no media has none of its own, and there
-       the product's default set is the honest answer. */
-    /* the single place a colour is turned into an ordering, so the sheet and the
-       page gallery can never disagree about what a colour's shots are */
-    api.orderFor = function (value, variantMediaId) {
-      var key = normKey(value);
-      /* the variants' own grouping first; the section's only if that is empty */
-      var group = variantGroups[key] || groups[key];
-      var owned = group && group.media ? group.media.map(String) : [];
-
-      var primary = variantMediaId != null && variantMediaId !== ''
-        ? String(variantMediaId)
-        : (group && group.primary ? String(group.primary) : null);
-      if (primary && allIds.indexOf(primary) !== -1) {
-        owned = [primary].concat(owned.filter(function (id) { return id !== primary; }));
-      }
-      owned = owned.filter(function (id) { return allIds.indexOf(id) !== -1; });
-      return owned.length ? owned : allIds.slice();
-    };
-
-    api.setVariant = function (value, variantMediaId) {
-      api.order = api.orderFor(value, variantMediaId);
-      api.limit = Math.min(3, api.order.length) || 1;
-      apply();
+    /* a colour selection re-points IMG 1 and touches nothing else */
+    api.setVariant = function (value) {
+      api.setPrimary(designatedMedia[normKey(value)] || (groups[normKey(value)] || {}).primary);
     };
 
     apply();
@@ -488,7 +480,7 @@
     if (!item || !item.hasAttribute('data-slot')) return;
     if (item.getAttribute('data-media-type') !== 'image') return;
     var gallery = galleryFor(item);
-    if (gallery) gallery.promote(item.getAttribute('data-media-id'));
+    if (gallery) gallery.setPrimary(item.getAttribute('data-media-id'));
   });
 
   /* ---------- product gallery thumbnails ---------- */
@@ -518,10 +510,11 @@
       item.classList.toggle('is-active', item.getAttribute('data-media-id') === id);
     });
 
-    /* desktop additionally moves it into IMG 1, leaving IMG 2 and 3 where they are */
+    /* desktop additionally re-points IMG 1; IMG 2, IMG 3 and the carousel
+       itself are untouched, so the clicked thumb stays where it is */
     if (desktopGallery.matches) {
       var gallery = galleryFor(thumb);
-      if (gallery) gallery.promote(id);
+      if (gallery) gallery.setPrimary(id);
     }
   });
 
@@ -573,17 +566,14 @@
   /* The sheet's gallery is the page's gallery ordering for the chosen colour --
      same mapping, so the shot that leads here is the one that leads there. With
      no colour chosen it is the product's default set. */
-  function miniRenderGallery() {
+  /* The strip is the product's media, drawn once and never filtered -- the same
+     rule the page gallery follows. Only the stage moves. */
+  function miniRenderStrip() {
     if (!miniGallery) return;
     var strip = qs('[data-minipdp-thumbs]');
     if (!strip) return;
-    var color = miniPdp.colorIndex >= 0 ? miniPdp.selected[miniPdp.colorIndex] : null;
-    var order = color
-      ? miniGallery.orderFor(color, miniDesignatedMedia(color))
-      : miniGallery.defaultOrder.slice();
-    order = order.filter(function (id) { return miniGallery.media[id]; });
+    var order = miniGallery.defaultOrder.filter(function (id) { return miniGallery.media[id]; });
     if (!order.length) return;
-
     strip.innerHTML = order.map(function (id) {
       var m = miniGallery.media[id];
       return '<button type="button" class="mini-pdp__thumb" data-minipdp-thumb data-media-id="' + id +
@@ -591,6 +581,15 @@
     }).join('');
     strip.hidden = order.length < 2;
     miniShowMedia(order[0]);
+  }
+
+  /* a colour moves the stage alone */
+  function miniShowColorMedia() {
+    if (!miniGallery || miniPdp.colorIndex < 0) return;
+    var color = miniPdp.selected[miniPdp.colorIndex];
+    if (!color) return;
+    var id = miniDesignatedMedia(color);
+    if (id) miniShowMedia(id);
   }
 
   /* Where the sheet lives when it is the drawer's. The drawer panel is
@@ -801,7 +800,8 @@
     else returnMiniPdp(root);
     root.classList.toggle('mini-pdp--standalone', !!options.standalone);
     root.hidden = false;
-    miniRenderGallery();
+    miniRenderStrip();
+    miniShowColorMedia();
     miniUpdate();
   }
 
@@ -827,7 +827,7 @@
       miniPdp.selected[index] = value.getAttribute('data-option-value');
       /* a colour change moves the gallery to that colour's shots, the same way
          the page's gallery moves */
-      if (index === miniPdp.colorIndex) miniRenderGallery();
+      if (index === miniPdp.colorIndex) miniShowColorMedia();
       miniUpdate();
       return;
     }
@@ -891,7 +891,6 @@
       standalone: true,
       gallery: gallery ? {
         media: gallery.media,
-        orderFor: gallery.orderFor,
         defaultOrder: gallery.defaultOrder,
         mediaIdForVariant: gallery.mediaIdForVariant,
         designatedMediaFor: gallery.designatedMediaFor
@@ -918,7 +917,7 @@
       'IMG 2': slots[1] ? slots[1].getAttribute('data-media-id') : null,
       'IMG 3': slots[2] ? slots[2].getAttribute('data-media-id') : null,
       'IMG 1 src': slots[0] && slots[0].querySelector('img') ? slots[0].querySelector('img').src : null,
-      'ordering': gallery ? gallery.order.slice() : null
+      'IMG 1 state': gallery ? gallery.primaryId() : null
     });
   }
 
