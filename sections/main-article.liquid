@@ -3,7 +3,7 @@
     <p class="text-small text-secondary lowercase">{{ article.published_at | date: '%d %b %Y' }}</p>
     <h1 class="h-section">{{ article.title | downcase }}</h1>
     {%- if article.image -%}
-      <img src="{{ article.image | image_url: width: 1400 }}" alt="{{ article.image.alt | escape }}" style="border-radius: 12px; margin-bottom: 24px;" width="1400" height="{{ 1400 | divided_by: article.image.aspect_ratio | round }}">
+      <img src="{{ article.image | image_url: width: 1400 }}" alt="{{ article.image.alt | escape }}" style="border-radius: var(--radius-media); margin-bottom: 24px;" width="1400" height="{{ 1400 | divided_by: article.image.aspect_ratio | round }}">
     {%- endif -%}
     <div class="rte">{{ article.content }}</div>
   </div>
