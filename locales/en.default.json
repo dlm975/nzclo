@@ -41,7 +41,8 @@
       "regular_price": "regular price",
       "sale_price": "sale price",
       "quantity": "quantity",
-      "choose_options": "choose options"
+      "choose_options": "choose options",
+      "description": "description"
     }
   },
   "cart": {

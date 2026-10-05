@@ -215,6 +215,24 @@
       });
   });
 
+  /* ---------- product gallery thumbnails ---------- */
+
+  document.addEventListener('click', function (e) {
+    var thumb = e.target.closest('[data-gallery-thumb]');
+    if (!thumb) return;
+    var id = thumb.getAttribute('data-media-id');
+    var scope = thumb.closest('.product-page') || document;
+
+    qsa('[data-gallery-thumb]', scope).forEach(function (t) {
+      var on = t === thumb;
+      t.classList.toggle('is-active', on);
+      t.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    qsa('[data-gallery-item]', scope).forEach(function (item) {
+      item.classList.toggle('is-active', item.getAttribute('data-media-id') === id);
+    });
+  });
+
   /* ---------- add-on carousel + mini product sheet ---------- */
 
   var miniPdp = { product: null, names: [], values: [], selected: [] };

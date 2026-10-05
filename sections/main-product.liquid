@@ -22,7 +22,11 @@
     <div class="product-gallery">
       {%- if product.media.size > 0 -%}
         {%- for media in product.media -%}
-          <div class="product-gallery__item">
+          <div
+            class="product-gallery__item{% if forloop.first %} is-active{% endif %}"
+            data-gallery-item
+            data-media-id="{{ media.id }}"
+          >
             {%- case media.media_type -%}
               {%- when 'image' -%}
                 <img
@@ -42,23 +46,33 @@
           </div>
         {%- endfor -%}
       {%- else -%}
-        <div class="product-gallery__item">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+        <div class="product-gallery__item is-active">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
       {%- endif -%}
     </div>
 
     <div class="product-info">
-      {%- if product.vendor != blank -%}
-        <p class="product-info__vendor">{{ product.vendor | downcase }}</p>
+      {%- if product.media.size > 1 -%}
+        <div class="product-thumbs">
+          {%- for media in product.media -%}
+            <button
+              type="button"
+              class="product-thumb{% if forloop.first %} is-active{% endif %}"
+              data-gallery-thumb
+              data-media-id="{{ media.id }}"
+              aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+              aria-label="{{ product.title | escape }} — {{ forloop.index }}"
+            >
+              <img src="{{ media | image_url: width: 220 }}" alt="" loading="lazy" width="110" height="138">
+            </button>
+          {%- endfor -%}
+        </div>
       {%- endif -%}
+
       <h1 class="product-info__title">{{ product.title | downcase }}</h1>
       <div class="product-info__price">
         <span data-price>{% render 'price', variant: product.selected_or_first_available_variant %}</span>
         <span class="preorder-badge">{{ settings.preorder_label | default: 'Pre-Order' }}</span>
       </div>
-
-      {%- if product.description != blank -%}
-        <div class="product-info__description rte">{{ product.description }}</div>
-      {%- endif -%}
 
       {%- form 'product', product, data-ajax-add: '' -%}
         {%- assign current_variant = product.selected_or_first_available_variant -%}
@@ -127,6 +141,13 @@
       {%- endform -%}
 
       <div class="product-accordions">
+        {%- if product.description != blank -%}
+          <details>
+            <summary>{{ 'products.product.description' | t }}</summary>
+            <div class="accordion__content rte">{{ product.description }}</div>
+          </details>
+        {%- endif -%}
+
         {%- for block in section.blocks -%}
           {%- if block.type == 'accordion' and block.settings.content != blank -%}
             <details {{ block.shopify_attributes }}>
