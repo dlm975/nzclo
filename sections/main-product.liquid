@@ -55,7 +55,12 @@
           else
             assign variant_value = variant.option3
           endif
-          if variant_value == value and variant.featured_media
+          comment
+            option.values yields value drops, variant.optionN yields strings, so
+            both sides are forced to a string before they are compared
+          endcomment
+          assign value_name = value | append: ''
+          if variant_value == value_name and variant.featured_media
             echo '|'
             echo variant.featured_media.id
           endif
@@ -80,7 +85,12 @@
           else
             assign variant_value = variant.option3
           endif
-          if variant_value == value and variant.featured_media
+          comment
+            option.values yields value drops, variant.optionN yields strings, so
+            both sides are forced to a string before they are compared
+          endcomment
+          assign value_name = value | append: ''
+          if variant_value == value_name and variant.featured_media
             assign primary_id = variant.featured_media.id
             assign primary_pos = variant.featured_media.position
             break

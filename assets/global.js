@@ -264,12 +264,105 @@
       if (img && entry) entry.thumb = img.getAttribute('src') || '';
     });
 
+    /* Shopify's variant data is the source of truth for which shot belongs to
+       which variant. The section's mapping is kept only as a last resort, for a
+       product JSON that carries no variant imagery at all. */
+    var productJson = null;
+    var productJsonEl = qs('[data-product-json]', scope);
+    if (productJsonEl) {
+      try { productJson = JSON.parse(productJsonEl.textContent); } catch (err) { productJson = null; }
+    }
+
+    function normKey(value) { return String(value == null ? '' : value).toLowerCase().trim(); }
+
+    /* a CDN url identifies its file regardless of the size it was asked for, so
+       a variant's featured_image can be matched to a gallery media item even
+       when the JSON carries no featured_media id */
+    function fileKey(url) {
+      if (!url) return '';
+      var s = String(url).split('?')[0].split('#')[0];
+      s = s.substring(s.lastIndexOf('/') + 1);
+      s = s.replace(/_(\d+x\d*|\d*x\d+|small|medium|large|grande|compact|master|pico|icon|thumb)(?=\.\w+$)/i, '');
+      return s.toLowerCase();
+    }
+
+    var keyToId = {};
+    Object.keys(mediaInfo).forEach(function (id) {
+      var k = fileKey(mediaInfo[id].full);
+      if (k && !keyToId[k]) keyToId[k] = id;
+    });
+
+    function mediaIdForVariant(variant) {
+      if (!variant) return null;
+      var fm = variant.featured_media;
+      if (fm && fm.id != null && allIds.indexOf(String(fm.id)) !== -1) return String(fm.id);
+      var fi = variant.featured_image;
+      var src = fi && (fi.src || (typeof fi === 'string' ? fi : null));
+      var k = fileKey(src);
+      return k && keyToId[k] ? keyToId[k] : null;
+    }
+
+    var colorIndex = -1;
+    if (productJson) {
+      (productJson.options || []).forEach(function (option, i) {
+        var name = String(option && option.name ? option.name : option).toLowerCase();
+        if (name.indexOf('color') !== -1 || name.indexOf('colour') !== -1) colorIndex = i;
+      });
+    }
+
+    /* Each colour's shots, built from the variants themselves: every media item
+       its own variants point at, plus the unclaimed ones uploaded between its
+       first shot and the next colour's -- never one another colour's variant
+       points at. */
+    var variantGroups = {};
+    if (productJson && productJson.variants && colorIndex >= 0) {
+      var keyOrder = [];
+      var ownMedia = {};
+      productJson.variants.forEach(function (v) {
+        var key = normKey(v.options ? v.options[colorIndex] : null);
+        if (!ownMedia[key]) { ownMedia[key] = []; keyOrder.push(key); }
+        var mid = mediaIdForVariant(v);
+        if (mid && ownMedia[key].indexOf(mid) === -1) ownMedia[key].push(mid);
+      });
+
+      var anchorOf = {};
+      var claimed = {};
+      keyOrder.forEach(function (key) {
+        if (!ownMedia[key].length) return;
+        anchorOf[key] = ownMedia[key].reduce(function (best, id) {
+          return allIds.indexOf(id) < allIds.indexOf(best) ? id : best;
+        });
+        ownMedia[key].forEach(function (id) { claimed[id] = true; });
+      });
+      var anchorPositions = Object.keys(anchorOf).map(function (k) { return allIds.indexOf(anchorOf[k]); });
+
+      keyOrder.forEach(function (key) {
+        if (!anchorOf[key]) return;
+        var start = allIds.indexOf(anchorOf[key]);
+        var stop = anchorPositions.reduce(function (acc, i) {
+          return i > start && i < acc ? i : acc;
+        }, allIds.length);
+        var list = [];
+        for (var i = 0; i < allIds.length; i++) {
+          var id = allIds[i];
+          if (ownMedia[key].indexOf(id) !== -1) list.push(id);
+          else if (i > start && i < stop && !claimed[id]) list.push(id);
+        }
+        var p = allIds[start];
+        var at = list.indexOf(p);
+        if (at > 0) list = [p].concat(list.slice(0, at), list.slice(at + 1));
+        variantGroups[key] = { primary: p, media: list };
+      });
+    }
+
     var api = {
       scope: scope,
       order: allIds.slice(),
       limit: Math.min(3, allIds.length) || 1,
       media: mediaInfo,
-      defaultOrder: allIds.slice()
+      defaultOrder: allIds.slice(),
+      mediaIdForVariant: mediaIdForVariant,
+      colorIndex: colorIndex
     };
 
     function apply() {
@@ -316,8 +409,9 @@
     /* the single place a colour is turned into an ordering, so the sheet and the
        page gallery can never disagree about what a colour's shots are */
     api.orderFor = function (value, variantMediaId) {
-      var key = String(value == null ? '' : value).toLowerCase().trim();
-      var group = groups[key];
+      var key = normKey(value);
+      /* the variants' own grouping first; the section's only if that is empty */
+      var group = variantGroups[key] || groups[key];
       var owned = group && group.media ? group.media.map(String) : [];
 
       var primary = variantMediaId != null && variantMediaId !== ''
@@ -411,7 +505,10 @@
       if (v.options[miniPdp.colorIndex] !== color) return;
       if (!match || (!match.available && v.available)) match = v;
     });
-    return match && match.featured_media ? match.featured_media.id : null;
+    if (!match) return null;
+    /* the page gallery's resolver, so the sheet and the page agree */
+    if (miniGallery && miniGallery.mediaIdForVariant) return miniGallery.mediaIdForVariant(match);
+    return match.featured_media ? match.featured_media.id : null;
   }
 
   function miniShowMedia(id) {
@@ -748,9 +845,37 @@
     renderMiniPdp(product, {
       preselect: preselect.length ? preselect : null,
       standalone: true,
-      gallery: gallery ? { media: gallery.media, orderFor: gallery.orderFor, defaultOrder: gallery.defaultOrder } : null
+      gallery: gallery ? {
+        media: gallery.media,
+        orderFor: gallery.orderFor,
+        defaultOrder: gallery.defaultOrder,
+        mediaIdForVariant: gallery.mediaIdForVariant
+      } : null
     });
   });
+
+  /* Off unless the url carries ?gallerydebug=1. The data flow it reports is the
+     one that can only be checked against a real storefront's Liquid output. */
+  var GALLERY_DEBUG = /[?&]gallerydebug=1\b/.test(window.location.search);
+
+  function galleryDebug(color, variant, mediaId, gallery) {
+    if (!GALLERY_DEBUG || !window.console) return;
+    var slots = qsa('[data-gallery-item][data-slot]').sort(function (a, b) {
+      return a.getAttribute('data-slot') - b.getAttribute('data-slot');
+    });
+    console.log('[gallery]', {
+      'selected colour': color,
+      'selected variant id': variant ? variant.id : null,
+      'variant featured_media id': variant && variant.featured_media ? variant.featured_media.id : null,
+      'variant featured_image': variant && variant.featured_image ? (variant.featured_image.src || variant.featured_image) : null,
+      'resolved media id (IMG 1)': mediaId,
+      'IMG 1': slots[0] ? slots[0].getAttribute('data-media-id') : null,
+      'IMG 2': slots[1] ? slots[1].getAttribute('data-media-id') : null,
+      'IMG 3': slots[2] ? slots[2].getAttribute('data-media-id') : null,
+      'IMG 1 src': slots[0] && slots[0].querySelector('img') ? slots[0].querySelector('img').src : null,
+      'ordering': gallery ? gallery.order.slice() : null
+    });
+  }
 
   /* ---------- variant picker ---------- */
 
@@ -794,15 +919,17 @@
 
     function showColor(color) {
       var representative = variantForColor(color);
-      var mediaId = representative && representative.featured_media
-        ? representative.featured_media.id
-        : null;
       var gallery = galleryFor(wrapper);
+      /* one resolver for the whole page: featured_media id, else the
+         featured_image matched to a gallery shot by its file, else the
+         section's mapping */
+      var mediaId = gallery && representative ? gallery.mediaIdForVariant(representative) : null;
       if (gallery) gallery.setVariant(color, mediaId);
       if (barImage && representative && representative.featured_image && representative.featured_image.src) {
         barImage.src = smallImage(representative.featured_image.src);
         barImage.removeAttribute('srcset');
       }
+      galleryDebug(color, representative, mediaId, gallery);
     }
     var buyBtn = wrapper.querySelector('[data-add-to-cart]');
     var buyText = wrapper.querySelector('[data-add-to-cart-text]');
