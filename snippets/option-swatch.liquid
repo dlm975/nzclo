@@ -1,0 +1,24 @@
+{%- comment -%}
+  The circular colour chip beside a colour option's label.
+
+  Shopify's own swatch for the value where the merchant has set one, otherwise
+  the value's name read as a CSS colour -- black, white, navy, grey and the rest
+  are colour keywords already. A name that is neither keeps the neutral chip the
+  stylesheet paints underneath, so a swatch is never invisible.
+
+  @param value - the product option value
+
+  Usage: {% render 'option-swatch', value: value %}
+{%- endcomment -%}
+{%- liquid
+  assign swatch_image = value.swatch.image
+  assign swatch_color = value.swatch.color
+  if swatch_color == blank
+    assign swatch_color = value | append: '' | downcase | strip | replace: ' ', ''
+  endif
+-%}
+{%- if swatch_image -%}
+  <span class="option-pill__swatch" aria-hidden="true" style="background-image: url({{ swatch_image | image_url: width: 48 }});"></span>
+{%- else -%}
+  <span class="option-pill__swatch" aria-hidden="true" style="background-color: {{ swatch_color | escape }};"></span>
+{%- endif -%}
