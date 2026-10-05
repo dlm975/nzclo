@@ -246,7 +246,31 @@
     /* `limit` is how many slots the grid claims -- three, or fewer when the
        selected colour has fewer shots, which is what keeps a short colour from
        borrowing a third image off the next one. */
-    var api = { scope: scope, order: allIds.slice(), limit: Math.min(3, allIds.length) || 1 };
+    /* The PDP's own media, read off the markup the section already printed, so
+       the sheet shows exactly the shots the page shows without refetching. */
+    var mediaInfo = {};
+    items.forEach(function (el) {
+      var img = el.querySelector('img');
+      if (!img) return;
+      mediaInfo[el.getAttribute('data-media-id')] = {
+        full: img.getAttribute('src') || '',
+        srcset: img.getAttribute('srcset') || '',
+        alt: img.getAttribute('alt') || ''
+      };
+    });
+    qsa('[data-gallery-thumb]', scope).forEach(function (t) {
+      var img = t.querySelector('img');
+      var entry = mediaInfo[t.getAttribute('data-media-id')];
+      if (img && entry) entry.thumb = img.getAttribute('src') || '';
+    });
+
+    var api = {
+      scope: scope,
+      order: allIds.slice(),
+      limit: Math.min(3, allIds.length) || 1,
+      media: mediaInfo,
+      defaultOrder: allIds.slice()
+    };
 
     function apply() {
       var shown = api.order.slice(0, api.limit);
@@ -289,7 +313,9 @@
 
        A colour whose variants point at no media has none of its own, and there
        the product's default set is the honest answer. */
-    api.setVariant = function (value, variantMediaId) {
+    /* the single place a colour is turned into an ordering, so the sheet and the
+       page gallery can never disagree about what a colour's shots are */
+    api.orderFor = function (value, variantMediaId) {
       var key = String(value == null ? '' : value).toLowerCase().trim();
       var group = groups[key];
       var owned = group && group.media ? group.media.map(String) : [];
@@ -301,8 +327,11 @@
         owned = [primary].concat(owned.filter(function (id) { return id !== primary; }));
       }
       owned = owned.filter(function (id) { return allIds.indexOf(id) !== -1; });
+      return owned.length ? owned : allIds.slice();
+    };
 
-      api.order = owned.length ? owned : allIds.slice();
+    api.setVariant = function (value, variantMediaId) {
+      api.order = api.orderFor(value, variantMediaId);
       api.limit = Math.min(3, api.order.length) || 1;
       apply();
     };
@@ -368,7 +397,59 @@
 
   /* ---------- add-on carousel + mini product sheet ---------- */
 
-  var miniPdp = { product: null, names: [], values: [], selected: [] };
+  var miniPdp = { product: null, names: [], values: [], selected: [], colorIndex: -1 };
+
+  /* The page's media, handed over by the + button. Absent for the drawer's
+     add-on sheet, which keeps its single-image layout. */
+  var miniGallery = null;
+
+  function miniVariantMediaId(color) {
+    var p = miniPdp.product;
+    if (!p || miniPdp.colorIndex < 0) return null;
+    var match = null;
+    p.variants.forEach(function (v) {
+      if (v.options[miniPdp.colorIndex] !== color) return;
+      if (!match || (!match.available && v.available)) match = v;
+    });
+    return match && match.featured_media ? match.featured_media.id : null;
+  }
+
+  function miniShowMedia(id) {
+    if (!miniGallery) return;
+    var entry = miniGallery.media[id];
+    var stage = qs('[data-minipdp-stage]');
+    if (!entry || !stage) return;
+    stage.src = entry.full;
+    if (entry.srcset) stage.setAttribute('srcset', entry.srcset);
+    else stage.removeAttribute('srcset');
+    stage.alt = entry.alt || '';
+    qsa('[data-minipdp-thumb]').forEach(function (t) {
+      t.classList.toggle('is-active', t.getAttribute('data-media-id') === String(id));
+    });
+  }
+
+  /* The sheet's gallery is the page's gallery ordering for the chosen colour --
+     same mapping, so the shot that leads here is the one that leads there. With
+     no colour chosen it is the product's default set. */
+  function miniRenderGallery() {
+    if (!miniGallery) return;
+    var strip = qs('[data-minipdp-thumbs]');
+    if (!strip) return;
+    var color = miniPdp.colorIndex >= 0 ? miniPdp.selected[miniPdp.colorIndex] : null;
+    var order = color
+      ? miniGallery.orderFor(color, miniVariantMediaId(color))
+      : miniGallery.defaultOrder.slice();
+    order = order.filter(function (id) { return miniGallery.media[id]; });
+    if (!order.length) return;
+
+    strip.innerHTML = order.map(function (id) {
+      var m = miniGallery.media[id];
+      return '<button type="button" class="mini-pdp__thumb" data-minipdp-thumb data-media-id="' + id +
+        '"><img src="' + (m.thumb || m.full) + '" alt="" loading="lazy"></button>';
+    }).join('');
+    strip.hidden = order.length < 2;
+    miniShowMedia(order[0]);
+  }
 
   /* Where the sheet lives when it is the drawer's. The drawer panel is
      transform: translateX(100%) while closed, and a transform makes an element
@@ -407,6 +488,7 @@
     root.hidden = true;
     root.classList.remove('mini-pdp--standalone');
     returnMiniPdp(root);
+    miniGallery = null;
     var body = qs('[data-minipdp-body]', root);
     if (body) body.innerHTML = '';
     miniPdp.product = null;
@@ -472,6 +554,20 @@
       btn.disabled = !miniValueOffered(idx, val);
     });
 
+    var stockEl = qs('[data-minipdp-stock]');
+    if (stockEl) {
+      if (!allChosen) {
+        stockEl.textContent = '';
+        stockEl.removeAttribute('data-state');
+      } else if (variant && variant.available) {
+        stockEl.textContent = 'in stock';
+        stockEl.setAttribute('data-state', 'in');
+      } else {
+        stockEl.textContent = variant ? 'sold out' : 'unavailable';
+        stockEl.setAttribute('data-state', 'out');
+      }
+    }
+
     var addBtn = qs('[data-minipdp-add]');
     if (addBtn) {
       var ready = variant && variant.available && allChosen;
@@ -506,6 +602,13 @@
       return seen;
     });
 
+    miniPdp.colorIndex = -1;
+    miniPdp.names.forEach(function (name, i) {
+      var n = String(name).toLowerCase();
+      if (n.indexOf('color') !== -1 || n.indexOf('colour') !== -1) miniPdp.colorIndex = i;
+    });
+    miniGallery = options.gallery || null;
+
     var hasRealOptions = !(miniPdp.names.length === 1 && miniPdp.values[0].length === 1 && miniPdp.values[0][0] === 'Default Title');
     var first = product.variants.filter(function (v) { return v.available; })[0] || product.variants[0];
     miniPdp.selected = miniPdp.names.map(function (_, i) {
@@ -525,19 +628,39 @@
       }).join('') + '</div>';
     }
 
-    body.innerHTML =
-      '<div class="mini-pdp__top">' +
-        '<span class="mini-pdp__media"><img data-minipdp-image src="' + (product.featured_image || '') + '" alt=""></span>' +
-        '<span><h3 class="mini-pdp__title">' + product.title + '</h3>' +
-        '<span class="mini-pdp__price" data-minipdp-price></span></span>' +
-      '</div>' + optionsHtml +
+    var addHtml =
       '<button type="button" class="btn btn--solid btn--full mini-pdp__add" data-minipdp-add data-card-add data-label-add="' +
         'add to bag" data-label-choose="choose options" data-variant-id=""><span data-minipdp-add-text>add to bag</span></button>';
+
+    if (miniGallery) {
+      /* the fuller layout: the page's gallery beside the purchase panel */
+      body.innerHTML =
+        '<div class="mini-pdp__layout">' +
+          '<div class="mini-pdp__gallery">' +
+            '<span class="mini-pdp__stage"><img data-minipdp-stage src="" alt=""></span>' +
+            '<div class="mini-pdp__thumbs" data-minipdp-thumbs></div>' +
+          '</div>' +
+          '<div class="mini-pdp__panel">' +
+            '<h3 class="mini-pdp__title">' + product.title + '</h3>' +
+            '<span class="mini-pdp__price" data-minipdp-price></span>' +
+            '<span class="mini-pdp__stock" data-minipdp-stock></span>' +
+            optionsHtml + addHtml +
+          '</div>' +
+        '</div>';
+    } else {
+      body.innerHTML =
+        '<div class="mini-pdp__top">' +
+          '<span class="mini-pdp__media"><img data-minipdp-image src="' + (product.featured_image || '') + '" alt=""></span>' +
+          '<span><h3 class="mini-pdp__title">' + product.title + '</h3>' +
+          '<span class="mini-pdp__price" data-minipdp-price></span></span>' +
+        '</div>' + optionsHtml + addHtml;
+    }
 
     if (options.standalone) liftMiniPdp(root);
     else returnMiniPdp(root);
     root.classList.toggle('mini-pdp--standalone', !!options.standalone);
     root.hidden = false;
+    miniRenderGallery();
     miniUpdate();
   }
 
@@ -554,9 +677,16 @@
 
     if (e.target.closest('[data-minipdp-close]')) { closeMiniPdp(); return; }
 
+    var thumb = e.target.closest('[data-minipdp-thumb]');
+    if (thumb) { miniShowMedia(thumb.getAttribute('data-media-id')); return; }
+
     var value = e.target.closest('[data-minipdp-value]');
     if (value) {
-      miniPdp.selected[parseInt(value.getAttribute('data-option-index'), 10)] = value.getAttribute('data-option-value');
+      var index = parseInt(value.getAttribute('data-option-index'), 10);
+      miniPdp.selected[index] = value.getAttribute('data-option-value');
+      /* a colour change moves the gallery to that colour's shots, the same way
+         the page's gallery moves */
+      if (index === miniPdp.colorIndex) miniRenderGallery();
       miniUpdate();
       return;
     }
@@ -614,7 +744,12 @@
       return checked ? checked.value : null;
     });
 
-    renderMiniPdp(product, { preselect: preselect.length ? preselect : null, standalone: true });
+    var gallery = galleryFor(qs('[data-product-form-wrapper]'));
+    renderMiniPdp(product, {
+      preselect: preselect.length ? preselect : null,
+      standalone: true,
+      gallery: gallery ? { media: gallery.media, orderFor: gallery.orderFor, defaultOrder: gallery.defaultOrder } : null
+    });
   });
 
   /* ---------- variant picker ---------- */
