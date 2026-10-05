@@ -508,6 +508,21 @@
     if (e.key === 'Escape') closeMiniPdp();
   });
 
+  /* ---------- floating PDP product bar ---------- */
+
+  /* Watches the buy controls rather than the button itself: the pre-order swap
+     takes the button out of the flow entirely, and an element that is not
+     rendered never intersects, which would pin the bar open. A 0.2 threshold
+     gives the hysteresis that stops it flickering at the boundary. */
+  (function () {
+    var bar = qs('[data-pdp-bar]');
+    var buyArea = qs('[data-buy-observe]');
+    if (!bar || !buyArea || !window.IntersectionObserver) return;
+    new IntersectionObserver(function (entries) {
+      bar.classList.toggle('is-visible', !entries[0].isIntersecting);
+    }, { threshold: 0.2 }).observe(buyArea);
+  })();
+
   /* ---------- variant picker ---------- */
 
   qsa('[data-product-form-wrapper]').forEach(function (wrapper) {
@@ -527,6 +542,8 @@
 
     var idInput = wrapper.querySelector('input[name="id"]');
     var priceEl = wrapper.querySelector('[data-price]');
+    var barPrice = qs('[data-pdp-bar-price]');
+    var barImage = qs('[data-pdp-bar-image]');
     var buyBtn = wrapper.querySelector('[data-add-to-cart]');
     var buyText = wrapper.querySelector('[data-add-to-cart-text]');
 
@@ -601,6 +618,14 @@
           html = '<s>' + money(variant.compare_at_price) + '</s>' + html;
         }
         priceEl.innerHTML = html;
+        if (barPrice) barPrice.innerHTML = html;
+      }
+      /* the bar follows the variant's own shot where it has one; a variant
+         without its own image leaves the product's default in place */
+      if (barImage && variant.featured_image && variant.featured_image.src) {
+        var src = variant.featured_image.src;
+        barImage.src = src + (src.indexOf('?') === -1 ? '?' : '&') + 'width=160';
+        barImage.removeAttribute('srcset');
       }
       if (buyBtn && buyText) {
         buyBtn.disabled = !variant.available;

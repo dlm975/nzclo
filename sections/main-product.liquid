@@ -259,7 +259,7 @@
           <p class="preorder-note">{{ settings.preorder_message }}</p>
         {%- endif -%}
 
-        <div class="product-form__buttons">
+        <div class="product-form__buttons" data-buy-observe>
           <button
             type="submit"
             class="btn btn--solid btn--full"
@@ -313,6 +313,31 @@
       </div>
     </div>
   </div>
+</div>
+
+{%- comment -%}
+  Shown once the buy controls leave the viewport. Information only: no buy
+  button, aria-hidden because it repeats what the page already says, and
+  pointer-events are off in the stylesheet so it never takes a click meant for
+  the page underneath it.
+{%- endcomment -%}
+<div class="pdp-bar" data-pdp-bar aria-hidden="true">
+  <span class="pdp-bar__media">
+    {%- if product.featured_media -%}
+      <img
+        data-pdp-bar-image
+        src="{{ product.featured_media | image_url: width: 160 }}"
+        alt=""
+        loading="lazy"
+        width="80"
+        height="107"
+      >
+    {%- endif -%}
+  </span>
+  <span class="pdp-bar__title">{{ product.title | downcase }}</span>
+  <span class="pdp-bar__price" data-pdp-bar-price>
+    {%- render 'price', variant: product.selected_or_first_available_variant -%}
+  </span>
 </div>
 
 <div style="height: clamp(40px, 6vw, 88px);"></div>
