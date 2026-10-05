@@ -207,6 +207,11 @@
         button.classList.remove('is-busy');
         button.classList.add('is-added');
         setTimeout(function () { button.classList.remove('is-added'); }, 1800);
+        /* the sheet opened from the floating bar gets out of the way so the
+           drawer it just refreshed is visible. The drawer's own mini PDP is
+           left exactly as it was. */
+        var sheet = button.closest('#mini-pdp');
+        if (sheet && sheet.classList.contains('mini-pdp--standalone')) closeMiniPdp();
         return drawerEnabled ? refreshCartDrawer(true) : updateCartCount();
       })
       .catch(function (err) {
@@ -349,6 +354,31 @@
 
   var miniPdp = { product: null, names: [], values: [], selected: [] };
 
+  /* Where the sheet lives when it is the drawer's. The drawer panel is
+     transform: translateX(100%) while closed, and a transform makes an element
+     the containing block for position: fixed inside it -- so a sheet opened
+     from the page would be laid out against the closed, off-screen panel. It
+     is lifted to the body for that, and put back on close. */
+  var miniPdpHome = null;
+
+  function liftMiniPdp(root) {
+    if (miniPdpHome || root.parentNode === document.body) return;
+    miniPdpHome = { parent: root.parentNode, next: root.nextSibling };
+    document.body.appendChild(root);
+  }
+
+  function returnMiniPdp(root) {
+    if (!miniPdpHome) return;
+    /* a cart refresh rebuilds the drawer, and with it its own copy of the
+       sheet -- so this one is dropped rather than put back as a duplicate */
+    if (miniPdpHome.parent && miniPdpHome.parent.isConnected) {
+      miniPdpHome.parent.insertBefore(root, miniPdpHome.next);
+    } else if (root.parentNode === document.body) {
+      root.remove();
+    }
+    miniPdpHome = null;
+  }
+
   function miniMoney(cents) {
     var root = qs('#mini-pdp');
     var fmt = (root && root.getAttribute('data-money-format')) || '${{amount}}';
@@ -359,6 +389,8 @@
     var root = qs('#mini-pdp');
     if (!root) return;
     root.hidden = true;
+    root.classList.remove('mini-pdp--standalone');
+    returnMiniPdp(root);
     var body = qs('[data-minipdp-body]', root);
     if (body) body.innerHTML = '';
     miniPdp.product = null;
@@ -405,8 +437,15 @@
       }
     }
 
+    /* The shot follows the variant once the customer has picked something. With
+       nothing picked the product's own image stays, which is what lets the
+       sheet open without a variant chosen. Always true for the drawer's
+       add-ons, where every option arrives preselected. */
+    var anyChosen = miniPdp.selected.some(function (v) { return v !== null; });
+    var allChosen = miniPdp.selected.every(function (v) { return v !== null; });
+
     var imgEl = qs('[data-minipdp-image]');
-    if (imgEl && variant && variant.featured_image && variant.featured_image.src) {
+    if (imgEl && anyChosen && variant && variant.featured_image && variant.featured_image.src) {
       imgEl.src = variant.featured_image.src;
     }
 
@@ -419,18 +458,26 @@
 
     var addBtn = qs('[data-minipdp-add]');
     if (addBtn) {
-      var ready = variant && variant.available && miniPdp.selected.every(function (v) { return v !== null; });
+      var ready = variant && variant.available && allChosen;
       addBtn.disabled = !ready;
-      addBtn.setAttribute('data-variant-id', variant ? variant.id : '');
+      /* no variant id until the choice is complete, so a half-made selection
+         can never be added */
+      addBtn.setAttribute('data-variant-id', ready ? variant.id : '');
       var label = qs('[data-minipdp-add-text]', addBtn);
       if (label) {
-        label.textContent = !variant ? 'unavailable'
-          : (!variant.available ? 'sold out' : (addBtn.getAttribute('data-label-add') || 'add to bag'));
+        label.textContent = !allChosen ? (addBtn.getAttribute('data-label-choose') || 'choose options')
+          : (!variant ? 'unavailable'
+          : (!variant.available ? 'sold out' : (addBtn.getAttribute('data-label-add') || 'add to bag')));
       }
     }
   }
 
-  function renderMiniPdp(product) {
+  /* options.preselect: the choices to open with, an entry per option and null
+     for "not chosen". options.standalone: promote the sheet to the viewport,
+     for when there is no drawer panel around it. Both omitted -- which is how
+     the drawer's add-ons call it -- leaves the original behaviour untouched. */
+  function renderMiniPdp(product, options) {
+    options = options || {};
     var body = qs('[data-minipdp-body]');
     var root = qs('#mini-pdp');
     if (!body || !root) return;
@@ -446,7 +493,9 @@
     var hasRealOptions = !(miniPdp.names.length === 1 && miniPdp.values[0].length === 1 && miniPdp.values[0][0] === 'Default Title');
     var first = product.variants.filter(function (v) { return v.available; })[0] || product.variants[0];
     miniPdp.selected = miniPdp.names.map(function (_, i) {
-      return hasRealOptions ? (first ? first.options[i] : null) : first.options[i];
+      if (!hasRealOptions) return first.options[i];
+      if (options.preselect) return options.preselect[i] == null ? null : options.preselect[i];
+      return first ? first.options[i] : null;
     });
 
     var optionsHtml = '';
@@ -467,8 +516,11 @@
         '<span class="mini-pdp__price" data-minipdp-price></span></span>' +
       '</div>' + optionsHtml +
       '<button type="button" class="btn btn--solid btn--full mini-pdp__add" data-minipdp-add data-card-add data-label-add="' +
-        'add to bag" data-variant-id=""><span data-minipdp-add-text>add to bag</span></button>';
+        'add to bag" data-label-choose="choose options" data-variant-id=""><span data-minipdp-add-text>add to bag</span></button>';
 
+    if (options.standalone) liftMiniPdp(root);
+    else returnMiniPdp(root);
+    root.classList.toggle('mini-pdp--standalone', !!options.standalone);
     root.hidden = false;
     miniUpdate();
   }
@@ -522,6 +574,32 @@
       bar.classList.toggle('is-visible', !entries[0].isIntersecting);
     }, { threshold: 0.2 }).observe(buyArea);
   })();
+
+  /* The + opens the cart drawer's mini PDP on this product, carrying whatever
+     the customer has already chosen on the page -- which is nothing at all on
+     arrival, so the sheet opens unchosen too. No fetch: the section already
+     prints the product JSON. */
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('[data-pdp-bar-add]')) return;
+    var jsonEl = qs('[data-product-json]');
+    if (!jsonEl) return;
+    var product;
+    try { product = JSON.parse(jsonEl.textContent); } catch (err) { return; }
+
+    /* the sheet's markup wants a plain url here; the drawer's add-ons get one
+       from /products/<handle>.js, so normalise rather than assume */
+    if (typeof product.featured_image !== 'string') {
+      var barImg = qs('[data-pdp-bar-image]');
+      product.featured_image = (product.featured_image && product.featured_image.src) || (barImg ? barImg.src : '');
+    }
+
+    var preselect = qsa('[data-option-group]').map(function (group) {
+      var checked = group.querySelector('input:checked');
+      return checked ? checked.value : null;
+    });
+
+    renderMiniPdp(product, { preselect: preselect.length ? preselect : null, standalone: true });
+  });
 
   /* ---------- variant picker ---------- */
 

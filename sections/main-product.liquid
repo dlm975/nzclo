@@ -316,12 +316,12 @@
 </div>
 
 {%- comment -%}
-  Shown once the buy controls leave the viewport. Information only: no buy
-  button, aria-hidden because it repeats what the page already says, and
-  pointer-events are off in the stylesheet so it never takes a click meant for
-  the page underneath it.
+  Shown once the buy controls leave the viewport. Pointer events are off in the
+  stylesheet so the bar never takes a click meant for the page underneath it;
+  the + button turns them back on for itself. It opens the cart drawer's own
+  mini PDP rather than carrying a second buy button.
 {%- endcomment -%}
-<div class="pdp-bar" data-pdp-bar aria-hidden="true">
+<div class="pdp-bar" data-pdp-bar>
   <span class="pdp-bar__media">
     {%- if product.featured_media -%}
       <img
@@ -338,6 +338,14 @@
   <span class="pdp-bar__price" data-pdp-bar-price>
     {%- render 'price', variant: product.selected_or_first_available_variant -%}
   </span>
+  <button
+    type="button"
+    class="pdp-bar__add"
+    data-pdp-bar-add
+    aria-label="{{ 'products.product.choose_options' | t }} — {{ product.title | escape }}"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg>
+  </button>
 </div>
 
 <div style="height: clamp(40px, 6vw, 88px);"></div>

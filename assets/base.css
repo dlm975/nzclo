@@ -2083,3 +2083,67 @@ select.field {
   .pdp-bar { transition: opacity 0.26s ease, visibility 0s linear 0.26s; transform: none; }
   .pdp-bar.is-visible { transition: opacity 0.26s ease, visibility 0s; }
 }
+
+/* the one control on the bar: it opens the cart drawer's mini PDP. The bar
+   takes no pointer events, so the button turns them back on for itself. */
+.pdp-bar__add {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-left: 2px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(var(--color-text));
+  color: rgb(var(--color-background));
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+.pdp-bar__add:hover { transform: scale(1.06); }
+.pdp-bar__add:focus-visible { outline: 2px solid rgb(var(--color-text)); outline-offset: 2px; }
+.pdp-bar__add svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+/* a comfortable tap target on a phone without making the bar any taller */
+@media (max-width: 749px) {
+  .pdp-bar__add { width: 40px; height: 40px; margin-left: 4px; }
+  .pdp-bar__add svg { width: 16px; height: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pdp-bar__add, .pdp-bar__add:hover { transition: none; transform: none; }
+}
+
+/* The mini PDP is the cart drawer's component, so it is positioned inside the
+   drawer panel. Opened from the floating bar there is no panel to sit in, so
+   the same element is promoted to the viewport -- nothing else about it
+   changes: same sheet, same scrim, same options, same add to bag. */
+.mini-pdp--standalone { position: fixed; inset: 0; z-index: 110; visibility: visible; }
+/* the bar is what opened the sheet and says the same three things, so it gets
+   out of the way rather than sharing the bottom edge with the add button */
+body:has(.mini-pdp--standalone) .pdp-bar {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px);
+}
+/* on a wide screen a full-bleed bottom sheet reads as a mistake, so it becomes
+   a centred dialog; the phone keeps the bottom sheet exactly as it is */
+@media (min-width: 750px) {
+  .mini-pdp--standalone .mini-pdp__sheet {
+    left: 0;
+    right: 0;
+    bottom: 24px;
+    margin-inline: auto;
+    max-width: 460px;
+    max-height: calc(100vh - 48px);
+    border-radius: var(--radius-tile);
+  }
+}
