@@ -5,6 +5,107 @@
     echo product.url
   endcapture
   assign po_link = po_link_raw | url_encode
+  comment
+    Desktop lays the first four shots out as a 2x2 grid, so it needs to know
+    which media belong to which colour. Shopify only ties a single image to a
+    variant, so each colour is anchored at its variant image's position and owns
+    every media item from there up to the next colour's anchor -- which is how
+    the shots are uploaded, grouped per colour in order. Nothing is hardcoded;
+    a colour with no variant image simply falls back to the whole media list.
+  endcomment
+  assign color_option = null
+  for product_option in product.options_with_values
+    assign option_name = product_option.name | downcase
+    if option_name contains 'color' or option_name contains 'colour'
+      assign color_option = product_option
+      break
+    endif
+  endfor
+
+  assign media_groups = ''
+  if color_option and product.media.size > 0
+    assign color_position = color_option.position
+
+    capture anchor_csv
+      for value in color_option.values
+        assign anchor = 0
+        for variant in product.variants
+          if color_position == 1
+            assign variant_value = variant.option1
+          elsif color_position == 2
+            assign variant_value = variant.option2
+          else
+            assign variant_value = variant.option3
+          endif
+          if variant_value == value and variant.featured_media
+            assign anchor = variant.featured_media.position
+            break
+          endif
+        endfor
+        echo anchor
+        unless forloop.last
+          echo ','
+        endunless
+      endfor
+    endcapture
+    assign anchors = anchor_csv | split: ','
+
+    comment
+      Media sitting ahead of the earliest anchor belong to that first colour,
+      so its range starts at the top of the list rather than at its own anchor.
+    endcomment
+    assign min_anchor = 99999
+    for a in anchors
+      assign an = a | strip | times: 1
+      if an > 0 and an < min_anchor
+        assign min_anchor = an
+      endif
+    endfor
+
+    capture media_groups
+      echo '{'
+      for value in color_option.values
+        assign anchor = anchors[forloop.index0] | strip | times: 1
+        assign start = anchor
+        if anchor == min_anchor
+          assign start = 1
+        endif
+        assign stop = 99999
+        for b in anchors
+          assign bn = b | strip | times: 1
+          if bn > anchor and bn < stop
+            assign stop = bn
+          endif
+        endfor
+
+        unless forloop.first
+          echo ','
+        endunless
+        assign group_key = value | append: '' | downcase
+        echo group_key | json
+        echo ':['
+        assign written = 0
+        for media in product.media
+          assign include = false
+          if anchor == 0
+            assign include = true
+          elsif media.position >= start and media.position < stop
+            assign include = true
+          endif
+          if include
+            if written > 0
+              echo ','
+            endif
+            echo media.id
+            assign written = written | plus: 1
+          endif
+        endfor
+        echo ']'
+      endfor
+      echo '}'
+    endcapture
+  endif
+
   assign po_base = settings.preorder_page_url | default: '/pages/special-order'
   capture preorder_href
     echo po_base
@@ -19,13 +120,29 @@
   <div class="product-page" data-product-form-wrapper data-update-url data-money-format="{{ shop.money_format | escape }}">
     <script type="application/json" data-product-json>{{ product | json }}</script>
 
-    <div class="product-gallery">
+    {%- if media_groups != blank -%}
+      <script type="application/json" data-media-groups>{{ media_groups }}</script>
+    {%- endif -%}
+
+    {%- liquid
+      assign slot_count = product.media.size
+      if slot_count > 4
+        assign slot_count = 4
+      endif
+      if slot_count < 1
+        assign slot_count = 1
+      endif
+    -%}
+    <div class="product-gallery" data-gallery-grid data-slots="{{ slot_count }}">
       {%- if product.media.size > 0 -%}
         {%- for media in product.media -%}
           <div
             class="product-gallery__item{% if forloop.first %} is-active{% endif %}"
             data-gallery-item
             data-media-id="{{ media.id }}"
+            data-media-type="{{ media.media_type }}"
+            {%- comment -%} the first four fill the desktop grid; mobile ignores the slot {%- endcomment -%}
+            {% if forloop.index0 < 4 %}data-slot="{{ forloop.index0 }}"{% endif %}
           >
             {%- case media.media_type -%}
               {%- when 'image' -%}
@@ -46,13 +163,17 @@
           </div>
         {%- endfor -%}
       {%- else -%}
-        <div class="product-gallery__item is-active">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+        <div class="product-gallery__item is-active" data-slot="0">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div>
       {%- endif -%}
     </div>
 
     <div class="product-info">
       {%- if product.media.size > 1 -%}
-        <div class="product-thumbs-wrap">
+        {%- comment -%}
+          With four shots or fewer the desktop grid holds them all, so the
+          carousel has nothing left to show there. Mobile still shows it.
+        {%- endcomment -%}
+        <div class="product-thumbs-wrap"{% if product.media.size <= 4 %} data-thumbs-empty{% endif %}>
           <button type="button" class="product-thumbs__arrow product-thumbs__arrow--prev" data-thumbs-prev aria-label="Previous images">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
           </button>
@@ -63,6 +184,8 @@
               class="product-thumb{% if forloop.first %} is-active{% endif %}"
               data-gallery-thumb
               data-media-id="{{ media.id }}"
+              {%- comment -%} already on the desktop grid, so kept out of the desktop carousel {%- endcomment -%}
+              {% if forloop.index0 < 4 %}data-thumb-hidden{% endif %}
               aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
               aria-label="{{ product.title | escape }} — {{ forloop.index }}"
             >

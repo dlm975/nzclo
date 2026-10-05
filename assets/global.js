@@ -215,6 +215,102 @@
       });
   });
 
+  /* ---------- desktop product gallery (2x2 grid + carousel) ---------- */
+
+  /* Desktop shows the first four shots as a grid and keeps the rest in the
+     carousel; mobile keeps its single stage, so every branch here is gated on
+     the media query. One ordered list of media ids drives both: entries 0-3 are
+     the grid, the remainder is the carousel, and every interaction is a swap
+     inside that list -- which is what leaves IMG 2-4 untouched when a carousel
+     shot is promoted. A colour change replaces the list outright. */
+  var desktopGallery = window.matchMedia('(min-width: 900px)');
+  var galleries = [];
+
+  function buildGallery(root) {
+    var scope = root.closest('.product-page') || document;
+    var items = qsa('[data-gallery-item]', scope);
+    var thumbsWrap = qs('.product-thumbs-wrap', scope);
+    var allIds = items.map(function (el) { return el.getAttribute('data-media-id'); });
+
+    var groups = {};
+    var groupsEl = qs('[data-media-groups]', scope);
+    if (groupsEl) {
+      try { groups = JSON.parse(groupsEl.textContent) || {}; } catch (err) { groups = {}; }
+    }
+
+    /* `limit` is how many slots the grid claims -- four, or fewer when the
+       selected colour has fewer shots, which is what keeps a short colour from
+       borrowing a fourth image off the next one. */
+    var api = { scope: scope, order: allIds.slice(), limit: Math.min(4, allIds.length) || 1 };
+
+    function apply() {
+      var shown = api.order.slice(0, api.limit);
+      items.forEach(function (el) {
+        var i = shown.indexOf(el.getAttribute('data-media-id'));
+        if (i === -1) el.removeAttribute('data-slot');
+        else el.setAttribute('data-slot', String(i));
+      });
+      /* the carousel is everything the grid is not showing */
+      qsa('[data-gallery-thumb]', scope).forEach(function (t) {
+        if (shown.indexOf(t.getAttribute('data-media-id')) === -1) t.removeAttribute('data-thumb-hidden');
+        else t.setAttribute('data-thumb-hidden', '');
+      });
+      root.setAttribute('data-slots', String(shown.length || 1));
+      if (thumbsWrap) {
+        if (api.order.length > shown.length) thumbsWrap.removeAttribute('data-thumbs-empty');
+        else thumbsWrap.setAttribute('data-thumbs-empty', '');
+      }
+    }
+
+    /* promoting swaps with the primary, so whatever was IMG 1 takes the
+       promoted shot's old place instead of disappearing */
+    api.promote = function (id) {
+      var i = api.order.indexOf(id);
+      if (i < 1) return;
+      var head = api.order[0];
+      api.order[0] = api.order[i];
+      api.order[i] = head;
+      apply();
+    };
+
+    /* The selected colour's shots take the grid and lead the carousel; the other
+       colours follow it rather than disappearing, so every shot stays reachable
+       and the carousel is never empty while the product has more than four. */
+    api.setColor = function (value) {
+      var key = String(value == null ? '' : value).toLowerCase();
+      var group = groups[key];
+      var owned = group && group.length ? group.map(String) : allIds.slice();
+      var rest = allIds.filter(function (id) { return owned.indexOf(id) === -1; });
+      api.order = owned.concat(rest);
+      api.limit = Math.min(4, owned.length) || 1;
+      apply();
+    };
+
+    apply();
+    return api;
+  }
+
+  function galleryFor(node) {
+    var scope = node && node.closest ? node.closest('.product-page') : null;
+    if (!scope) return null;
+    for (var i = 0; i < galleries.length; i++) {
+      if (galleries[i].scope === scope) return galleries[i];
+    }
+    return null;
+  }
+
+  qsa('[data-gallery-grid]').forEach(function (root) { galleries.push(buildGallery(root)); });
+
+  /* clicking IMG 2, 3 or 4 makes it the primary */
+  document.addEventListener('click', function (e) {
+    if (!desktopGallery.matches) return;
+    var item = e.target.closest('[data-gallery-item]');
+    if (!item || !item.hasAttribute('data-slot')) return;
+    if (item.getAttribute('data-media-type') !== 'image') return;
+    var gallery = galleryFor(item);
+    if (gallery) gallery.promote(item.getAttribute('data-media-id'));
+  });
+
   /* ---------- product gallery thumbnails ---------- */
 
   document.addEventListener('click', function (e) {
@@ -241,6 +337,12 @@
     qsa('[data-gallery-item]', scope).forEach(function (item) {
       item.classList.toggle('is-active', item.getAttribute('data-media-id') === id);
     });
+
+    /* desktop additionally moves it into IMG 1, leaving IMG 2-4 where they are */
+    if (desktopGallery.matches) {
+      var gallery = galleryFor(thumb);
+      if (gallery) gallery.promote(id);
+    }
   });
 
   /* ---------- add-on carousel + mini product sheet ---------- */
@@ -414,6 +516,15 @@
     var product;
     try { product = JSON.parse(jsonEl.textContent); } catch (err) { return; }
 
+    /* a colour change resets the gallery to that colour's shots; a size change
+       must leave it alone, so the last colour is tracked rather than reacting
+       to every option change */
+    var colorIndex = -1;
+    (product.options || []).forEach(function (option, i) {
+      var name = String(option && option.name ? option.name : option).toLowerCase();
+      if (name.indexOf('color') !== -1 || name.indexOf('colour') !== -1) colorIndex = i;
+    });
+
     var idInput = wrapper.querySelector('input[name="id"]');
     var priceEl = wrapper.querySelector('[data-price]');
     var buyBtn = wrapper.querySelector('[data-add-to-cart]');
@@ -439,6 +550,15 @@
     }
 
     function update() {
+      if (colorIndex >= 0) {
+        var color = selectedOptions()[colorIndex];
+        if (color && color !== lastColor) {
+          lastColor = color;
+          var gallery = galleryFor(wrapper);
+          if (gallery) gallery.setColor(color);
+        }
+      }
+
       var variant = findVariant(selectedOptions());
       if (!variant) {
         if (buyBtn) { buyBtn.disabled = true; }
@@ -462,6 +582,16 @@
         url.searchParams.set('variant', variant.id);
         history.replaceState({}, '', url.toString());
       }
+    }
+
+    /* Seed the gallery from the colour that is actually selected on load, so a
+       colour carrying fewer than four shots never borrows one from the next
+       colour -- and so a ?variant= link opens on its own colour's shots. On the
+       ordinary case this is the media order the section already rendered. */
+    var lastColor = colorIndex >= 0 ? selectedOptions()[colorIndex] : null;
+    if (lastColor) {
+      var initialGallery = galleryFor(wrapper);
+      if (initialGallery) initialGallery.setColor(lastColor);
     }
 
     wrapper.addEventListener('change', function (e) {
