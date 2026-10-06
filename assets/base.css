@@ -2493,3 +2493,206 @@ body:has(.mini-pdp--standalone) .pdp-bar {
   }
   .size-guide__close { top: 6px; right: 6px; width: 32px; height: 32px; }
 }
+
+/* ---------- ratings and customer reviews ---------- */
+
+/* two identical rows, the filled one clipped to the score */
+.stars { position: relative; display: inline-block; line-height: 0; }
+.stars__row { display: inline-flex; gap: calc(var(--star-size) * 0.14); white-space: nowrap; }
+.stars__row svg { width: var(--star-size); height: var(--star-size); display: block; }
+.stars__row--track svg { fill: rgba(var(--color-text), 0.17); }
+.stars__row--fill {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  width: var(--star-fill);
+}
+.stars__row--fill svg { fill: rgb(var(--color-text)); }
+
+/* reads as a line of text beside the price, never as a control */
+.pdp-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: 12px;
+  color: rgb(var(--color-text));
+  font-size: 13px;
+  line-height: 1;
+  text-decoration: none;
+  vertical-align: middle;
+}
+.pdp-rating:hover { color: rgb(var(--color-text)); }
+.pdp-rating:hover .pdp-rating__count { text-decoration-color: rgb(var(--color-text)); }
+.pdp-rating__score { font-weight: 600; }
+.pdp-rating__count {
+  color: rgb(var(--color-text-secondary));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(var(--color-text), 0.25);
+}
+.pdp-rating:focus-visible { outline: 2px solid rgb(var(--color-text)); outline-offset: 3px; border-radius: 4px; }
+
+.reviews {
+  /* clears the floating header when the rating link jumps here */
+  scroll-margin-top: calc(var(--header-height) + 24px);
+  padding-top: clamp(40px, 5vw, 72px);
+  padding-bottom: clamp(32px, 4vw, 56px);
+  border-top: 1px solid rgba(var(--color-text), 0.1);
+}
+.reviews__title {
+  margin: 0 0 clamp(24px, 3vw, 40px);
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.reviews__subtitle {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgb(var(--color-text-secondary));
+}
+
+/* score, distribution and fit across one row, divided by hairlines */
+.reviews__overview {
+  display: grid;
+  grid-template-columns: minmax(150px, auto) minmax(0, 1fr) minmax(220px, 300px);
+  gap: clamp(24px, 3.4vw, 56px);
+  align-items: start;
+}
+.reviews__score { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.reviews__average {
+  font-size: clamp(42px, 5vw, 60px);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+}
+.reviews__total { font-size: 13px; color: rgb(var(--color-text-secondary)); }
+
+.reviews__bars { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.reviews__bar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.reviews__bar-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 12px;
+  color: rgb(var(--color-text-secondary));
+  font-variant-numeric: tabular-nums;
+}
+.reviews__bar-star { width: 10px; height: 10px; fill: rgba(var(--color-text), 0.35); }
+.reviews__track {
+  height: 6px;
+  border-radius: 100px;
+  background: rgba(var(--color-text), 0.09);
+  overflow: hidden;
+}
+.reviews__fill { display: block; height: 100%; border-radius: inherit; background: rgb(var(--color-text)); }
+.reviews__bar-count {
+  min-width: 46px;
+  text-align: right;
+  font-size: 12px;
+  color: rgb(var(--color-text-secondary));
+  font-variant-numeric: tabular-nums;
+}
+
+.reviews__fit { padding-left: clamp(24px, 3vw, 44px); border-left: 1px solid rgba(var(--color-text), 0.1); }
+.reviews__fit-result { margin: 0 0 18px; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+.fit-scale { position: relative; height: 12px; }
+.fit-scale__line {
+  position: absolute;
+  inset: 50% 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 1px;
+  background: rgba(var(--color-text), 0.18);
+}
+.fit-scale__tick { width: 4px; height: 4px; border-radius: 50%; background: rgba(var(--color-text), 0.28); }
+.fit-scale__dot {
+  position: absolute;
+  top: 50%;
+  left: var(--fit, 50%);
+  width: 11px;
+  height: 11px;
+  margin: -5.5px 0 0 -5.5px;
+  border-radius: 50%;
+  background: rgb(var(--color-text));
+}
+.fit-scale__ends {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: rgb(var(--color-text-secondary));
+}
+
+.reviews__detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: clamp(24px, 3.4vw, 56px);
+  margin-top: clamp(32px, 4vw, 56px);
+  padding-top: clamp(28px, 3.4vw, 44px);
+  border-top: 1px solid rgba(var(--color-text), 0.1);
+}
+
+/* lifted just enough to read as its own piece, not as a grey box */
+.review-summary {
+  padding: clamp(20px, 2.2vw, 30px);
+  border: 1px solid rgba(var(--color-text), 0.08);
+  border-radius: var(--radius-panel);
+  background: rgba(var(--color-tile), 0.5);
+}
+.review-summary__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+.review-summary__spark { width: 13px; height: 13px; fill: rgba(var(--color-text), 0.45); flex: none; }
+.review-summary__meta { margin: 4px 0 14px; font-size: 12px; color: rgb(var(--color-text-secondary)); }
+.review-summary__body { margin: 0; font-size: 14px; line-height: 1.65; }
+
+.reviews__tags { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.reviews__tag {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid rgba(var(--color-text), 0.14);
+  border-radius: var(--radius-chip);
+  font-size: 13px;
+  line-height: 1.2;
+}
+.reviews__tag-count { font-size: 12px; color: rgb(var(--color-text-secondary)); font-variant-numeric: tabular-nums; }
+
+/* phones: recomposed rather than squeezed -- the score reads across the top,
+   the fit becomes its own strip, and nothing keeps a desktop column */
+@media (max-width: 899px) {
+  .reviews__overview { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .reviews__score {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .reviews__average { font-size: 40px; line-height: 1; }
+  .reviews__total { width: 100%; }
+  .reviews__fit {
+    padding: 20px 0 0;
+    border-left: 0;
+    border-top: 1px solid rgba(var(--color-text), 0.1);
+  }
+  .reviews__fit-result { margin-bottom: 14px; font-size: 17px; }
+  .reviews__detail { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+}
+@media (max-width: 749px) {
+  .reviews { padding-top: 34px; padding-bottom: 28px; }
+  .reviews__title { margin-bottom: 22px; }
+  .reviews__bar { gap: 10px; }
+  .reviews__bar-count { min-width: 40px; }
+  .review-summary__body { font-size: 14.5px; line-height: 1.7; }
+  .pdp-rating { margin-left: 10px; }
+}

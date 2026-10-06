@@ -1,0 +1,30 @@
+{%- comment -%}
+  A whole number with thousands separators. Liquid has no number formatter, and
+  "9,986 reviews" reads very differently from "9986 reviews".
+
+  @param value - the number
+
+  Usage: {% render 'number-comma', value: 9986 %}
+{%- endcomment -%}
+{%- liquid
+  assign n = value | times: 1
+  if n >= 1000000
+    assign m = n | divided_by: 1000000
+    assign rest = n | modulo: 1000000
+    assign k = rest | divided_by: 1000 | prepend: '00' | slice: -3, 3
+    assign r = rest | modulo: 1000 | prepend: '00' | slice: -3, 3
+    echo m
+    echo ','
+    echo k
+    echo ','
+    echo r
+  elsif n >= 1000
+    assign k = n | divided_by: 1000
+    assign r = n | modulo: 1000 | prepend: '00' | slice: -3, 3
+    echo k
+    echo ','
+    echo r
+  else
+    echo n
+  endif
+-%}

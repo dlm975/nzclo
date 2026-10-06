@@ -31,6 +31,9 @@
       "login_form_heading": "enter store using password",
       "login_form_password_label": "password",
       "login_form_submit": "enter"
+    },
+    "accessibility": {
+      "close": "Close"
     }
   },
   "products": {
@@ -43,7 +46,9 @@
       "quantity": "quantity",
       "choose_options": "choose options",
       "description": "description",
-      "size_guide": "size guide"
+      "size_guide": "size guide",
+      "customer_reviews": "Customer Reviews",
+      "summary_meta": "Based on"
     }
   },
   "cart": {

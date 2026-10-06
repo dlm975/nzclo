@@ -1,0 +1,37 @@
+{%- comment -%}
+  Five stars with a fractional fill. Two identical rows, the filled one clipped
+  to the score, so 4.4 shows as four stars and a little under half of the fifth
+  rather than being rounded to something it is not.
+
+  @param rating  - the score, out of 5
+  @param size    - star size in px (default 14)
+  @param label   - accessible label; omit for a decorative row
+
+  Usage: {% render 'rating-stars', rating: 4.4, size: 16 %}
+{%- endcomment -%}
+{%- liquid
+  assign star_size = size | default: 14
+  assign percent = rating | times: 1.0 | divided_by: 5.0 | times: 100
+  if percent > 100
+    assign percent = 100
+  endif
+  if percent < 0
+    assign percent = 0
+  endif
+-%}
+<span
+  class="stars"
+  style="--star-size: {{ star_size }}px; --star-fill: {{ percent }}%;"
+  {% if label %}role="img" aria-label="{{ label | escape }}"{% else %}aria-hidden="true"{% endif %}
+>
+  <span class="stars__row stars__row--track">
+    {%- for i in (1..5) -%}
+      <svg viewBox="0 0 20 19" aria-hidden="true"><path d="M10 0l2.9 6.2 6.6.9-4.8 4.8 1.2 6.8L10 15.5 4.1 18.7l1.2-6.8L.5 7.1l6.6-.9z"/></svg>
+    {%- endfor -%}
+  </span>
+  <span class="stars__row stars__row--fill">
+    {%- for i in (1..5) -%}
+      <svg viewBox="0 0 20 19" aria-hidden="true"><path d="M10 0l2.9 6.2 6.6.9-4.8 4.8 1.2 6.8L10 15.5 4.1 18.7l1.2-6.8L.5 7.1l6.6-.9z"/></svg>
+    {%- endfor -%}
+  </span>
+</span>

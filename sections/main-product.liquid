@@ -24,6 +24,41 @@
   endfor
 
   comment
+    Every review figure comes from the distribution, so the headline average,
+    the count and the bars can never disagree with each other. Shopify's review
+    metafields stand in only when no distribution has been entered, and the bars
+    are then not drawn at all rather than being invented.
+  endcomment
+  assign r5 = section.settings.reviews_5 | default: 0 | times: 1
+  assign r4 = section.settings.reviews_4 | default: 0 | times: 1
+  assign r3 = section.settings.reviews_3 | default: 0 | times: 1
+  assign r2 = section.settings.reviews_2 | default: 0 | times: 1
+  assign r1 = section.settings.reviews_1 | default: 0 | times: 1
+  assign review_total = r5 | plus: r4 | plus: r3 | plus: r2 | plus: r1
+
+  assign has_distribution = false
+  if review_total > 0
+    assign has_distribution = true
+    assign weighted = r5 | times: 5
+    assign part = r4 | times: 4
+    assign weighted = weighted | plus: part
+    assign part = r3 | times: 3
+    assign weighted = weighted | plus: part
+    assign part = r2 | times: 2
+    assign weighted = weighted | plus: part
+    assign weighted = weighted | plus: r1
+    assign review_average = weighted | times: 1.0 | divided_by: review_total | round: 1
+  else
+    assign review_total = product.metafields.reviews.rating_count.value | default: 0 | times: 1
+    assign review_average = product.metafields.reviews.rating.value.rating | default: 0 | times: 1.0 | round: 1
+  endif
+
+  assign show_reviews = false
+  if section.settings.reviews_enabled and review_total > 0
+    assign show_reviews = true
+  endif
+
+  comment
     The product's own size guide, from the "Size guide image" metafield. Nothing
     is rendered at all when it is empty, so a product without one shows no link.
   endcomment
@@ -279,6 +314,16 @@
       <div class="product-info__price">
         <span data-price>{% render 'price', variant: product.selected_or_first_available_variant %}</span>
         <span class="preorder-badge">{{ settings.preorder_label | default: 'Pre-Order' }}</span>
+        {%- if show_reviews -%}
+          {%- comment -%} reads as text next to the price, not as a control {%- endcomment -%}
+          <a class="pdp-rating" href="#customer-reviews" data-scroll-to-reviews>
+            {% render 'rating-stars', rating: review_average, size: 12 %}
+            <span class="pdp-rating__score">{{ review_average }}</span>
+            <span class="pdp-rating__count">
+              {%- render 'number-comma', value: review_total -%} reviews
+            </span>
+          </a>
+        {%- endif -%}
       </div>
 
       {%- form 'product', product, data-ajax-add: '' -%}
@@ -407,6 +452,112 @@
   </div>
 </div>
 
+{%- if show_reviews -%}
+  <section class="page-width reviews" id="customer-reviews" aria-labelledby="customer-reviews-title">
+    <h2 class="reviews__title" id="customer-reviews-title">{{ 'products.product.customer_reviews' | t: default: 'Customer Reviews' }}</h2>
+
+    <div class="reviews__overview">
+      <div class="reviews__score">
+        <span class="reviews__average">{{ review_average }}</span>
+        {% render 'rating-stars', rating: review_average, size: 17, label: review_average | append: ' out of 5 stars' %}
+        <span class="reviews__total">{% render 'number-comma', value: review_total %} reviews</span>
+      </div>
+
+      {%- if has_distribution -%}
+        <ol class="reviews__bars">
+          {%- for level in (1..5) -%}
+            {%- liquid
+              assign star = 6 | minus: level
+              case star
+                when 5
+                  assign bucket = r5
+                when 4
+                  assign bucket = r4
+                when 3
+                  assign bucket = r3
+                when 2
+                  assign bucket = r2
+                else
+                  assign bucket = r1
+              endcase
+              assign share = bucket | times: 100.0 | divided_by: review_total
+            -%}
+            <li class="reviews__bar">
+              <span class="reviews__bar-stars">
+                {{ star }}
+                <svg class="reviews__bar-star" viewBox="0 0 20 19" aria-hidden="true"><path d="M10 0l2.9 6.2 6.6.9-4.8 4.8 1.2 6.8L10 15.5 4.1 18.7l1.2-6.8L.5 7.1l6.6-.9z"/></svg>
+              </span>
+              <span class="reviews__track"><span class="reviews__fill" style="width: {{ share }}%;"></span></span>
+              <span class="reviews__bar-count">{% render 'number-comma', value: bucket %}</span>
+            </li>
+          {%- endfor -%}
+        </ol>
+      {%- endif -%}
+
+      {%- if section.settings.fit_label != blank -%}
+        <div class="reviews__fit">
+          <h3 class="reviews__subtitle">{{ section.settings.fit_heading | default: 'How does it fit?' }}</h3>
+          <p class="reviews__fit-result">{{ section.settings.fit_label }}</p>
+          <div class="fit-scale" style="--fit: {{ section.settings.fit_position }}%;">
+            <span class="fit-scale__line" aria-hidden="true">
+              {%- for tick in (1..5) -%}<span class="fit-scale__tick"></span>{%- endfor -%}
+            </span>
+            <span class="fit-scale__dot" aria-hidden="true"></span>
+          </div>
+          <p class="fit-scale__ends">
+            <span>{{ section.settings.fit_min_label | default: 'Small' }}</span>
+            <span>{{ section.settings.fit_max_label | default: 'Big' }}</span>
+          </p>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.review_summary != blank or section.settings.review_keywords != blank -%}
+      <div class="reviews__detail">
+        {%- if section.settings.review_summary != blank -%}
+          <article class="review-summary">
+            <h3 class="review-summary__title">
+              <svg class="review-summary__spark" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0l1.5 4.6L14 6l-4.5 1.4L8 12 6.5 7.4 2 6l4.5-1.4z"/><path d="M13.2 10.4l.6 1.8 1.8.6-1.8.6-.6 1.8-.6-1.8-1.8-.6 1.8-.6z"/></svg>
+              {{ section.settings.summary_heading | default: 'Review Summary' }}
+            </h3>
+            <p class="review-summary__meta">
+              {{ 'products.product.summary_meta' | t: default: 'Based on' }}
+              {% render 'number-comma', value: review_total %} customer reviews
+            </p>
+            <p class="review-summary__body">{{ section.settings.review_summary }}</p>
+          </article>
+        {%- endif -%}
+
+        {%- if section.settings.review_keywords != blank -%}
+          <div class="reviews__mentions">
+            <h3 class="reviews__subtitle">{{ section.settings.keywords_heading | default: 'What customers mention' }}</h3>
+            <ul class="reviews__tags">
+              {%- assign keyword_lines = section.settings.review_keywords | newline_to_br | split: '<br />' -%}
+              {%- for line in keyword_lines -%}
+                {%- liquid
+                  assign entry = line | strip
+                  if entry == blank
+                    continue
+                  endif
+                  assign parts = entry | split: '|'
+                  assign keyword_label = parts[0] | strip
+                  assign keyword_count = parts[1] | strip
+                -%}
+                <li class="reviews__tag">
+                  {{ keyword_label }}
+                  {%- if keyword_count != blank -%}
+                    <span class="reviews__tag-count">{% render 'number-comma', value: keyword_count %}</span>
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </section>
+{%- endif -%}
+
 {%- if size_guide -%}
   {%- comment -%}
     The image at its own size, capped at three quarters of the viewport. The
@@ -435,7 +586,8 @@
         srcset="{{ size_guide | image_url: width: 800 }} 800w, {{ size_guide | image_url: width: 1200 }} 1200w, {{ size_guide | image_url: width: 1600 }} 1600w"
         sizes="75vw"
         alt="{{ size_guide.alt | default: 'Size guide' | escape }}"
-        {% if size_guide.width %}width="{{ size_guide.width }}" height="{{ size_guide.height }}"{% endif %}
+        width="{{ size_guide.width | default: 1600 }}"
+        height="{{ size_guide.height | default: 900 }}"
         loading="lazy"
       >
     </div>
@@ -480,14 +632,138 @@
 {% schema %}
 {
   "name": "Product page",
-  "settings": [],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Customer reviews"
+    },
+    {
+      "type": "paragraph",
+      "content": "The average and the review count are worked out from the star counts below, so they always agree. Leave them all at 0 to fall back to the product's review metafields."
+    },
+    {
+      "type": "checkbox",
+      "id": "reviews_enabled",
+      "label": "Show customer reviews",
+      "default": true
+    },
+    {
+      "type": "number",
+      "id": "reviews_5",
+      "label": "5 star reviews",
+      "default": 6039
+    },
+    {
+      "type": "number",
+      "id": "reviews_4",
+      "label": "4 star reviews",
+      "default": 2877
+    },
+    {
+      "type": "number",
+      "id": "reviews_3",
+      "label": "3 star reviews",
+      "default": 689
+    },
+    {
+      "type": "number",
+      "id": "reviews_2",
+      "label": "2 star reviews",
+      "default": 245
+    },
+    {
+      "type": "number",
+      "id": "reviews_1",
+      "label": "1 star reviews",
+      "default": 136
+    },
+    {
+      "type": "header",
+      "content": "Fit"
+    },
+    {
+      "type": "text",
+      "id": "fit_heading",
+      "label": "Heading",
+      "default": "How does it fit?"
+    },
+    {
+      "type": "text",
+      "id": "fit_label",
+      "label": "Result",
+      "default": "Just right"
+    },
+    {
+      "type": "range",
+      "id": "fit_position",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Result position on the scale",
+      "default": 50
+    },
+    {
+      "type": "text",
+      "id": "fit_min_label",
+      "label": "Scale start",
+      "default": "Small"
+    },
+    {
+      "type": "text",
+      "id": "fit_max_label",
+      "label": "Scale end",
+      "default": "Big"
+    },
+    {
+      "type": "header",
+      "content": "Review summary"
+    },
+    {
+      "type": "text",
+      "id": "summary_heading",
+      "label": "Heading",
+      "default": "Review Summary"
+    },
+    {
+      "type": "textarea",
+      "id": "review_summary",
+      "label": "Summary",
+      "default": "Many users have commented that the fabric is smooth and comfortable to wear, keeping them cool even in hot weather. It's also praised for drying quickly after washing and being wrinkle-resistant. The sleeve length covers the upper arms, and the overall length is neither too long nor too short, making it easy to pair with pants or skirts. However, some users have noted that the neckline is too high and uncomfortable, and that lighter colors are somewhat see-through."
+    },
+    {
+      "type": "header",
+      "content": "What customers mention"
+    },
+    {
+      "type": "text",
+      "id": "keywords_heading",
+      "label": "Heading",
+      "default": "What customers mention"
+    },
+    {
+      "type": "textarea",
+      "id": "review_keywords",
+      "label": "Keywords, one per line as Label|Count",
+      "default": "Smooth|2100\nComfort|2096\nNeck circumference|1764\nColor|1391\nLength|1281\nCool|1171\nSize|991\nPurchased a different color|954\nTouch|564\nSleeve Length|439"
+    }
+  ],
   "blocks": [
     {
       "type": "accordion",
       "name": "Accordion",
       "settings": [
-        { "type": "text", "id": "title", "label": "Title", "default": "details" },
-        { "type": "richtext", "id": "content", "label": "Content" }
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "details"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        }
       ]
     }
   ]

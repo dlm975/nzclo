@@ -847,6 +847,19 @@
     if (e.key === 'Escape') closeMiniPdp();
   });
 
+  /* the rating beside the price takes the reader to the reviews; the offset is
+     CSS's job via scroll-margin-top, so this only has to choose the easing */
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('[data-scroll-to-reviews]');
+    if (!link) return;
+    var target = qs('#customer-reviews');
+    if (!target) return;
+    e.preventDefault();
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    if (history.replaceState) history.replaceState({}, '', '#customer-reviews');
+  });
+
   /* ---------- size guide ---------- */
 
   (function () {
