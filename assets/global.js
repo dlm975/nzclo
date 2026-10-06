@@ -847,6 +847,46 @@
     if (e.key === 'Escape') closeMiniPdp();
   });
 
+  /* ---------- size guide ---------- */
+
+  (function () {
+    var guide = qs('[data-size-guide]');
+    if (!guide) return;
+    var opener = null;
+    var pageOverflow = '';
+
+    function openGuide(trigger) {
+      opener = trigger || null;
+      pageOverflow = document.documentElement.style.overflow;
+      /* the page behind must not scroll while the chart is up */
+      document.documentElement.style.overflow = 'hidden';
+      guide.hidden = false;
+      /* the scrim carries the same close hook, so the button is asked for by
+         name -- a div would swallow the focus without being able to hold it */
+      var close = qs('button[data-size-guide-close]', guide);
+      if (close && close.focus) close.focus();
+    }
+
+    function closeGuide() {
+      if (guide.hidden) return;
+      guide.hidden = true;
+      document.documentElement.style.overflow = pageOverflow;
+      if (opener && opener.focus) opener.focus();
+      opener = null;
+    }
+
+    document.addEventListener('click', function (e) {
+      var open = e.target.closest('[data-size-guide-open]');
+      if (open) { openGuide(open); return; }
+      /* the scrim and the close button both carry the close hook */
+      if (e.target.closest('[data-size-guide-close]')) closeGuide();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeGuide();
+    });
+  })();
+
   /* ---------- floating PDP product bar ---------- */
 
   /* Watches the buy controls rather than the button itself: the pre-order swap

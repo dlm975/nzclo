@@ -2336,3 +2336,97 @@ body:has(.mini-pdp--standalone) .pdp-bar {
 @media (prefers-reduced-motion: reduce) {
   .mini-pdp--standalone .mini-pdp__sheet { animation: none; }
 }
+
+/* ---------- size guide ---------- */
+
+/* a quiet text link sitting on the size option's own label */
+.size-guide-link {
+  margin-left: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: rgb(var(--color-text));
+  font: inherit;
+  text-transform: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  cursor: pointer;
+  opacity: 0.75;
+  transition: opacity var(--transition);
+}
+.size-guide-link:hover { opacity: 1; }
+.size-guide-link:focus-visible { outline: 2px solid rgb(var(--color-text)); outline-offset: 2px; border-radius: 3px; }
+
+.size-guide { position: fixed; inset: 0; z-index: 110; }
+.size-guide[hidden] { display: none; }
+.size-guide__scrim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.42); }
+
+/* The dialog shrink-wraps the image rather than holding a fixed box, so a chart
+   of any shape sits in its own outline with only the padding around it. Three
+   quarters of the viewport is the ceiling, not the target. */
+.size-guide__dialog {
+  --size-guide-pad: 14px;
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: fit-content;
+  height: fit-content;
+  max-width: 75vw;
+  max-height: 75vh;
+  max-width: 75dvw;
+  max-height: 75dvh;
+  padding: var(--size-guide-pad);
+  border-radius: var(--radius-panel);
+  background: rgb(var(--color-background));
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.26);
+  animation: size-guide-in 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+@keyframes size-guide-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .size-guide__dialog { animation: none; } }
+
+/* the image keeps its own proportions and is never cropped or stretched */
+.size-guide__image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: calc(75vw - 2 * var(--size-guide-pad));
+  max-height: calc(75vh - 2 * var(--size-guide-pad));
+  max-width: calc(75dvw - 2 * var(--size-guide-pad));
+  max-height: calc(75dvh - 2 * var(--size-guide-pad));
+  object-fit: contain;
+  border-radius: var(--radius-chip);
+}
+
+.size-guide__close {
+  position: absolute;
+  top: calc(var(--size-guide-pad) * -0.5 - 8px);
+  right: calc(var(--size-guide-pad) * -0.5 - 8px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid rgba(var(--color-text), 0.12);
+  border-radius: 50%;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-text));
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+}
+.size-guide__close svg { width: 15px; height: 15px; }
+.size-guide__close:focus-visible { outline: 2px solid rgb(var(--color-text)); outline-offset: 2px; }
+
+/* phones: the safe areas eat into the ceiling rather than being ignored */
+@media (max-width: 749px) {
+  .size-guide__dialog {
+    --size-guide-pad: 10px;
+    max-width: min(75dvw, calc(100dvw - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px) - 24px));
+    max-height: min(75dvh, calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 24px));
+  }
+  .size-guide__close { top: 6px; right: 6px; width: 32px; height: 32px; }
+}

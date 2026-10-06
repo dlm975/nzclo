@@ -23,6 +23,15 @@
     endif
   endfor
 
+  comment
+    The product's own size guide, from the "Size guide image" metafield. Nothing
+    is rendered at all when it is empty, so a product without one shows no link.
+  endcomment
+  assign size_guide = product.metafields.custom.size_guide_image.value
+  if size_guide == blank
+    assign size_guide = product.metafields.custom.size_guide.value
+  endif
+
   assign media_groups = ''
   if color_option and product.media.size > 0
     assign color_position = color_option.position
@@ -296,7 +305,15 @@
               {%- assign is_color_option = true -%}
             {%- endif -%}
             <fieldset class="option-group" data-option-group style="border: none; padding: 0; margin: 0 0 20px;">
-              <legend class="option-group__label">{{ option.name | downcase }}</legend>
+              {%- assign option_name_lower = option.name | downcase -%}
+              <legend class="option-group__label">
+                {{ option_name_lower }}
+                {%- if size_guide and option_name_lower contains 'size' -%}
+                  <button type="button" class="size-guide-link" data-size-guide-open aria-haspopup="dialog">
+                    {{ 'products.product.size_guide' | t: default: 'size guide' }}
+                  </button>
+                {%- endif -%}
+              </legend>
               <div class="option-pills">
                 {%- for value in option.values -%}
                   <span class="option-pill">
@@ -389,6 +406,41 @@
     </div>
   </div>
 </div>
+
+{%- if size_guide -%}
+  {%- comment -%}
+    The image at its own size, capped at three quarters of the viewport. The
+    dialog shrink-wraps it, so there is no empty box around a chart that does
+    not happen to be 3:4.
+  {%- endcomment -%}
+  <div class="size-guide" data-size-guide hidden>
+    <div class="size-guide__scrim" data-size-guide-close></div>
+    <div
+      class="size-guide__dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-label="{{ 'products.product.size_guide' | t: default: 'Size guide' }}"
+    >
+      <button
+        type="button"
+        class="size-guide__close"
+        data-size-guide-close
+        aria-label="{{ 'general.accessibility.close' | t: default: 'Close' }}"
+      >
+        {% render 'icon', name: 'close' %}
+      </button>
+      <img
+        class="size-guide__image"
+        src="{{ size_guide | image_url: width: 1600 }}"
+        srcset="{{ size_guide | image_url: width: 800 }} 800w, {{ size_guide | image_url: width: 1200 }} 1200w, {{ size_guide | image_url: width: 1600 }} 1600w"
+        sizes="75vw"
+        alt="{{ size_guide.alt | default: 'Size guide' | escape }}"
+        {% if size_guide.width %}width="{{ size_guide.width }}" height="{{ size_guide.height }}"{% endif %}
+        loading="lazy"
+      >
+    </div>
+  </div>
+{%- endif -%}
 
 {%- comment -%}
   Shown once the buy controls leave the viewport. Pointer events are off in the

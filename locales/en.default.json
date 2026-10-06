@@ -42,7 +42,8 @@
       "sale_price": "sale price",
       "quantity": "quantity",
       "choose_options": "choose options",
-      "description": "description"
+      "description": "description",
+      "size_guide": "size guide"
     }
   },
   "cart": {
