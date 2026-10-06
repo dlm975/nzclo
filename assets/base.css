@@ -2728,3 +2728,37 @@ body:has(.mini-pdp--standalone) .pdp-bar {
   .review-summary__body { font-size: 14.5px; line-height: 1.7; }
   .pdp-rating { margin-left: 10px; }
 }
+
+/* the quantity stepper and the trust line on one row, wrapping rather than
+   compressing the stepper when there is no room */
+.quantity-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+.quantity-row .qty-input { flex: none; }
+
+/* understated: no pill, no card, no background of its own */
+.shop-confidence {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.shop-confidence__text {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  color: rgb(var(--color-text));
+}
+.shop-confidence__image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  flex: none;
+}
+@media (max-width: 420px) {
+  .shop-confidence__text { font-size: 12.5px; }
+}

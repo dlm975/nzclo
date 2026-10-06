@@ -433,10 +433,38 @@
 
         <div class="option-group">
           <p class="option-group__label">{{ 'products.product.quantity' | t }}</p>
-          <div class="qty-input">
-            <button type="button" data-qty-change="-1" aria-label="decrease quantity">&minus;</button>
-            <input type="number" name="quantity" value="1" min="1" aria-label="{{ 'products.product.quantity' | t }}">
-            <button type="button" data-qty-change="1" aria-label="increase quantity">+</button>
+          {%- comment -%}
+            The stepper and the trust line share a row that wraps, so a narrow
+            screen moves the trust line underneath rather than squeezing the
+            stepper.
+          {%- endcomment -%}
+          <div class="quantity-row">
+            <div class="qty-input">
+              <button type="button" data-qty-change="-1" aria-label="decrease quantity">&minus;</button>
+              <input type="number" name="quantity" value="1" min="1" aria-label="{{ 'products.product.quantity' | t }}">
+              <button type="button" data-qty-change="1" aria-label="increase quantity">+</button>
+            </div>
+
+            {%- if section.settings.confidence_text != blank or section.settings.confidence_image -%}
+              <span class="shop-confidence">
+                {%- if section.settings.confidence_text != blank -%}
+                  <span class="shop-confidence__text">{{ section.settings.confidence_text }}</span>
+                {%- endif -%}
+                {%- if section.settings.confidence_image -%}
+                  {%- assign confidence_height = section.settings.confidence_image_height -%}
+                  {%- assign confidence_width = confidence_height | times: section.settings.confidence_image.aspect_ratio | round -%}
+                  <img
+                    class="shop-confidence__image"
+                    src="{{ section.settings.confidence_image | image_url: height: 96 }}"
+                    alt="{{ section.settings.confidence_image.alt | default: section.settings.confidence_text | escape }}"
+                    width="{{ confidence_width }}"
+                    height="{{ confidence_height }}"
+                    style="height: {{ confidence_height }}px;"
+                    loading="lazy"
+                  >
+                {%- endif -%}
+              </span>
+            {%- endif -%}
           </div>
         </div>
 
@@ -690,6 +718,35 @@
 {
   "name": "Product page",
   "settings": [
+    {
+      "type": "header",
+      "content": "Shop with confidence"
+    },
+    {
+      "type": "paragraph",
+      "content": "Shown beside the quantity selector. Upload your own badge image — nothing is bundled with the theme."
+    },
+    {
+      "type": "text",
+      "id": "confidence_text",
+      "label": "Text",
+      "default": "Shop with confidence"
+    },
+    {
+      "type": "image_picker",
+      "id": "confidence_image",
+      "label": "Badge image"
+    },
+    {
+      "type": "range",
+      "id": "confidence_image_height",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Badge height",
+      "default": 18
+    },
     {
       "type": "header",
       "content": "Customer reviews"
