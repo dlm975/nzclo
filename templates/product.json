@@ -32,6 +32,9 @@
         "shipping"
       ],
       "settings": {
+        "confidence_text": "Shop with confidence",
+        "confidence_image": "shopify://shop_images/Photoroom_20261004_185725.jpg",
+        "confidence_image_height": 18,
         "reviews_fallback": false,
         "reviews_enabled": true,
         "reviews_5": 6039,
