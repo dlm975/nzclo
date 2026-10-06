@@ -300,7 +300,7 @@
         "heading": "the most versatile pieces.",
         "text": "clothing made for every occsaion. classy, elevated clothing at value pricing.",
         "button_label": "shop the range",
-        "button_link": "",
+        "button_link": "shopify://collections",
         "reverse": false,
         "heading_font_enable": false,
         "heading_font": "assistant_n4",
