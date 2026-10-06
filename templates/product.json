@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -18,7 +27,28 @@
           }
         }
       },
-      "block_order": ["details", "shipping"]
+      "block_order": [
+        "details",
+        "shipping"
+      ],
+      "settings": {
+        "reviews_fallback": true,
+        "reviews_enabled": true,
+        "reviews_5": 6039,
+        "reviews_4": 2877,
+        "reviews_3": 689,
+        "reviews_2": 245,
+        "reviews_1": 136,
+        "fit_heading": "How does it fit?",
+        "fit_label": "Just right",
+        "fit_position": 50,
+        "fit_min_label": "Small",
+        "fit_max_label": "Big",
+        "summary_heading": "Review Summary",
+        "review_summary": "Many users have commented that the fabric is smooth and comfortable to wear, keeping them cool even in hot weather. It's also praised for drying quickly after washing and being wrinkle-resistant. The sleeve length covers the upper arms, and the overall length is neither too long nor too short, making it easy to pair with pants or skirts. However, some users have noted that the neckline is too high and uncomfortable, and that lighter colors are somewhat see-through.",
+        "keywords_heading": "What customers mention",
+        "review_keywords": "Smooth|2100\nComfort|2096\nNeck circumference|1764\nColor|1391\nLength|1281\nCool|1171\nSize|991\nPurchased more |954\nTouch|564\nSleeve Length|439"
+      }
     },
     "related": {
       "type": "related-products",
@@ -27,5 +57,8 @@
       }
     }
   },
-  "order": ["main", "related"]
+  "order": [
+    "main",
+    "related"
+  ]
 }

@@ -36,11 +36,17 @@
   assign mf = product.metafields.custom
   assign use_sample = section.settings.reviews_fallback
 
-  assign r5 = mf.reviews_5.value | default: 0 | times: 1
-  assign r4 = mf.reviews_4.value | default: 0 | times: 1
-  assign r3 = mf.reviews_3.value | default: 0 | times: 1
-  assign r2 = mf.reviews_2.value | default: 0 | times: 1
-  assign r1 = mf.reviews_1.value | default: 0 | times: 1
+  comment
+    Shopify builds a metafield's key from the name it is given, so a definition
+    called "Reviews 5 star" ends up at reviews_5_star rather than reviews_5.
+    Both spellings are read, so the definitions work whichever way they were
+    created.
+  endcomment
+  assign r5 = mf.reviews_5.value | default: mf.reviews_5_star.value | default: 0 | times: 1
+  assign r4 = mf.reviews_4.value | default: mf.reviews_4_star.value | default: 0 | times: 1
+  assign r3 = mf.reviews_3.value | default: mf.reviews_3_star.value | default: 0 | times: 1
+  assign r2 = mf.reviews_2.value | default: mf.reviews_2_star.value | default: 0 | times: 1
+  assign r1 = mf.reviews_1.value | default: mf.reviews_1_star.value | default: 0 | times: 1
   assign review_total = r5 | plus: r4 | plus: r3 | plus: r2 | plus: r1
 
   assign review_fit_label = mf.review_fit_label.value
