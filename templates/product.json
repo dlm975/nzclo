@@ -32,7 +32,7 @@
         "shipping"
       ],
       "settings": {
-        "reviews_fallback": true,
+        "reviews_fallback": false,
         "reviews_enabled": true,
         "reviews_5": 6039,
         "reviews_4": 2877,
