@@ -2299,34 +2299,97 @@ body:has(.mini-pdp--standalone) .pdp-bar {
 .mini-pdp__stock[data-state="out"] { color: rgb(var(--color-preorder, 37 99 235)); }
 .mini-pdp--standalone .mini-pdp__options { margin-top: 16px; margin-bottom: 18px; }
 
-/* phones: a bottom sheet using the width it has, the panel under the gallery */
+/* Phones: one frame, no scrolling. The sheet is a known height, the purchase
+   panel takes the room it needs, and the gallery absorbs everything left over
+   -- so the shots shrink to make space rather than the interface running off
+   the bottom, and there is never a gap either. Only the thumbnail column
+   scrolls, and its scroll is kept to itself. */
 @media (max-width: 749px) {
   .mini-pdp--standalone .mini-pdp__sheet {
     inset: auto 0 0 0;
     margin: 0;
     width: auto;
     max-width: none;
-    max-height: 85vh;
-    max-height: 85dvh;
+    height: 82vh;
+    height: 82dvh;
+    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 16px);
     border-radius: var(--radius-panel) var(--radius-panel) 0 0;
-    padding-bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+    padding: 16px 16px calc(14px + env(safe-area-inset-bottom, 0px));
   }
-  .mini-pdp--standalone .mini-pdp__body { overflow-y: auto; }
+  .mini-pdp--standalone .mini-pdp__body { overflow: hidden; }
   .mini-pdp--standalone .mini-pdp__layout {
-    --stage-h: min(44vh, 360px);
-    grid-template-columns: minmax(0, 1fr);
-    gap: 16px;
-    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+    min-height: 0;
   }
-  .mini-pdp__gallery { width: calc(var(--stage-h) * 0.75); max-width: 100%; margin-inline: auto; }
-  .mini-pdp__panel { overflow: visible; justify-content: flex-start; }
-  /* the body is what scrolls on a phone, so the buy button rides along its
-     bottom edge instead of being something you have to scroll down to find */
-  .mini-pdp--standalone .mini-pdp__add {
-    position: sticky;
-    bottom: 0;
-    margin-top: 18px;
+
+  /* IMG 1 beside its own vertical strip */
+  .mini-pdp__gallery {
+    flex: 1 1 auto;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+    min-height: 120px;
   }
+  /* IMG 1 takes the whole left side of the frame. No ratio is imposed here:
+     a fixed one plus a width cap would fight each other and come out neither,
+     so the frame is whatever is left beside the strip and the shot is cropped
+     to it -- the same object-fit: cover the desktop stage uses, never a
+     stretch. */
+  .mini-pdp__stage {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+    aspect-ratio: auto;
+  }
+  .mini-pdp__thumbs {
+    grid-auto-flow: row;
+    grid-auto-columns: 1fr;
+    grid-auto-rows: max-content;
+    gap: 6px;
+    /* the strip keeps its width; IMG 1 takes what is left */
+    flex: none;
+    width: 54px;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* the column scrolls on its own; the sheet behind it does not move */
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* the panel keeps its natural height, tightened so the shots keep more of it */
+  .mini-pdp__panel {
+    flex: 0 0 auto;
+    overflow: visible;
+    justify-content: flex-start;
+  }
+  .mini-pdp--standalone .mini-pdp__panel .mini-pdp__title { font-size: 15px; margin-bottom: 2px; }
+  .mini-pdp--standalone .mini-pdp__options { margin-top: 10px; margin-bottom: 0; }
+  .mini-pdp--standalone .mini-pdp__option + .mini-pdp__option { margin-top: 8px; }
+  .mini-pdp--standalone .mini-pdp__option-label { margin-bottom: 4px; }
+  .mini-pdp--standalone .mini-pdp__add { margin-top: 12px; }
+  /* the thumbnail strip now runs up to the top corner, so the close button
+     gets its own ground to sit on rather than sharing a thumbnail's */
+  .mini-pdp--standalone .mini-pdp__close {
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(var(--color-background), 0.92);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+  }
+  .mini-pdp__stock { margin-top: 4px; }
 }
 /* the sheet's own slide-up is a translateY, which would fight the centring */
 @keyframes mini-pdp-rise {
