@@ -43,33 +43,6 @@
         "button_color": ""
       }
     },
-    "authenticity": {
-      "type": "authenticity",
-      "settings": {
-        "text": "100% authentic product",
-        "badge_image": "shopify://shop_images/Twitter_Verified_Badge_1.svg",
-        "badge_svg_url": "",
-        "badge_alt": "Verified authentic",
-        "badge_height": 18,
-        "uniqlo_logo": "shopify://shop_images/Uniqlo_logo_Japanese_1.svg",
-        "uniqlo_svg_url": "",
-        "uniqlo_alt": "UNIQLO",
-        "airism_logo": "shopify://shop_images/airism-logo-vector.png",
-        "airism_svg_url": "",
-        "airism_alt": "AIRism",
-        "logo_height": 20,
-        "text_font_enable": false,
-        "text_font": "assistant_n4",
-        "text_size": 0,
-        "text_size_mobile": 0,
-        "text_weight": "default",
-        "text_spacing": 0,
-        "text_line_height": 0,
-        "text_transform": "default",
-        "text_align": "default",
-        "text_color": ""
-      }
-    },
     "featured": {
       "type": "featured-collection",
       "blocks": {
@@ -158,6 +131,33 @@
         "flag_svg_url": "",
         "flag_alt": "New Zealand",
         "flag_height": 16,
+        "text_font_enable": false,
+        "text_font": "assistant_n4",
+        "text_size": 0,
+        "text_size_mobile": 0,
+        "text_weight": "default",
+        "text_spacing": 0,
+        "text_line_height": 0,
+        "text_transform": "default",
+        "text_align": "default",
+        "text_color": ""
+      }
+    },
+    "authenticity": {
+      "type": "authenticity",
+      "settings": {
+        "text": "100% authentic product",
+        "badge_image": "shopify://shop_images/Twitter_Verified_Badge_1.svg",
+        "badge_svg_url": "",
+        "badge_alt": "Verified authentic",
+        "badge_height": 18,
+        "uniqlo_logo": "shopify://shop_images/Uniqlo_logo_Japanese_1.svg",
+        "uniqlo_svg_url": "",
+        "uniqlo_alt": "UNIQLO",
+        "airism_logo": "shopify://shop_images/airism-logo-vector.png",
+        "airism_svg_url": "",
+        "airism_alt": "AIRism",
+        "logo_height": 20,
         "text_font_enable": false,
         "text_font": "assistant_n4",
         "text_size": 0,
@@ -442,9 +442,9 @@
   },
   "order": [
     "hero",
-    "authenticity",
-    "featured",
     "local_stock",
+    "featured",
+    "authenticity",
     "tiles",
     "mission",
     "iwt",
