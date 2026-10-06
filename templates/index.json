@@ -43,6 +43,26 @@
         "button_color": ""
       }
     },
+    "local_stock": {
+      "type": "local-stock",
+      "settings": {
+        "text": "ALL STOCK HELD LOCALLY IN NEW ZEALAND",
+        "flag_image": "shopify://shop_images/Flag_of_New_Zealand.svg",
+        "flag_svg_url": "",
+        "flag_alt": "New Zealand",
+        "flag_height": 16,
+        "text_font_enable": false,
+        "text_font": "assistant_n4",
+        "text_size": 0,
+        "text_size_mobile": 0,
+        "text_weight": "default",
+        "text_spacing": 0,
+        "text_line_height": 0,
+        "text_transform": "default",
+        "text_align": "default",
+        "text_color": ""
+      }
+    },
     "featured": {
       "type": "featured-collection",
       "blocks": {
@@ -121,26 +141,6 @@
         "link_transform": "default",
         "link_align": "default",
         "link_color": ""
-      }
-    },
-    "local_stock": {
-      "type": "local-stock",
-      "settings": {
-        "text": "ALL STOCK HELD LOCALLY IN NEW ZEALAND",
-        "flag_image": "shopify://shop_images/Flag_of_New_Zealand.svg",
-        "flag_svg_url": "",
-        "flag_alt": "New Zealand",
-        "flag_height": 16,
-        "text_font_enable": false,
-        "text_font": "assistant_n4",
-        "text_size": 0,
-        "text_size_mobile": 0,
-        "text_weight": "default",
-        "text_spacing": 0,
-        "text_line_height": 0,
-        "text_transform": "default",
-        "text_align": "default",
-        "text_color": ""
       }
     },
     "authenticity": {
@@ -375,6 +375,7 @@
         "photo-4",
         "photo-5"
       ],
+      "disabled": true,
       "settings": {
         "heading": "nzclo + you",
         "button_label": "find us on social",
