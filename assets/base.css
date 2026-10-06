@@ -2554,6 +2554,7 @@ body:has(.mini-pdp--standalone) .pdp-bar {
 .pdp-rating:hover { color: rgb(var(--color-text)); }
 .pdp-rating:hover .pdp-rating__count { text-decoration-color: rgb(var(--color-text)); }
 .pdp-rating__score { font-weight: 600; }
+.pdp-rating__separator { color: rgba(var(--color-text), 0.3); }
 .pdp-rating__count {
   color: rgb(var(--color-text-secondary));
   text-decoration: underline;

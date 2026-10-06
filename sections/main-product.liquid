@@ -100,6 +100,17 @@
   endif
 
   comment
+    The count is formatted once and joined to its label here, rather than being
+    written next to a render tag where a whitespace-stripping delimiter was
+    eating the space and printing "9,986reviews".
+  endcomment
+  capture review_count_number
+    render 'number-comma', value: review_total
+  endcapture
+  assign review_count_number = review_count_number | strip
+  assign review_count_label = review_count_number | append: ' Reviews'
+
+  comment
     The product's own size guide, from the "Size guide image" metafield. Nothing
     is rendered at all when it is empty, so a product without one shows no link.
   endcomment
@@ -360,9 +371,8 @@
           <a class="pdp-rating" href="#customer-reviews" data-scroll-to-reviews>
             {% render 'rating-stars', rating: review_average, size: 12 %}
             <span class="pdp-rating__score">{{ review_average }}</span>
-            <span class="pdp-rating__count">
-              {%- render 'number-comma', value: review_total -%} reviews
-            </span>
+            <span class="pdp-rating__separator" aria-hidden="true">&middot;</span>
+            <span class="pdp-rating__count">{{ review_count_label }}</span>
           </a>
         {%- endif -%}
       </div>
@@ -508,7 +518,7 @@
         <span class="reviews__average">{{ review_average }}</span>
         {%- assign rating_label = review_average | append: ' out of 5 stars' -%}
         {% render 'rating-stars', rating: review_average, size: 17, label: rating_label %}
-        <span class="reviews__total">{% render 'number-comma', value: review_total %} reviews</span>
+        <span class="reviews__total">{{ review_count_label }}</span>
       </div>
 
       {%- if has_distribution -%}
@@ -569,8 +579,7 @@
               {{ section.settings.summary_heading | default: 'Review Summary' }}
             </h3>
             <p class="review-summary__meta">
-              {{ 'products.product.summary_meta' | t: default: 'Based on' }}
-              {% render 'number-comma', value: review_total %} customer reviews
+              {{ 'products.product.summary_meta' | t: default: 'Based on' }} {{ review_count_number }} customer reviews
             </p>
             <p class="review-summary__body">{{ review_summary_text }}</p>
           </article>
