@@ -470,6 +470,12 @@
             {{ settings.preorder_cta_label | default: 'Create an order request' }}
           </a>
         </div>
+
+        {%- comment -%}
+          A sibling of the buttons, not a child: the pre-order swap hides what is
+          inside that container, and the row belongs under it either way.
+        {%- endcomment -%}
+        {% render 'payment-icons', class: 'payment-icons--product' %}
       {%- endform -%}
 
       <div class="product-accordions">

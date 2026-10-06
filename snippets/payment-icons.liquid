@@ -1,0 +1,18 @@
+{%- comment -%}
+  The store's enabled payment methods, in Shopify's own brand SVGs, so the row
+  always matches what checkout actually accepts. Renders nothing when the store
+  has none configured.
+
+  @param class - extra classes for the list
+
+  Usage: {% render 'payment-icons', class: 'payment-icons--product' %}
+{%- endcomment -%}
+{%- if shop.enabled_payment_types.size > 0 -%}
+  <ul class="payment-icons{% if class %} {{ class }}{% endif %}" role="list">
+    {%- for type in shop.enabled_payment_types -%}
+      <li class="payment-icons__item">
+        {{ type | payment_type_svg_tag: class: 'payment-icons__icon' }}
+      </li>
+    {%- endfor -%}
+  </ul>
+{%- endif -%}

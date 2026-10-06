@@ -1666,7 +1666,7 @@ select.field {
 
 /* payment methods below the checkout button: no container, brand assets kept
    at their own aspect ratio and small enough to stay secondary to the CTA */
-.cart-payments {
+.payment-icons {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -1676,15 +1676,18 @@ select.field {
   padding: 0;
   list-style: none;
 }
-.cart-payments__item { display: flex; }
-.cart-payments__icon {
+.payment-icons__item { display: flex; }
+/* under the buy buttons: far enough to read as reassurance rather than as part
+   of the button, with no card, border or background of its own */
+.payment-icons--product { margin-top: 16px; }
+.payment-icons__icon {
   display: block;
   height: 22px;
   width: auto;
 }
 @media (max-width: 420px) {
-  .cart-payments { gap: 5px 6px; }
-  .cart-payments__icon { height: 20px; }
+  .payment-icons { gap: 5px 6px; }
+  .payment-icons__icon { height: 20px; }
 }
 
 /* Cart reward progress.
