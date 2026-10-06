@@ -13,6 +13,8 @@
   --radius-control: 11px;  /* buttons, inputs, selectors */
   --radius-chip: 9px;      /* badges, thumbnails, small controls */
   --radius-round: 50%;     /* intentionally circular */
+  /* a muted, warm gold for review stars -- gold rather than yellow */
+  --color-star: 184 149 80;
   --radius-pill: var(--radius-control);
   --radius-tile: var(--radius-panel);
   --header-height: 64px;
@@ -2497,17 +2499,42 @@ body:has(.mini-pdp--standalone) .pdp-bar {
 /* ---------- ratings and customer reviews ---------- */
 
 /* two identical rows, the filled one clipped to the score */
-.stars { position: relative; display: inline-block; line-height: 0; }
-.stars__row { display: inline-flex; gap: calc(var(--star-size) * 0.14); white-space: nowrap; }
-.stars__row svg { width: var(--star-size); height: var(--star-size); display: block; }
-.stars__row--track svg { fill: rgba(var(--color-text), 0.17); }
+/* One star, one implementation: an svg box of a fixed size, laid out as a block
+   so no baseline or descender gets a say in where it sits. */
+.star-icon {
+  display: block;
+  flex: none;
+  width: var(--star-size, 14px);
+  height: var(--star-size, 14px);
+  fill: rgb(var(--color-star));
+}
+
+/* inline-flex rather than inline-block: the row has no baseline of its own to
+   be aligned by, so it centres against the number beside it instead of hanging
+   off the text baseline */
+.stars {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  line-height: 1;
+}
+.stars__row {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--star-size) * 0.14);
+  white-space: nowrap;
+}
+.stars__row--track .star-icon { fill: rgba(var(--color-text), 0.16); }
+/* pinned to the track's own box, so the two rows cannot drift apart */
 .stars__row--fill {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  bottom: 0;
   overflow: hidden;
   width: var(--star-fill);
 }
-.stars__row--fill svg { fill: rgb(var(--color-text)); }
 
 /* reads as a line of text beside the price, never as a control */
 .pdp-rating {
@@ -2577,10 +2604,11 @@ body:has(.mini-pdp--standalone) .pdp-bar {
   align-items: center;
   gap: 3px;
   font-size: 12px;
+  line-height: 1;
   color: rgb(var(--color-text-secondary));
   font-variant-numeric: tabular-nums;
 }
-.reviews__bar-star { width: 10px; height: 10px; fill: rgba(var(--color-text), 0.35); }
+.reviews__bar-star { --star-size: 10px; }
 .reviews__track {
   height: 6px;
   border-radius: 100px;

@@ -1,0 +1,10 @@
+{%- comment -%}
+  The one star shape used everywhere: the overall rating, the inline rating by
+  the price, and the distribution rows. Sized by --star-size on the element, so
+  nothing has to restate its dimensions.
+
+  @param class - extra classes for the svg
+
+  Usage: {% render 'icon-star' %}
+{%- endcomment -%}
+<svg class="star-icon{% if class %} {{ class }}{% endif %}" viewBox="0 0 20 19" aria-hidden="true" focusable="false"><path d="M10 0l2.9 6.2 6.6.9-4.8 4.8 1.2 6.8L10 15.5 4.1 18.7l1.2-6.8L.5 7.1l6.6-.9z"/></svg>
