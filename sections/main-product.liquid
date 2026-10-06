@@ -494,7 +494,8 @@
     <div class="reviews__overview">
       <div class="reviews__score">
         <span class="reviews__average">{{ review_average }}</span>
-        {% render 'rating-stars', rating: review_average, size: 17, label: review_average | append: ' out of 5 stars' %}
+        {%- assign rating_label = review_average | append: ' out of 5 stars' -%}
+        {% render 'rating-stars', rating: review_average, size: 17, label: rating_label %}
         <span class="reviews__total">{% render 'number-comma', value: review_total %} reviews</span>
       </div>
 
