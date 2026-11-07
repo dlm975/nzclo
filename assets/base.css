@@ -2765,17 +2765,17 @@ body:has(.mini-pdp--standalone) .pdp-bar {
 
 /* ---------- bundle collection page ---------- */
 /* The collection card and the product page's option pills, arranged as two steps
-   and a bar that stays in view while they are being worked through. On desktop
-   the steps keep the collection's four columns: three shirts, then the shorts. */
+   and a bar that stays in view while they are being worked through. Desktop gives
+   each product an equal column: two shirts, then the shorts. */
 
 .bundle-steps {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--card-gap);
   padding-top: 16px;
 }
 .bundle-step { position: relative; min-width: 0; scroll-margin-top: calc(var(--header-height) + 16px); }
-.bundle-step--shirts { grid-column: span 3; }
+.bundle-step--shirts { grid-column: span 2; }
 .bundle-step__label {
   display: flex;
   justify-content: space-between;
@@ -2812,7 +2812,16 @@ body:has(.mini-pdp--standalone) .pdp-bar {
 }
 .bundle-plus--between { display: none; }
 
-.product-grid--bundle { grid-template-columns: repeat(3, 1fr); }
+.product-grid--bundle { grid-template-columns: repeat(2, 1fr); }
+
+/* one line on desktop; the type scales with the column so the full title fits */
+.bundle-card .product-card__title {
+  display: block;
+  overflow: hidden;
+  font-size: clamp(10.5px, 1vw, 13px);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
 .bundle-card__pick {
   width: 100%;
@@ -2923,24 +2932,11 @@ body:has(.mini-pdp--standalone) .pdp-bar {
   .bundle-plus--on-card { display: none; }
   .bundle-plus--between { display: inline-flex; justify-self: center; }
 
-  /* a peek of the next card says there are more; the rail runs to the screen edge */
-  .product-grid--bundle {
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: 44%;
-    --card-gap: 10px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    /* a scroller clips on every side, so this is the room for the hover lift and
-       the selected ring above the cards, and their shadows below */
-    margin: -14px calc(var(--gutter) * -1) -30px;
-    padding: 14px var(--gutter) 36px;
-    scroll-padding: 0 var(--gutter);
-    scrollbar-width: none;
+  .bundle-card .product-card__title {
+    display: -webkit-box;
+    font-size: clamp(10.5px, 3.35vw, 12px);
+    white-space: normal;
   }
-  .product-grid--bundle::-webkit-scrollbar { display: none; }
-  .product-grid--bundle .product-card { scroll-snap-align: start; }
-  .product-grid--bundle .product-card__title { -webkit-line-clamp: 3; }
 
   .bundle-step--shorts .bundle-panel__title { display: none; }
   .bundle-panel__group { width: 100%; }

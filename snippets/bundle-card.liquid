@@ -10,7 +10,7 @@
   Usage: {% render 'bundle-card', product: product %}
 {%- endcomment -%}
 {%- liquid
-  assign image_sizes = image_sizes | default: '(max-width: 749px) 44vw, 25vw'
+  assign image_sizes = image_sizes | default: '(max-width: 749px) 50vw, 33vw'
   assign primary = product.featured_media
   assign secondary = null
   if product.media.size > 1
