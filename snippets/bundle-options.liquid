@@ -1,6 +1,6 @@
 {%- comment -%}
-  One product's option pills for the bundle: the same markup as the product page,
-  hidden until its card is picked. An option with one value has nothing to decide,
+  One product's options for the bundle: the product page's pills, with size as a
+  dropdown, hidden until its card is picked. An option with one value has nothing to decide,
   so it arrives chosen and stays out of sight.
 
   @param product - the product
@@ -19,7 +19,30 @@
           if option_name_lower contains 'color' or option_name_lower contains 'colour'
             assign is_color_option = true
           endif
+          assign is_size_option = false
+          if option_name_lower contains 'size'
+            assign is_size_option = true
+          endif
+          assign control_id = 'Bundle-' | append: product.id | append: '-' | append: option.position
         -%}
+        {%- if is_size_option -%}
+          <div
+            class="option-group bundle-panel__group"
+            data-bundle-option
+            data-option-index="{{ forloop.index0 }}"
+            data-option-name="{{ option_name_lower | escape }}"
+            {% if option.values.size == 1 %}hidden{% endif %}
+          >
+            <label class="option-group__label" for="{{ control_id }}">{{ option_name_lower }}</label>
+            <select class="field bundle-panel__select" id="{{ control_id }}" name="bundle-{{ product.id }}-{{ option.position }}">
+              <option value="">choose {{ option_name_lower }}</option>
+              {%- for value in option.values -%}
+                <option value="{{ value | escape }}" data-label="{{ value | downcase | escape }}"{% if option.values.size == 1 %} selected{% endif %}>{{ value | downcase }}</option>
+              {%- endfor -%}
+            </select>
+          </div>
+          {%- continue -%}
+        {%- endif -%}
         <fieldset
           class="option-group bundle-panel__group"
           data-bundle-option

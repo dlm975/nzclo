@@ -5,10 +5,12 @@
 
   @param product - the product
   @param selected - optional, renders the card already chosen
+  @param image_sizes - optional, the images' sizes attribute where the card is not rail width
 
   Usage: {% render 'bundle-card', product: product %}
 {%- endcomment -%}
 {%- liquid
+  assign image_sizes = image_sizes | default: '(max-width: 749px) 44vw, 25vw'
   assign primary = product.featured_media
   assign secondary = null
   if product.media.size > 1
@@ -35,7 +37,7 @@
           class="pc-img--primary"
           src="{{ primary | image_url: width: 700 }}"
           srcset="{{ primary | image_url: width: 400 }} 400w, {{ primary | image_url: width: 700 }} 700w, {{ primary | image_url: width: 1000 }} 1000w"
-          sizes="(max-width: 749px) 44vw, 25vw"
+          sizes="{{ image_sizes }}"
           alt="{{ primary.alt | default: product.title | escape }}"
           loading="lazy"
           width="600"
@@ -46,7 +48,7 @@
             class="pc-img--secondary"
             src="{{ secondary | image_url: width: 700 }}"
             srcset="{{ secondary | image_url: width: 400 }} 400w, {{ secondary | image_url: width: 700 }} 700w, {{ secondary | image_url: width: 1000 }} 1000w"
-            sizes="(max-width: 749px) 44vw, 25vw"
+            sizes="{{ image_sizes }}"
             alt=""
             loading="lazy"
             width="600"

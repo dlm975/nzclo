@@ -39,19 +39,22 @@
         {%- endfor -%}
       </section>
 
+      {%- comment -%} mobile only: on desktop the plus sits on the shorts card instead {%- endcomment -%}
+      <span class="bundle-plus bundle-plus--between" aria-hidden="true">
+        <svg class="product-card__add-icon" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></svg>
+      </span>
+
       <section class="bundle-step bundle-step--shorts" data-bundle-step data-noun="{{ section.settings.shorts_noun | escape }}" aria-labelledby="BundleStep2-{{ section.id }}">
         <h2 class="bundle-step__label" id="BundleStep2-{{ section.id }}">2. add your {{ section.settings.shorts_noun }}</h2>
 
         {%- comment -%} there is nothing to choose between here, so it starts selected {%- endcomment -%}
-        <div class="bundle-step__single">
-          <div class="product-grid--collection bundle-step__card">
-            <span class="bundle-step__plus" aria-hidden="true">
-              <svg class="product-card__add-icon" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></svg>
-            </span>
-            {% render 'bundle-card', product: shorts, selected: shorts.available %}
-          </div>
-          {% render 'bundle-options', product: shorts, selected: shorts.available %}
+        <div class="product-grid--collection bundle-step__card">
+          <span class="bundle-plus bundle-plus--on-card" aria-hidden="true">
+            <svg class="product-card__add-icon" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></svg>
+          </span>
+          {% render 'bundle-card', product: shorts, selected: shorts.available, image_sizes: '(max-width: 749px) 100vw, 25vw' %}
         </div>
+        {% render 'bundle-options', product: shorts, selected: shorts.available %}
       </section>
     </div>
 

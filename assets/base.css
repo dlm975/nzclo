@@ -2789,25 +2789,28 @@ body:has(.mini-pdp--standalone) .pdp-bar {
 }
 .bundle-step__label .text-secondary { font-weight: 400; }
 
-/* sits on the gap between the two steps, level with the middle of the card */
-.bundle-step__card { position: relative; }
-.bundle-step__plus {
-  position: absolute;
-  top: 50%;
-  left: calc(var(--card-gap) / -2);
-  z-index: 5;
+.bundle-plus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 32px;
   height: 32px;
-  margin: -16px 0 0 -16px;
   border-radius: 50%;
   background: rgb(var(--color-background));
   color: rgb(var(--color-text));
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
   pointer-events: none;
 }
+/* sits on the gap between the two steps, level with the middle of the card */
+.bundle-step__card { position: relative; }
+.bundle-plus--on-card {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--card-gap) / -2);
+  z-index: 5;
+  margin: -16px 0 0 -16px;
+}
+.bundle-plus--between { display: none; }
 
 .product-grid--bundle { grid-template-columns: repeat(3, 1fr); }
 
@@ -2831,7 +2834,8 @@ body:has(.mini-pdp--standalone) .pdp-bar {
 .bundle-panel__title { margin: 0 0 14px; font-size: 13px; font-weight: 500; }
 .bundle-panel__options { display: flex; flex-wrap: wrap; column-gap: 40px; }
 .bundle-panel__group { min-width: 0; margin: 0 0 16px; padding: 0; border: 0; }
-.bundle-panel__group .option-group__label { padding: 0; }
+.bundle-panel__group .option-group__label { display: block; padding: 0; }
+.bundle-panel__select { min-width: 180px; padding-top: 10px; padding-bottom: 10px; font-size: 13px; cursor: pointer; }
 .bundle-panel .option-pill input:disabled { cursor: not-allowed; }
 .bundle-panel .option-pill input:disabled + label { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
 
@@ -2855,11 +2859,13 @@ body:has(.mini-pdp--standalone) .pdp-bar {
 .bundle-bar__total s { margin-right: 6px; font-size: 13px; font-weight: 400; color: rgb(var(--color-text-secondary)); }
 .bundle-bar__add { flex: none; min-width: 200px; }
 .bundle-bar__add.is-busy { opacity: 0.55; pointer-events: none; }
+.bundle-bar__add.is-added { background: #1d7a46; border-color: #1d7a46; }
 
 @media (max-width: 749px) {
-  .bundle-steps { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .bundle-steps { grid-template-columns: minmax(0, 1fr); gap: 14px; }
   .bundle-step--shirts { grid-column: auto; }
-  .bundle-step__plus { display: none; }
+  .bundle-plus--on-card { display: none; }
+  .bundle-plus--between { display: inline-flex; justify-self: center; }
 
   /* a peek of the next card says there are more; the rail runs to the screen edge */
   .product-grid--bundle {
@@ -2869,23 +2875,21 @@ body:has(.mini-pdp--standalone) .pdp-bar {
     --card-gap: 10px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    /* room inside the scroller for the cards' shadows and the selected ring */
-    margin: -6px calc(var(--gutter) * -1) -30px;
-    padding: 6px var(--gutter) 36px;
+    /* a scroller clips on every side, so this is the room for the hover lift and
+       the selected ring above the cards, and their shadows below */
+    margin: -14px calc(var(--gutter) * -1) -30px;
+    padding: 14px var(--gutter) 36px;
     scroll-padding: 0 var(--gutter);
     scrollbar-width: none;
   }
   .product-grid--bundle::-webkit-scrollbar { display: none; }
   .product-grid--bundle .product-card { scroll-snap-align: start; }
+  .product-grid--bundle .product-card__title { -webkit-line-clamp: 3; }
 
-  /* the shorts card lines up with the rail, its options beside it */
-  .bundle-step__single { display: grid; grid-template-columns: calc(44% - 3px) minmax(0, 1fr); gap: 14px; align-items: start; }
-  .bundle-step__single .bundle-panel { padding-top: 0; }
-  .bundle-step__single .bundle-panel__title { display: none; }
-  .bundle-step__single .option-pill label { min-width: 42px; padding: 9px 11px; }
-
-  .product-grid--bundle .product-card__title,
-  .bundle-step__single .product-card__title { -webkit-line-clamp: 3; }
+  .bundle-step--shorts .bundle-panel__title { display: none; }
+  .bundle-panel__group { width: 100%; }
+  /* below 16px, iOS zooms the page when a select is focused */
+  .bundle-panel__select { width: 100%; font-size: 16px; }
 
   .bundle-bar { gap: 14px; padding: 10px 10px 10px 16px; }
   .bundle-bar__summary { display: none; }

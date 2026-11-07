@@ -1234,8 +1234,9 @@
   /* ---------- bundle collection page ---------- */
 
   /* Each step holds one chosen card, and the chosen card's panel holds its option
-     radios. The radios are the only record of what is selected, so the page is
-     read afresh on every change rather than mirrored into state here. */
+     controls -- radios, or a select for size. Those are the only record of what is
+     selected, so the page is read afresh on every change rather than mirrored into
+     state here. */
   (function () {
     var root = qs('[data-bundle]');
     var addButton = root && qs('[data-bundle-add]', root);
@@ -1263,8 +1264,16 @@
     function groupsOf(step, card) { return qsa('[data-bundle-option]', panelOf(step, card)); }
 
     function checkedValue(group) {
+      var select = group.querySelector('select');
+      if (select) return select.value || null;
       var checked = group.querySelector('input:checked');
       return checked ? checked.value : null;
+    }
+
+    function clearChoice(group, choice) {
+      var select = group.querySelector('select');
+      if (!select) choice.checked = false;
+      else if (select.value === choice.value) select.value = '';
     }
 
     function optionIndex(group) { return parseInt(group.getAttribute('data-option-index'), 10); }
@@ -1288,14 +1297,16 @@
       var variants = productOf(card).variants;
       groups.forEach(function (group, position) {
         var earlier = groups.slice(0, position);
-        qsa('input', group).forEach(function (input) {
-          input.disabled = !variants.some(function (v) {
-            return v.available && v.options[optionIndex(group)] === input.value && earlier.every(function (g) {
+        qsa('input, option[data-label]', group).forEach(function (choice) {
+          choice.disabled = !variants.some(function (v) {
+            return v.available && v.options[optionIndex(group)] === choice.value && earlier.every(function (g) {
               var value = checkedValue(g);
               return value === null || v.options[optionIndex(g)] === value;
             });
           });
-          if (input.disabled) input.checked = false;
+          if (choice.disabled) clearChoice(group, choice);
+          var label = choice.getAttribute('data-label');
+          if (label) choice.textContent = label + (choice.disabled ? ' \u2014 sold out' : '');
         });
       });
     }
@@ -1366,6 +1377,7 @@
         total.textContent = (need ? 'from ' : '') + money(sum);
       }
 
+      if (addButton.classList.contains('is-added')) return;
       addButton.textContent = need || 'add bundle to bag';
       addButton.disabled = !!need && need.indexOf('sold out') !== -1;
     }
@@ -1388,11 +1400,21 @@
 
       if (!e.target.closest('[data-bundle-add]') || addButton.classList.contains('is-busy')) return;
 
-      /* the button names what is missing, and a press takes the shopper to it */
+      /* the button names what is missing, and a press takes the shopper to it:
+         the open option where a card is chosen, otherwise the step's cards */
       var waiting = steps.filter(needOf)[0];
       if (waiting) {
+        var waitingCard = cardOf(waiting);
+        var openGroup = waitingCard && groupsOf(waiting, waitingCard).filter(function (g) {
+          return checkedValue(g) === null;
+        })[0];
         var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        waiting.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+        (openGroup || waiting).scrollIntoView({
+          behavior: reduce ? 'auto' : 'smooth',
+          block: openGroup ? 'center' : 'start'
+        });
+        var control = openGroup && openGroup.querySelector('select');
+        if (control) control.focus({ preventScroll: true });
         return;
       }
 
@@ -1414,6 +1436,12 @@
         })
         .then(function () {
           addButton.classList.remove('is-busy');
+          addButton.classList.add('is-added');
+          addButton.textContent = 'added to bag';
+          setTimeout(function () {
+            addButton.classList.remove('is-added');
+            render();
+          }, 1800);
           return drawerEnabled ? refreshCartDrawer(true) : updateCartCount();
         })
         .catch(function (err) {
