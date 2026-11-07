@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -6,11 +15,16 @@
         "title": "Airism Tee + Jorts Deal",
         "shirts": [
           "uniqlo-airism-cotton-oversized-t-shirt",
-          "uniqlo-airism-cotton-oversized-t-shirt-womens"
+          "uniqlo-airism-cotton-oversized-t-shirt-womens",
+          "uniqlo-airism-cotton-crew-neck-t-shirt-ls"
         ],
-        "shorts": "uniqlo-jorts"
+        "shorts": "uniqlo-jorts",
+        "shirt_noun": "tee",
+        "shorts_noun": "jorts"
       }
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }
