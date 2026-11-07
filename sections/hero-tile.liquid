@@ -1,0 +1,102 @@
+{%- comment -%}
+  A promotional tile laid over the hero. It is its own section so it can be moved,
+  edited or hidden without touching the hero, and must sit directly after it: the
+  wrapper has no height and hangs the tile upward from the hero's bottom edge.
+
+  Customers see nothing until a collection is chosen, so the button can never
+  lead nowhere.
+{%- endcomment -%}
+{%- liquid
+  assign deal = section.settings.collection
+  assign shirt = section.settings.shirt
+  assign shorts = section.settings.shorts
+  assign normal_cents = shirt.price | plus: shorts.price
+  assign deal_cents = section.settings.deal_price | times: 100 | round
+-%}
+
+{%- if deal != blank or request.design_mode -%}
+  <div class="hero-tile" style="--hero-tile-lift: {{ section.settings.mobile_lift }}px;">
+    <div class="hero-tile__card">
+      <div class="hero-tile__images">
+        {%- if shirt.featured_media -%}
+          <img src="{{ shirt.featured_media | image_url: width: 300 }}" alt="{{ shirt.title | escape }}" loading="lazy" width="300" height="400">
+        {%- endif -%}
+        {%- if shorts.featured_media -%}
+          <img src="{{ shorts.featured_media | image_url: width: 300 }}" alt="{{ shorts.title | escape }}" loading="lazy" width="300" height="400">
+        {%- endif -%}
+      </div>
+
+      <div class="hero-tile__body">
+        <h2 class="hero-tile__title">{{ section.settings.title }}</h2>
+        {%- if deal_cents > 0 -%}
+          <p class="hero-tile__price">
+            {%- if normal_cents > deal_cents -%}<s>{{ normal_cents | money }}</s>{%- endif -%}
+            {{ deal_cents | money }}
+          </p>
+        {%- endif -%}
+        <a class="btn btn--solid hero-tile__button" href="{{ deal.url | default: '#' }}">{{ section.settings.button_label }}</a>
+        {%- if deal == blank -%}
+          <p class="hero-tile__note">choose a collection in the section settings</p>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Hero tile",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection",
+      "info": "Where the button goes. The tile stays hidden until this is set."
+    },
+    {
+      "type": "product",
+      "id": "shirt",
+      "label": "Shirt"
+    },
+    {
+      "type": "product",
+      "id": "shorts",
+      "label": "Shorts"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Airism Tee + Jorts"
+    },
+    {
+      "type": "number",
+      "id": "deal_price",
+      "label": "Bundle price",
+      "info": "In dollars. The crossed-out price is the shirt and shorts added together."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "shop bundle"
+    },
+    {
+      "type": "range",
+      "id": "mobile_lift",
+      "min": 12,
+      "max": 320,
+      "step": 4,
+      "unit": "px",
+      "label": "Height above the hero's bottom edge on mobile",
+      "info": "Raise this if the tile covers the hero's heading or button.",
+      "default": 176
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero tile"
+    }
+  ]
+}
+{% endschema %}

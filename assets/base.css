@@ -439,6 +439,52 @@ select.field {
 .hero--center .hero__content { text-align: center; }
 .hero--right .hero__content { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
 
+/* ---------- hero tile ---------- */
+/* No height of its own: the tile hangs up from the hero's bottom edge, on the left
+   so it clears the hero's text, which sits bottom right. */
+.hero-tile { position: relative; z-index: 3; height: 0; }
+.hero-tile__card {
+  position: absolute;
+  left: calc(var(--gutter) * 2);
+  bottom: clamp(20px, 3vw, 40px);
+  display: flex;
+  gap: 14px;
+  padding: 12px;
+  border-radius: var(--radius-panel);
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-text));
+  box-shadow: var(--card-shadow);
+}
+.hero-tile__images { flex: none; display: flex; gap: 6px; }
+.hero-tile__images img {
+  width: 96px;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: var(--radius-chip);
+}
+.hero-tile__body { display: flex; flex-direction: column; width: 172px; min-width: 0; }
+.hero-tile__title { margin: 2px 0 0; font-size: 16px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; }
+.hero-tile__price { margin: 4px 0 10px; font-size: 15px; font-weight: 600; }
+.hero-tile__price s { margin-right: 6px; font-size: 13px; font-weight: 400; color: rgb(var(--color-text-secondary)); }
+.hero-tile__button { margin-top: auto; padding: 11px 14px; font-size: 11px; }
+.hero-tile__note { margin: 6px 0 0; font-size: 11px; color: rgb(var(--color-text-secondary)); }
+/* until there is room beside the hero's text, the tile sits above it */
+@media (max-width: 899px) {
+  .hero-tile__card { right: calc(var(--gutter) * 2); bottom: var(--hero-tile-lift, 176px); gap: 12px; max-width: 420px; padding: 10px; }
+  .hero-tile__images { gap: 4px; }
+  .hero-tile__images img { width: 72px; }
+  .hero-tile__body { flex: 1 1 0; width: auto; }
+  .hero-tile__title { font-size: 15px; }
+  .hero-tile__price { margin-bottom: 6px; font-size: 14px; }
+  .hero-tile__price s { font-size: 12px; }
+  .hero-tile__button { padding: 10px 8px; }
+}
+@media (max-width: 359px) {
+  .hero-tile__images img { width: 54px; }
+  .hero-tile__card { gap: 10px; }
+}
+
 /* ---------- authenticity strip ---------- */
 
 .authenticity {

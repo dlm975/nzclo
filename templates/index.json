@@ -9,6 +9,17 @@
  */
 {
   "sections": {
+    "hero_tile": {
+      "type": "hero-tile",
+      "settings": {
+        "shirt": "uniqlo-airism-cotton-oversized-t-shirt",
+        "shorts": "uniqlo-jorts",
+        "title": "Airism Tee + Jorts",
+        "deal_price": 79.9,
+        "button_label": "shop bundle",
+        "mobile_lift": 176
+      }
+    },
     "hero": {
       "type": "hero",
       "settings": {
@@ -443,6 +454,7 @@
   },
   "order": [
     "hero",
+    "hero_tile",
     "local_stock",
     "featured",
     "authenticity",
