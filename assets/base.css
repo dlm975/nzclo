@@ -2891,7 +2891,7 @@ body:has(.mini-pdp--standalone) .pdp-bar {
   /* below 16px, iOS zooms the page when a select is focused */
   .bundle-panel__select { width: 100%; font-size: 16px; }
 
-  .bundle-bar { gap: 14px; padding: 10px 10px 10px 16px; }
-  .bundle-bar__summary { display: none; }
-  .bundle-bar__add { flex: 1 1 auto; min-width: 0; padding-left: 14px; padding-right: 14px; }
+  .bundle-bar { flex-wrap: wrap; gap: 8px 12px; padding: 10px 10px 10px; }
+  .bundle-bar__summary { flex: 1 1 0; padding-left: 6px; font-size: 12px; }
+  .bundle-bar__add { flex: 1 1 100%; min-width: 0; padding-left: 14px; padding-right: 14px; }
 }

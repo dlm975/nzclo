@@ -1316,18 +1316,16 @@
       var index = optionIndex(group);
       var value = checkedValue(group);
       var match = productOf(card).variants.filter(function (v) {
-        return v.options[index] === value && v.featured_image;
+        return v.options[index] === value && v.image;
       })[0];
       if (!match) return;
-      var src = match.featured_image.src;
-      var join = src.indexOf('?') === -1 ? '?' : '&';
       var shot = qs('.product-card__shot .pc-img--primary', card);
       var bleed = qs('.product-card__bleed .pc-img--primary', card);
       if (shot) {
         shot.removeAttribute('srcset');
-        shot.src = src + join + 'width=1000';
+        shot.src = match.image;
       }
-      if (bleed) bleed.src = src + join + 'width=400';
+      if (bleed) bleed.src = match.bleed;
       card.classList.add('product-card--variant-selected');
     }
 
@@ -1357,8 +1355,9 @@
     function lineFor(step) {
       var card = cardOf(step);
       if (!card) return 'choose your ' + step.getAttribute('data-noun');
+      /* the selection leads, so a narrow bar truncates the title and not the choice */
       var chosen = groupsOf(step, card).map(checkedValue).filter(Boolean);
-      return [productOf(card).title].concat(chosen).join(' / ').toLowerCase();
+      return chosen.concat(productOf(card).title).join(' / ').toLowerCase();
     }
 
     function render() {

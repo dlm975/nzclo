@@ -93,5 +93,29 @@
     </span>
   </div>
 
-  <script type="application/json" data-bundle-product>{{ product | json }}</script>
+  {%- comment -%}
+    Spelled out rather than {{ product | json }}: the page needs these fields to be
+    there whichever kind of setting the product came from.
+  {%- endcomment -%}
+  <script type="application/json" data-bundle-product>
+    {
+      "title": {{ product.title | json }},
+      "price": {{ product.price }},
+      "variants": [
+        {%- for variant in product.variants -%}
+          {
+            "id": {{ variant.id }},
+            "price": {{ variant.price }},
+            "available": {{ variant.available }},
+            "options": {{ variant.options | json }}
+            {%- if variant.featured_media -%}
+              ,"image": {{ variant.featured_media | image_url: width: 1000 | json }}
+              ,"bleed": {{ variant.featured_media | image_url: width: 400 | json }}
+            {%- endif -%}
+          }
+          {%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
 </div>
