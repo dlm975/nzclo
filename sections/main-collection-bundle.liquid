@@ -1,0 +1,126 @@
+{%- comment -%}
+  A collection page for a two-part deal: the customer picks one of the listed
+  shirts, then options for it and the shorts, and both go to the bag together.
+
+  The price shown here is display only. The saving itself comes from an automatic
+  discount in the Shopify admin, which this section cannot create or check.
+{%- endcomment -%}
+{%- liquid
+  assign deal_title = section.settings.title | default: collection.title
+  assign shirts = section.settings.shirts
+  assign shorts = section.settings.shorts
+  assign deal_cents = section.settings.deal_price | times: 100 | round
+-%}
+
+<div class="page-width bundle" data-bundle data-deal-price="{{ deal_cents }}" data-money-format="{{ shop.money_format | escape }}">
+  <div class="collection-header">
+    <h1 class="h-section">{{ deal_title }}</h1>
+    {%- if collection.description != blank -%}
+      <div class="collection-header__description">{{ collection.description }}</div>
+    {%- endif -%}
+  </div>
+
+  {%- if shirts.count > 0 and shorts != blank -%}
+    <div class="bundle-steps">
+      <section class="bundle-step bundle-step--shirts" data-bundle-step data-noun="{{ section.settings.shirt_noun | escape }}" aria-labelledby="BundleStep1-{{ section.id }}">
+        <h2 class="bundle-step__label" id="BundleStep1-{{ section.id }}">
+          1. choose your {{ section.settings.shirt_noun }}
+          <span class="text-secondary">1 of {{ shirts.count }}</span>
+        </h2>
+
+        <div class="product-grid product-grid--collection product-grid--bundle">
+          {%- for product in shirts -%}
+            {% render 'bundle-card', product: product %}
+          {%- endfor -%}
+        </div>
+
+        {%- for product in shirts -%}
+          {% render 'bundle-options', product: product %}
+        {%- endfor -%}
+      </section>
+
+      <section class="bundle-step bundle-step--shorts" data-bundle-step data-noun="{{ section.settings.shorts_noun | escape }}" aria-labelledby="BundleStep2-{{ section.id }}">
+        <h2 class="bundle-step__label" id="BundleStep2-{{ section.id }}">2. add your {{ section.settings.shorts_noun }}</h2>
+
+        {%- comment -%} there is nothing to choose between here, so it starts selected {%- endcomment -%}
+        <div class="bundle-step__single">
+          <div class="product-grid--collection bundle-step__card">
+            <span class="bundle-step__plus" aria-hidden="true">
+              <svg class="product-card__add-icon" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></svg>
+            </span>
+            {% render 'bundle-card', product: shorts, selected: shorts.available %}
+          </div>
+          {% render 'bundle-options', product: shorts, selected: shorts.available %}
+        </div>
+      </section>
+    </div>
+
+    <div class="bundle-bar">
+      <div class="bundle-bar__summary" aria-live="polite">
+        <span class="bundle-bar__line" data-bundle-line></span>
+        <span class="bundle-bar__line" data-bundle-line></span>
+      </div>
+      <div class="bundle-bar__total">
+        <s data-bundle-compare hidden></s>
+        <span data-bundle-total></span>
+      </div>
+      <button type="button" class="btn btn--solid bundle-bar__add" data-bundle-add></button>
+    </div>
+  {%- else -%}
+    <div class="cart-empty">
+      <p class="text-secondary">
+        {%- if request.design_mode -%}
+          choose the shirts and shorts for this deal in the section settings
+        {%- else -%}
+          no products found
+        {%- endif -%}
+      </p>
+      <a class="btn" href="{{ routes.all_products_collection_url }}">shop all</a>
+    </div>
+  {%- endif -%}
+</div>
+
+<div style="height: clamp(40px, 6vw, 88px);"></div>
+
+{% schema %}
+{
+  "name": "Bundle collection page",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Bundle title",
+      "default": "Airism Tee + Jorts Deal"
+    },
+    {
+      "type": "product_list",
+      "id": "shirts",
+      "label": "Shirts to choose from",
+      "limit": 3
+    },
+    {
+      "type": "product",
+      "id": "shorts",
+      "label": "Shorts"
+    },
+    {
+      "type": "number",
+      "id": "deal_price",
+      "label": "Bundle price",
+      "info": "Display only, in dollars. Must match an automatic discount set up in Shopify, which is what actually changes the price at checkout. Leave blank to show the normal combined price."
+    },
+    {
+      "type": "text",
+      "id": "shirt_noun",
+      "label": "Shirt wording",
+      "default": "tee"
+    },
+    {
+      "type": "text",
+      "id": "shorts_noun",
+      "label": "Shorts wording",
+      "default": "jorts"
+    }
+  ]
+}
+{% endschema %}

@@ -2762,3 +2762,132 @@ body:has(.mini-pdp--standalone) .pdp-bar {
 @media (max-width: 420px) {
   .shop-confidence__text { font-size: 12.5px; }
 }
+
+/* ---------- bundle collection page ---------- */
+/* The collection card and the product page's option pills, arranged as two steps
+   and a bar that stays in view while they are being worked through. On desktop
+   the steps keep the collection's four columns: three shirts, then the shorts. */
+
+.bundle-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--card-gap);
+  padding-top: 16px;
+}
+.bundle-step { position: relative; min-width: 0; scroll-margin-top: calc(var(--header-height) + 16px); }
+.bundle-step--shirts { grid-column: span 3; }
+.bundle-step__label {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 14px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.5;
+  text-transform: lowercase;
+}
+.bundle-step__label .text-secondary { font-weight: 400; }
+
+/* sits on the gap between the two steps, level with the middle of the card */
+.bundle-step__card { position: relative; }
+.bundle-step__plus {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--card-gap) / -2);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin: -16px 0 0 -16px;
+  border-radius: 50%;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-text));
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  pointer-events: none;
+}
+
+.product-grid--bundle { grid-template-columns: repeat(3, 1fr); }
+
+.bundle-card__pick {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.bundle-card__pick:disabled { cursor: default; }
+.bundle-card__pick:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
+/* the mark reports the choice; the click belongs to the card beneath it */
+.bundle-card__mark { pointer-events: none; }
+.bundle-card.is-selected { box-shadow: 0 0 0 2px rgb(var(--color-background)), 0 0 0 4px rgb(var(--color-text)); }
+.bundle-card.is-selected .bundle-card__mark { background: rgb(var(--color-text)); color: rgb(var(--color-background)); }
+.bundle-card.is-selected .product-card__add-icon--plus { display: none; }
+.bundle-card.is-selected .product-card__add-icon--check { display: block; }
+
+.bundle-panel { padding-top: 22px; }
+.bundle-panel__title { margin: 0 0 14px; font-size: 13px; font-weight: 500; }
+.bundle-panel__options { display: flex; flex-wrap: wrap; column-gap: 40px; }
+.bundle-panel__group { min-width: 0; margin: 0 0 16px; padding: 0; border: 0; }
+.bundle-panel__group .option-group__label { padding: 0; }
+.bundle-panel .option-pill input:disabled { cursor: not-allowed; }
+.bundle-panel .option-pill input:disabled + label { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+
+.bundle-bar {
+  position: sticky;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 24px;
+  padding: 14px 14px 14px 20px;
+  border-radius: var(--radius-panel);
+  background: rgb(var(--color-background));
+  box-shadow: var(--card-shadow), 0 0 0 1px rgba(var(--color-text), 0.08);
+}
+.bundle-bar__summary { flex: 1 1 auto; min-width: 0; font-size: 13px; line-height: 1.4; }
+.bundle-bar__line { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.bundle-bar__line + .bundle-bar__line { color: rgb(var(--color-text-secondary)); }
+.bundle-bar__total { flex: none; font-size: 16px; font-weight: 600; white-space: nowrap; }
+.bundle-bar__total s { margin-right: 6px; font-size: 13px; font-weight: 400; color: rgb(var(--color-text-secondary)); }
+.bundle-bar__add { flex: none; min-width: 200px; }
+.bundle-bar__add.is-busy { opacity: 0.55; pointer-events: none; }
+
+@media (max-width: 749px) {
+  .bundle-steps { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .bundle-step--shirts { grid-column: auto; }
+  .bundle-step__plus { display: none; }
+
+  /* a peek of the next card says there are more; the rail runs to the screen edge */
+  .product-grid--bundle {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 44%;
+    --card-gap: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    /* room inside the scroller for the cards' shadows and the selected ring */
+    margin: -6px calc(var(--gutter) * -1) -30px;
+    padding: 6px var(--gutter) 36px;
+    scroll-padding: 0 var(--gutter);
+    scrollbar-width: none;
+  }
+  .product-grid--bundle::-webkit-scrollbar { display: none; }
+  .product-grid--bundle .product-card { scroll-snap-align: start; }
+
+  /* the shorts card lines up with the rail, its options beside it */
+  .bundle-step__single { display: grid; grid-template-columns: calc(44% - 3px) minmax(0, 1fr); gap: 14px; align-items: start; }
+  .bundle-step__single .bundle-panel { padding-top: 0; }
+  .bundle-step__single .bundle-panel__title { display: none; }
+  .bundle-step__single .option-pill label { min-width: 42px; padding: 9px 11px; }
+
+  .product-grid--bundle .product-card__title,
+  .bundle-step__single .product-card__title { -webkit-line-clamp: 3; }
+
+  .bundle-bar { gap: 14px; padding: 10px 10px 10px 16px; }
+  .bundle-bar__summary { display: none; }
+  .bundle-bar__add { flex: 1 1 auto; min-width: 0; padding-left: 14px; padding-right: 14px; }
+}

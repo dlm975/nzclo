@@ -1,0 +1,95 @@
+{%- comment -%}
+  The collection card as a selector: the same layers and classes as product-card,
+  except the whole-card link is a button that picks this product for the bundle,
+  and the corner + marks the choice rather than adding to the bag.
+
+  @param product - the product
+  @param selected - optional, renders the card already chosen
+
+  Usage: {% render 'bundle-card', product: product %}
+{%- endcomment -%}
+{%- liquid
+  assign primary = product.featured_media
+  assign secondary = null
+  if product.media.size > 1
+    assign secondary = product.media[1]
+  endif
+-%}
+
+<div
+  class="product-card bundle-card{% if secondary %} product-card--swap{% endif %}{% if selected %} is-selected{% endif %}"
+  data-bundle-card
+  data-product-id="{{ product.id }}"
+>
+  <div class="product-card__media">
+    {%- if primary -%}
+      <span class="product-card__bleed" aria-hidden="true">
+        <img class="pc-img--primary" src="{{ primary | image_url: width: 400 }}" alt="" loading="lazy" width="400" height="533">
+        {%- if secondary -%}
+          <img class="pc-img--secondary" src="{{ secondary | image_url: width: 400 }}" alt="" loading="lazy" width="400" height="533">
+        {%- endif -%}
+      </span>
+
+      <span class="product-card__shot">
+        <img
+          class="pc-img--primary"
+          src="{{ primary | image_url: width: 700 }}"
+          srcset="{{ primary | image_url: width: 400 }} 400w, {{ primary | image_url: width: 700 }} 700w, {{ primary | image_url: width: 1000 }} 1000w"
+          sizes="(max-width: 749px) 44vw, 25vw"
+          alt="{{ primary.alt | default: product.title | escape }}"
+          loading="lazy"
+          width="600"
+          height="800"
+        >
+        {%- if secondary -%}
+          <img
+            class="pc-img--secondary"
+            src="{{ secondary | image_url: width: 700 }}"
+            srcset="{{ secondary | image_url: width: 400 }} 400w, {{ secondary | image_url: width: 700 }} 700w, {{ secondary | image_url: width: 1000 }} 1000w"
+            sizes="(max-width: 749px) 44vw, 25vw"
+            alt=""
+            loading="lazy"
+            width="600"
+            height="800"
+          >
+        {%- endif -%}
+      </span>
+    {%- else -%}
+      <span class="product-card__shot">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</span>
+    {%- endif -%}
+
+    <button
+      type="button"
+      class="product-card__link bundle-card__pick"
+      data-bundle-pick
+      aria-pressed="{% if selected %}true{% else %}false{% endif %}"
+      aria-label="{{ product.title | escape }}"
+      {% unless product.available %}disabled{% endunless %}
+    ></button>
+
+    <span class="product-card__scrim"></span>
+
+    {%- if product.available -%}
+      <span class="product-card__add bundle-card__mark" aria-hidden="true">
+        <svg class="product-card__add-icon product-card__add-icon--plus" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></svg>
+        <svg class="product-card__add-icon product-card__add-icon--check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+      </span>
+    {%- else -%}
+      <span class="product-card__badge">sold out</span>
+    {%- endif -%}
+
+    <span class="product-card__info">
+      {%- if product.metafields.custom.subtitle != blank -%}
+        <span class="product-card__eyebrow">{{ product.metafields.custom.subtitle }}</span>
+      {%- endif -%}
+
+      <h3 class="product-card__title">{{ product.title }}</h3>
+
+      <span class="product-card__row">
+        <span class="product-card__price">{% render 'price', product: product %}</span>
+      </span>
+    </span>
+  </div>
+
+  <script type="application/json" data-bundle-product>{{ product | json }}</script>
+</div>

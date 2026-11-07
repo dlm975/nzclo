@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-collection-bundle",
+      "settings": {
+        "title": "Airism Tee + Jorts Deal",
+        "shirts": [
+          "uniqlo-airism-cotton-oversized-t-shirt",
+          "uniqlo-airism-cotton-oversized-t-shirt-womens"
+        ],
+        "shorts": "uniqlo-jorts"
+      }
+    }
+  },
+  "order": ["main"]
+}

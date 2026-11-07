@@ -1230,4 +1230,213 @@
     e.preventDefault();
     refreshCartDrawer(true).catch(function () { window.location.href = link.href; });
   });
+
+  /* ---------- bundle collection page ---------- */
+
+  /* Each step holds one chosen card, and the chosen card's panel holds its option
+     radios. The radios are the only record of what is selected, so the page is
+     read afresh on every change rather than mirrored into state here. */
+  (function () {
+    var root = qs('[data-bundle]');
+    var addButton = root && qs('[data-bundle-add]', root);
+    if (!addButton) return;
+
+    var steps = qsa('[data-bundle-step]', root);
+    var dealPrice = parseInt(root.getAttribute('data-deal-price'), 10) || 0;
+
+    function money(cents) {
+      var fmt = root.getAttribute('data-money-format') || '${{amount}}';
+      return fmt.replace(/\{\{\s*amount[^}]*\}\}/, (cents / 100).toFixed(2));
+    }
+
+    function cardOf(step) { return qs('.bundle-card.is-selected', step); }
+
+    function productOf(card) {
+      if (!card.bundleProduct) card.bundleProduct = JSON.parse(qs('[data-bundle-product]', card).textContent);
+      return card.bundleProduct;
+    }
+
+    function panelOf(step, card) {
+      return qs('[data-bundle-panel="' + card.getAttribute('data-product-id') + '"]', step);
+    }
+
+    function groupsOf(step, card) { return qsa('[data-bundle-option]', panelOf(step, card)); }
+
+    function checkedValue(group) {
+      var checked = group.querySelector('input:checked');
+      return checked ? checked.value : null;
+    }
+
+    function optionIndex(group) { return parseInt(group.getAttribute('data-option-index'), 10); }
+
+    /* the variant for the chosen options, or null while any is still open */
+    function variantOf(step) {
+      var card = cardOf(step);
+      if (!card) return null;
+      var groups = groupsOf(step, card);
+      if (groups.some(function (g) { return checkedValue(g) === null; })) return null;
+      return productOf(card).variants.filter(function (v) {
+        return v.available && groups.every(function (g) { return v.options[optionIndex(g)] === checkedValue(g); });
+      })[0] || null;
+    }
+
+    /* Each option is narrowed only by the ones before it. A shopper on an in-stock
+       colour can then always move to another colour, even one lacking this size;
+       narrowing both ways would strand them behind their own selection. */
+    function refreshOptions(step, card) {
+      var groups = groupsOf(step, card);
+      var variants = productOf(card).variants;
+      groups.forEach(function (group, position) {
+        var earlier = groups.slice(0, position);
+        qsa('input', group).forEach(function (input) {
+          input.disabled = !variants.some(function (v) {
+            return v.available && v.options[optionIndex(group)] === input.value && earlier.every(function (g) {
+              var value = checkedValue(g);
+              return value === null || v.options[optionIndex(g)] === value;
+            });
+          });
+          if (input.disabled) input.checked = false;
+        });
+      });
+    }
+
+    /* the card follows the colour, the way a swatch moves the regular card */
+    function showColor(card, group) {
+      var index = optionIndex(group);
+      var value = checkedValue(group);
+      var match = productOf(card).variants.filter(function (v) {
+        return v.options[index] === value && v.featured_image;
+      })[0];
+      if (!match) return;
+      var src = match.featured_image.src;
+      var join = src.indexOf('?') === -1 ? '?' : '&';
+      var shot = qs('.product-card__shot .pc-img--primary', card);
+      var bleed = qs('.product-card__bleed .pc-img--primary', card);
+      if (shot) {
+        shot.removeAttribute('srcset');
+        shot.src = src + join + 'width=1000';
+      }
+      if (bleed) bleed.src = src + join + 'width=400';
+      card.classList.add('product-card--variant-selected');
+    }
+
+    /* what this step still needs, worded for the button; null once it is complete */
+    function needOf(step) {
+      var noun = step.getAttribute('data-noun');
+      var card = cardOf(step);
+      if (!card) {
+        return qs('.bundle-card__pick:not(:disabled)', step) ? 'choose your ' + noun : noun + ' sold out';
+      }
+      var open = groupsOf(step, card).filter(function (g) { return checkedValue(g) === null; })[0];
+      if (open) return 'choose ' + noun + ' ' + open.getAttribute('data-option-name');
+      return variantOf(step) ? null : noun + ' sold out';
+    }
+
+    function priceOf(step) {
+      var variant = variantOf(step);
+      if (variant) return variant.price;
+      var card = cardOf(step);
+      if (card) return productOf(card).price;
+      var prices = qsa('.bundle-card', step).filter(function (c) {
+        return !qs('[data-bundle-pick]', c).disabled;
+      }).map(function (c) { return productOf(c).price; });
+      return prices.length ? Math.min.apply(null, prices) : 0;
+    }
+
+    function lineFor(step) {
+      var card = cardOf(step);
+      if (!card) return 'choose your ' + step.getAttribute('data-noun');
+      var chosen = groupsOf(step, card).map(checkedValue).filter(Boolean);
+      return [productOf(card).title].concat(chosen).join(' / ').toLowerCase();
+    }
+
+    function render() {
+      var lines = qsa('[data-bundle-line]', root);
+      steps.forEach(function (step, i) { if (lines[i]) lines[i].textContent = lineFor(step); });
+
+      var sum = steps.reduce(function (total, step) { return total + priceOf(step); }, 0);
+      var need = steps.map(needOf).filter(Boolean)[0];
+      var compare = qs('[data-bundle-compare]', root);
+      var total = qs('[data-bundle-total]', root);
+      if (dealPrice) {
+        total.textContent = money(dealPrice);
+        compare.hidden = sum <= dealPrice;
+        compare.textContent = money(sum);
+      } else {
+        total.textContent = (need ? 'from ' : '') + money(sum);
+      }
+
+      addButton.textContent = need || 'add bundle to bag';
+      addButton.disabled = !!need && need.indexOf('sold out') !== -1;
+    }
+
+    root.addEventListener('click', function (e) {
+      var pick = e.target.closest('[data-bundle-pick]');
+      if (pick) {
+        var step = pick.closest('[data-bundle-step]');
+        var card = pick.closest('[data-bundle-card]');
+        qsa('[data-bundle-card]', step).forEach(function (other) {
+          var chosen = other === card;
+          other.classList.toggle('is-selected', chosen);
+          qs('[data-bundle-pick]', other).setAttribute('aria-pressed', chosen ? 'true' : 'false');
+          panelOf(step, other).hidden = !chosen;
+        });
+        refreshOptions(step, card);
+        render();
+        return;
+      }
+
+      if (!e.target.closest('[data-bundle-add]') || addButton.classList.contains('is-busy')) return;
+
+      /* the button names what is missing, and a press takes the shopper to it */
+      var waiting = steps.filter(needOf)[0];
+      if (waiting) {
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        waiting.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+        return;
+      }
+
+      addButton.classList.add('is-busy');
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          items: steps.map(function (s) { return { id: variantOf(s).id, quantity: 1 }; })
+        })
+      })
+        .then(function (r) {
+          if (!r.ok) {
+            return r.json().then(function (data) {
+              throw new Error(data.description || data.message || 'could not add to bag');
+            });
+          }
+          return r.json();
+        })
+        .then(function () {
+          addButton.classList.remove('is-busy');
+          return drawerEnabled ? refreshCartDrawer(true) : updateCartCount();
+        })
+        .catch(function (err) {
+          addButton.classList.remove('is-busy');
+          alert(err.message || 'could not add to bag');
+        });
+    });
+
+    root.addEventListener('change', function (e) {
+      var group = e.target.closest('[data-bundle-option]');
+      if (!group) return;
+      var step = group.closest('[data-bundle-step]');
+      var card = cardOf(step);
+      if (!card) return;
+      if (group.hasAttribute('data-color-option')) showColor(card, group);
+      refreshOptions(step, card);
+      render();
+    });
+
+    steps.forEach(function (step) {
+      var card = cardOf(step);
+      if (card) refreshOptions(step, card);
+    });
+    render();
+  })();
 })();

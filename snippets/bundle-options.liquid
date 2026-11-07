@@ -1,0 +1,53 @@
+{%- comment -%}
+  One product's option pills for the bundle: the same markup as the product page,
+  hidden until its card is picked. An option with one value has nothing to decide,
+  so it arrives chosen and stays out of sight.
+
+  @param product - the product
+  @param selected - optional, renders the panel open
+
+  Usage: {% render 'bundle-options', product: product %}
+{%- endcomment -%}
+<div class="bundle-panel" data-bundle-panel="{{ product.id }}"{% unless selected %} hidden{% endunless %}>
+  {%- unless product.has_only_default_variant -%}
+    <p class="bundle-panel__title">{{ product.title }}</p>
+    <div class="bundle-panel__options">
+      {%- for option in product.options_with_values -%}
+        {%- liquid
+          assign option_name_lower = option.name | downcase
+          assign is_color_option = false
+          if option_name_lower contains 'color' or option_name_lower contains 'colour'
+            assign is_color_option = true
+          endif
+        -%}
+        <fieldset
+          class="option-group bundle-panel__group"
+          data-bundle-option
+          data-option-index="{{ forloop.index0 }}"
+          data-option-name="{{ option_name_lower | escape }}"
+          {% if is_color_option %}data-color-option{% endif %}
+          {% if option.values.size == 1 %}hidden{% endif %}
+        >
+          <legend class="option-group__label">{{ option_name_lower }}</legend>
+          <div class="option-pills">
+            {%- for value in option.values -%}
+              <span class="option-pill">
+                <input
+                  type="radio"
+                  id="Bundle-{{ product.id }}-{{ option.position }}-{{ forloop.index }}"
+                  name="bundle-{{ product.id }}-{{ option.position }}"
+                  value="{{ value | escape }}"
+                  {% if option.values.size == 1 %}checked{% endif %}
+                >
+                <label for="Bundle-{{ product.id }}-{{ option.position }}-{{ forloop.index }}">
+                  {%- if is_color_option -%}{% render 'option-swatch', value: value %}{%- endif -%}
+                  {{ value | downcase }}
+                </label>
+              </span>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+      {%- endfor -%}
+    </div>
+  {%- endunless -%}
+</div>
