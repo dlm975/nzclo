@@ -1381,7 +1381,48 @@
       addButton.disabled = !!need && need.indexOf('sold out') !== -1;
     }
 
+    /* the fuller product view, kept to the same open and close as the size guide */
+    var sheet = null;
+    var sheetOpener = null;
+    var pageOverflow = '';
+
+    function openDetails(trigger) {
+      var next = qs('[data-bundle-details="' + trigger.getAttribute('data-bundle-details-open') + '"]', root);
+      if (!next) return;
+      sheet = next;
+      sheetOpener = trigger;
+      pageOverflow = document.documentElement.style.overflow;
+      document.documentElement.style.overflow = 'hidden';
+      sheet.hidden = false;
+      var close = qs('button[data-bundle-details-close]', sheet);
+      if (close) close.focus();
+
+      var guide = qs('[data-bundle-guide]', sheet);
+      if (guide && trigger.hasAttribute('data-show-size-guide')) {
+        guide.open = true;
+        guide.scrollIntoView({ block: 'start' });
+      }
+    }
+
+    function closeDetails() {
+      if (!sheet) return;
+      sheet.hidden = true;
+      sheet = null;
+      document.documentElement.style.overflow = pageOverflow;
+      if (sheetOpener) sheetOpener.focus();
+      sheetOpener = null;
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeDetails();
+    });
+
     root.addEventListener('click', function (e) {
+      var detailsTrigger = e.target.closest('[data-bundle-details-open]');
+      if (detailsTrigger) { openDetails(detailsTrigger); return; }
+      /* the scrim carries the same hook as the button */
+      if (e.target.closest('[data-bundle-details-close]')) { closeDetails(); return; }
+
       var pick = e.target.closest('[data-bundle-pick]');
       if (pick) {
         var step = pick.closest('[data-bundle-step]');

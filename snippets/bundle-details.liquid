@@ -1,0 +1,76 @@
+{%- comment -%}
+  A product's fuller view, opened over the bundle page: its photographs, description
+  and size guide, using the same "Size guide image" metafield as the product page.
+  Nothing in it loads until it opens, since its images are lazy and it starts hidden.
+
+  @param product - the product
+
+  Usage: {% render 'bundle-details', product: product %}
+{%- endcomment -%}
+{%- liquid
+  assign size_guide = product.metafields.custom.size_guide_image.value
+  if size_guide == blank
+    assign size_guide = product.metafields.custom.size_guide.value
+  endif
+-%}
+<div class="bundle-details" data-bundle-details="{{ product.id }}" hidden>
+  <div class="size-guide__scrim" data-bundle-details-close></div>
+  <div class="bundle-details__dialog" role="dialog" aria-modal="true" aria-label="{{ product.title | escape }}">
+    <button
+      type="button"
+      class="size-guide__close"
+      data-bundle-details-close
+      aria-label="{{ 'general.accessibility.close' | t: default: 'Close' }}"
+    >
+      {% render 'icon', name: 'close' %}
+    </button>
+
+    <div class="bundle-details__gallery">
+      {%- for media in product.media limit: 12 -%}
+        {%- if media.media_type == 'image' -%}
+          <img
+            src="{{ media | image_url: width: 700 }}"
+            srcset="{{ media | image_url: width: 400 }} 400w, {{ media | image_url: width: 700 }} 700w, {{ media | image_url: width: 1000 }} 1000w"
+            sizes="(max-width: 749px) 74vw, 520px"
+            alt="{{ media.alt | default: product.title | escape }}"
+            loading="lazy"
+            width="600"
+            height="800"
+          >
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="bundle-details__info">
+      <h2 class="bundle-details__title">{{ product.title }}</h2>
+      <span class="bundle-details__price">{% render 'price', product: product %}</span>
+
+      <div class="product-accordions">
+        {%- if product.description != blank -%}
+          <details open>
+            <summary>{{ 'products.product.description' | t }}</summary>
+            <div class="accordion__content rte">{{ product.description }}</div>
+          </details>
+        {%- endif -%}
+
+        {%- if size_guide -%}
+          <details data-bundle-guide>
+            <summary>{{ 'products.product.size_guide' | t: default: 'size guide' }}</summary>
+            <div class="accordion__content">
+              <img
+                class="bundle-details__guide"
+                src="{{ size_guide | image_url: width: 1000 }}"
+                alt="{{ size_guide.alt | default: 'Size guide' | escape }}"
+                loading="lazy"
+                width="{{ size_guide.width | default: 1000 }}"
+                height="{{ size_guide.height | default: 700 }}"
+              >
+            </div>
+          </details>
+        {%- endif -%}
+      </div>
+
+      <a class="btn bundle-details__link" href="{{ product.url }}">view full product page</a>
+    </div>
+  </div>
+</div>

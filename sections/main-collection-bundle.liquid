@@ -69,6 +69,12 @@
       </div>
       <button type="button" class="btn btn--solid bundle-bar__add" data-bundle-add></button>
     </div>
+
+    {%- comment -%} out here because a hovered card's transform would trap a fixed sheet {%- endcomment -%}
+    {%- for product in shirts -%}
+      {% render 'bundle-details', product: product %}
+    {%- endfor -%}
+    {% render 'bundle-details', product: shorts %}
   {%- else -%}
     <div class="cart-empty">
       <p class="text-secondary">

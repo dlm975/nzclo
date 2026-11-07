@@ -2830,11 +2830,30 @@ body:has(.mini-pdp--standalone) .pdp-bar {
 .bundle-card.is-selected .product-card__add-icon--plus { display: none; }
 .bundle-card.is-selected .product-card__add-icon--check { display: block; }
 
+/* set over the card, so it opts back in to the pointer the info layer gives up */
+.bundle-card__details {
+  flex: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  pointer-events: auto;
+}
+.bundle-card__details:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 3px; }
+
 .bundle-panel { padding-top: 22px; }
 .bundle-panel__title { margin: 0 0 14px; font-size: 13px; font-weight: 500; }
 .bundle-panel__options { display: flex; flex-wrap: wrap; column-gap: 40px; }
 .bundle-panel__group { min-width: 0; margin: 0 0 16px; padding: 0; border: 0; }
 .bundle-panel__group .option-group__label { display: block; padding: 0; }
+.bundle-panel__group label { font: inherit; }
 .bundle-panel__select { min-width: 180px; padding-top: 10px; padding-bottom: 10px; font-size: 13px; cursor: pointer; }
 .bundle-panel .option-pill input:disabled { cursor: not-allowed; }
 .bundle-panel .option-pill input:disabled + label { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
@@ -2860,6 +2879,43 @@ body:has(.mini-pdp--standalone) .pdp-bar {
 .bundle-bar__add { flex: none; min-width: 200px; }
 .bundle-bar__add.is-busy { opacity: 0.55; pointer-events: none; }
 .bundle-bar__add.is-added { background: #1d7a46; border-color: #1d7a46; }
+
+/* A product's fuller view over the page, so the selections underneath survive it.
+   The scrim and close button are the size guide's own. */
+.bundle-details { position: fixed; inset: 0; z-index: 110; }
+.bundle-details[hidden] { display: none; }
+.bundle-details__dialog {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  width: min(1040px, calc(100vw - 48px));
+  height: min(760px, calc(100vh - 48px));
+  height: min(760px, calc(100dvh - 48px));
+  overflow: hidden;
+  border-radius: var(--radius-panel);
+  background: rgb(var(--color-background));
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.26);
+  animation: size-guide-in 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) { .bundle-details__dialog { animation: none; } }
+.bundle-details .size-guide__close { top: 12px; right: 12px; z-index: 2; }
+.bundle-details__gallery {
+  display: grid;
+  grid-auto-rows: max-content;
+  gap: 8px;
+  padding: 8px;
+  overflow-y: auto;
+  background: rgb(var(--color-tile));
+}
+.bundle-details__gallery img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: var(--radius-chip); }
+.bundle-details__info { padding: 28px; overflow-y: auto; }
+.bundle-details__title { margin: 0 44px 6px 0; font-size: 20px; font-weight: 600; line-height: 1.25; }
+.bundle-details__price { font-size: 14px; color: rgb(var(--color-text-secondary)); }
+.bundle-details__price s { margin-right: 6px; }
+.bundle-details__guide { width: 100%; height: auto; border-radius: var(--radius-chip); }
+.bundle-details__link { margin-top: 20px; }
 
 @media (max-width: 749px) {
   .bundle-steps { grid-template-columns: minmax(0, 1fr); gap: 14px; }
@@ -2890,6 +2946,32 @@ body:has(.mini-pdp--standalone) .pdp-bar {
   .bundle-panel__group { width: 100%; }
   /* below 16px, iOS zooms the page when a select is focused */
   .bundle-panel__select { width: 100%; font-size: 16px; }
+
+  /* a bottom sheet: the photos swipe across the top and everything scrolls as one */
+  .bundle-details__dialog {
+    inset: auto 0 0;
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 92vh;
+    max-height: 92dvh;
+    overflow-y: auto;
+    border-radius: var(--radius-panel) var(--radius-panel) 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bundle-details .size-guide__close { position: sticky; top: 12px; left: 100%; right: auto; float: right; margin: 12px 12px -46px 0; }
+  .bundle-details__gallery {
+    grid-auto-flow: column;
+    grid-auto-columns: 74%;
+    grid-auto-rows: auto;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .bundle-details__gallery::-webkit-scrollbar { display: none; }
+  .bundle-details__gallery img { scroll-snap-align: start; }
+  .bundle-details__info { padding: 20px 20px 28px; overflow: visible; }
 
   .bundle-bar { flex-wrap: wrap; gap: 8px 12px; padding: 10px 10px 10px; }
   .bundle-bar__summary { flex: 1 1 0; padding-left: 6px; font-size: 12px; }

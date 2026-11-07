@@ -89,6 +89,13 @@
 
       <span class="product-card__row">
         <span class="product-card__price">{% render 'price', product: product %}</span>
+        <button
+          type="button"
+          class="bundle-card__details"
+          data-bundle-details-open="{{ product.id }}"
+          aria-haspopup="dialog"
+          aria-label="details — {{ product.title | escape }}"
+        >details</button>
       </span>
     </span>
   </div>

@@ -8,6 +8,12 @@
 
   Usage: {% render 'bundle-options', product: product %}
 {%- endcomment -%}
+{%- liquid
+  assign size_guide = product.metafields.custom.size_guide_image.value
+  if size_guide == blank
+    assign size_guide = product.metafields.custom.size_guide.value
+  endif
+-%}
 <div class="bundle-panel" data-bundle-panel="{{ product.id }}"{% unless selected %} hidden{% endunless %}>
   {%- unless product.has_only_default_variant -%}
     <p class="bundle-panel__title">{{ product.title }}</p>
@@ -33,7 +39,18 @@
             data-option-name="{{ option_name_lower | escape }}"
             {% if option.values.size == 1 %}hidden{% endif %}
           >
-            <label class="option-group__label" for="{{ control_id }}">{{ option_name_lower }}</label>
+            <div class="option-group__label">
+              <label for="{{ control_id }}">{{ option_name_lower }}</label>
+              {%- if size_guide -%}
+                <button
+                  type="button"
+                  class="size-guide-link"
+                  data-bundle-details-open="{{ product.id }}"
+                  data-show-size-guide
+                  aria-haspopup="dialog"
+                >{{ 'products.product.size_guide' | t: default: 'size guide' }}</button>
+              {%- endif -%}
+            </div>
             <select class="field bundle-panel__select" id="{{ control_id }}" name="bundle-{{ product.id }}-{{ option.position }}">
               <option value="">choose {{ option_name_lower }}</option>
               {%- for value in option.values -%}
